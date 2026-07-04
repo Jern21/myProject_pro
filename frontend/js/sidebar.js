@@ -93,12 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- 柴犬桌宠区域 -->
         <div class="flex-shrink-0 border-t border-gray-50 pt-2 pb-3 px-2 relative">
-            <div id="shiba-bubble" class="opacity-0 translate-y-2 scale-75 pointer-events-none transition-all duration-300 mb-1 bg-white border border-stone-800 text-stone-700 text-[10px] font-bold py-0.5 px-2 rounded-md shadow-sm max-w-[140px] text-center relative mx-auto" style="font-family: 'ZCOOL KuaiLe', sans-serif;">
-                <span id="shiba-bubble-text">你好呀！</span>
-                <div class="absolute bottom-[-4px] left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-white border-r border-b border-stone-800 rotate-45"></div>
-            </div>
-            <div class="flex justify-center cursor-pointer" id="shiba-pet-area">
-                <canvas id="shiba-canvas" width="80" height="80" class="w-12 h-12" style="image-rendering: pixelated;"></canvas>
+            <div class="relative cursor-pointer" id="shiba-pet-area">
+                <div id="shiba-bubble" class="opacity-0 pointer-events-none absolute z-30 whitespace-nowrap bg-white border border-stone-800 text-stone-700 text-[10px] font-bold py-0.5 px-2 rounded-md shadow-sm max-w-[140px] text-center" style="font-family: 'ZCOOL KuaiLe', sans-serif; left: 50%; transform: translateX(-50%); bottom: 68px; transition: opacity 0.3s ease, transform 0.3s ease;">
+                    <span id="shiba-bubble-text">你好呀！</span>
+                    <div class="absolute bottom-[-4px] left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-white border-r border-b border-stone-800 rotate-45"></div>
+                </div>
+                <canvas id="shiba-canvas" width="200" height="64" class="w-full h-16 block" style="image-rendering: pixelated;"></canvas>
             </div>
         </div>
 
@@ -191,6 +191,24 @@ var SHIBA_SPRITES = {
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     ],
+    side_walk: [
+        [0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0],
+        [0,0,1,2,2,1,0,0,1,2,2,1,0,0,0,0],
+        [0,0,1,2,2,1,1,1,1,2,3,2,1,0,0,0],
+        [0,1,2,2,2,2,2,2,2,2,2,2,1,0,0,0],
+        [1,2,5,6,2,2,2,2,2,2,2,2,2,1,0,0],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,1,1,0],
+        [1,2,2,2,2,2,4,4,2,2,2,2,2,2,1,0],
+        [0,1,2,2,2,4,4,4,4,2,2,2,2,2,1,0],
+        [0,0,1,3,2,4,4,4,4,2,2,2,1,1,0,0],
+        [0,0,1,3,3,4,4,4,4,3,3,1,0,0,0,0],
+        [0,1,2,2,1,1,1,1,1,2,2,1,0,0,0,0],
+        [0,1,2,2,1,0,0,0,0,1,2,2,1,0,0,0],
+        [0,1,2,1,0,0,0,0,0,1,2,1,0,0,0,0],
+        [0,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    ],
     side_jump: [
         [0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0],
         [0,0,1,2,2,1,0,0,1,2,2,1,0,0,0,0],
@@ -226,6 +244,24 @@ var SHIBA_SPRITES = {
         [1,2,2,2,1,0,0,0,0,0,0,1,2,2,2,1],
         [1,3,3,1,0,0,0,1,1,1,0,0,1,3,3,1],
         [0,1,1,0,0,0,1,2,2,2,1,0,0,1,1,0]
+    ],
+    side_sleep: [
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0],
+        [0,0,1,2,2,1,1,1,1,2,3,2,1,0,0,0],
+        [0,1,2,2,2,2,2,2,2,2,2,2,1,0,0,0],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,1,1,0],
+        [1,2,2,2,2,2,4,4,2,2,2,2,2,2,1,0],
+        [0,1,2,2,2,4,4,4,4,2,2,2,2,2,1,0],
+        [0,0,1,3,2,4,4,4,4,2,2,2,1,1,0,0],
+        [0,0,1,3,3,4,4,4,4,3,3,1,0,0,0,0],
+        [0,1,2,2,1,1,1,1,1,2,2,1,0,0,0,0],
+        [1,2,2,1,0,0,0,0,1,2,2,1,0,0,0,0],
+        [1,2,1,0,0,0,0,0,1,2,1,0,0,0,0,0],
+        [1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0]
     ]
 };
 
@@ -236,10 +272,36 @@ var SHIBA_SPEECHES = [
     '捏捏我的毛绒小耳朵吧~ 🐶',
     '最喜欢你啦！❤️',
     '累了就伸个懒腰汪！',
-    '代码写完了？真棒！🎉'
+    '代码写完了？真棒！🎉',
+    '陪你改bug到天亮！💪',
+    '摸摸我的头就好啦~',
+    '今天接了几个单呀？💰'
 ];
 
-var SHIBA_PIXEL_SCALE = 3;
+var SHIBA_IDLE_SPEECHES = [
+    '呼噜噜... 好困呀 ~',
+    '发呆中... 🤔',
+    '今天天气不错汪！☀️',
+    '要不要休息一下？',
+    '我在看着你哦！👀',
+    '喝口水再继续吧~',
+    '伸个懒腰~ 啊呜'
+];
+
+var SHIBA_SLEEP_SPEECHES = [
+    '呼噜... 梦到骨头了...',
+    'zzZ... 不要吵我...',
+    '梦里在跑酷汪！'
+];
+
+var SHIBA_PIXEL_SCALE = 2;
+var SHIBA_SPRITE_W = 16 * 2;   // 32px
+var SHIBA_SPRITE_H = 16 * 2;   // 32px
+var SHIBA_CANVAS_W = 200;
+var SHIBA_CANVAS_H = 64;
+var SHIBA_SPRITE_OFFSET_X = (200 - 32) / 2; // 84px 水平居中
+var SHIBA_SPRITE_OFFSET_Y = 64 - 32 - 4;     // 28px 贴底放置，留出跳跃空间
+var SHIBA_WALK_BOUND = 76;  // 行走边界（像素）
 var shibaState = null;
 
 function initShibaPet() {
@@ -247,30 +309,49 @@ function initShibaPet() {
     var petArea = document.getElementById('shiba-pet-area');
     if (!canvas || !petArea) return;
 
+    canvas.width = SHIBA_CANVAS_W;
+    canvas.height = SHIBA_CANVAS_H;
+
     shibaState = {
         canvas: canvas,
         ctx: canvas.getContext('2d'),
-        mode: 'IDLE',       // IDLE, HOVERED
+        petArea: petArea,
+        mode: 'IDLE',            // IDLE, HOVERED, SLEEPING
         ticks: 0,
         speechTimer: 0,
         vy: 0,
         jumpOffset: 0,
         isJumping: false,
-        direction: 1
+        direction: 1,            // 1=右, -1=左
+        walkOffset: 0,
+        walkSpeed: 0,
+        walkTimer: Math.floor(Math.random() * 200) + 100,
+        idleTimer: 0,
+        walkAnimPhase: 0
     };
 
-    // hover 回眸
+    // ---- Hover：回头看你 ----
     petArea.addEventListener('mouseenter', function () {
         shibaState.mode = 'HOVERED';
+        shibaState.walkSpeed = 0;
+        shibaState.idleTimer = 0;
     });
     petArea.addEventListener('mouseleave', function () {
-        shibaState.mode = 'IDLE';
+        if (shibaState.mode === 'HOVERED') {
+            shibaState.mode = 'IDLE';
+            shibaState.walkTimer = Math.floor(Math.random() * 150) + 100;
+        }
     });
 
-    // 点击蹦跳 + 说话
+    // ---- Click：蹦跳 + 说话 ----
     petArea.addEventListener('click', function () {
+        // 睡着了就叫醒
+        if (shibaState.mode === 'SLEEPING') {
+            shibaState.mode = 'IDLE';
+            shibaState.idleTimer = 0;
+        }
         if (!shibaState.isJumping) {
-            shibaState.vy = -3.5;
+            shibaState.vy = -4;
             shibaState.isJumping = true;
         }
         var msg = SHIBA_SPEECHES[Math.floor(Math.random() * SHIBA_SPEECHES.length)];
@@ -284,19 +365,31 @@ function initShibaPet() {
     setTimeout(function () {
         triggerShibaSpeech('汪！你好呀，我是小柴~ 🐶');
     }, 1200);
+
+    // 随机闲聊（每 9 秒检查一次）
+    setInterval(function () {
+        if (!shibaState || shibaState.speechTimer > 0) return;
+        if (shibaState.mode === 'IDLE' && Math.random() < 0.35) {
+            var msg = SHIBA_IDLE_SPEECHES[Math.floor(Math.random() * SHIBA_IDLE_SPEECHES.length)];
+            triggerShibaSpeech(msg);
+        } else if (shibaState.mode === 'SLEEPING' && Math.random() < 0.25) {
+            var msg2 = SHIBA_SLEEP_SPEECHES[Math.floor(Math.random() * SHIBA_SLEEP_SPEECHES.length)];
+            triggerShibaSpeech(msg2);
+        }
+    }, 9000);
 }
 
 function triggerShibaSpeech(text) {
     var bubble = document.getElementById('shiba-bubble');
     var bText = document.getElementById('shiba-bubble-text');
-    if (!bubble || !bText) return;
+    if (!bubble || !bText || !shibaState) return;
     bText.innerText = text;
     bubble.style.opacity = '1';
-    bubble.style.transform = 'translateY(0) scale(1)';
-    shibaState.speechTimer = 140;
+    bubble.style.transform = 'translateX(-50%) translateY(0) scale(1)';
+    shibaState.speechTimer = 160;
 }
 
-function drawShibaPixelFrame(ctx, matrix, flipX) {
+function drawShibaPixelFrame(ctx, matrix, flipX, offsetX, offsetY) {
     ctx.imageSmoothingEnabled = false;
     for (var r = 0; r < matrix.length; r++) {
         for (var c = 0; c < matrix[r].length; c++) {
@@ -305,11 +398,30 @@ function drawShibaPixelFrame(ctx, matrix, flipX) {
                 ctx.fillStyle = SHIBA_PALETTE[colorIdx];
                 var targetCol = flipX ? (matrix[r].length - 1 - c) : c;
                 ctx.fillRect(
-                    (targetCol + 2) * SHIBA_PIXEL_SCALE,
-                    (r + 2) * SHIBA_PIXEL_SCALE,
+                    offsetX + targetCol * SHIBA_PIXEL_SCALE,
+                    offsetY + r * SHIBA_PIXEL_SCALE,
                     SHIBA_PIXEL_SCALE,
                     SHIBA_PIXEL_SCALE
                 );
+            }
+        }
+    }
+}
+
+function drawPixelHeart(ctx, cx, cy) {
+    var heart = [
+        [0,1,1,0,1,1,0],
+        [1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1],
+        [0,1,1,1,1,1,0],
+        [0,0,1,1,1,0,0],
+        [0,0,0,1,0,0,0]
+    ];
+    ctx.fillStyle = '#ef4444';
+    for (var r = 0; r < heart.length; r++) {
+        for (var c = 0; c < heart[r].length; c++) {
+            if (heart[r][c]) {
+                ctx.fillRect(cx + c, cy + r, 1, 1);
             }
         }
     }
@@ -324,19 +436,19 @@ function renderShibaLoop() {
 
     shibaState.ticks++;
 
-    // 对话气泡消失
+    // ---- 对话气泡倒计时 ----
     if (shibaState.speechTimer > 0) {
         shibaState.speechTimer--;
         if (shibaState.speechTimer === 0) {
             var bubble = document.getElementById('shiba-bubble');
             if (bubble) {
                 bubble.style.opacity = '0';
-                bubble.style.transform = 'translateY(4px) scale(0.85)';
+                bubble.style.transform = 'translateX(-50%) translateY(4px) scale(0.85)';
             }
         }
     }
 
-    // 跳跃物理
+    // ---- 跳跃物理 ----
     if (shibaState.isJumping) {
         shibaState.vy += 0.3;
         shibaState.jumpOffset += shibaState.vy;
@@ -347,39 +459,134 @@ function renderShibaLoop() {
         }
     }
 
-    // 绘制阴影
-    var shadowScale = shibaState.isJumping ? Math.max(0.4, 1 + shibaState.jumpOffset / 30) : 1;
-    ctx.fillStyle = 'rgba(28, 25, 23, 0.06)';
+    // ---- 闲置行为：行走 + 入睡 ----
+    if (shibaState.mode === 'IDLE' && !shibaState.isJumping) {
+        shibaState.idleTimer++;
+
+        if (shibaState.walkSpeed > 0) {
+            // 行走中
+            shibaState.walkOffset += shibaState.walkSpeed * shibaState.direction;
+            shibaState.walkAnimPhase += 0.18;
+            // 走到边界就转身（钳制在边界，不跳到另一侧）
+            if (Math.abs(shibaState.walkOffset) > SHIBA_WALK_BOUND) {
+                shibaState.walkOffset = SHIBA_WALK_BOUND * Math.sign(shibaState.walkOffset);
+                shibaState.direction *= -1;
+            }
+            shibaState.walkTimer--;
+            if (shibaState.walkTimer <= 0) {
+                shibaState.walkSpeed = 0;
+                shibaState.walkTimer = Math.floor(Math.random() * 150) + 100;
+            }
+        } else {
+            // 站着不动，可能开始走
+            shibaState.walkTimer--;
+            if (shibaState.walkTimer <= 0) {
+                shibaState.walkSpeed = 0.2 + Math.random() * 0.15;
+                shibaState.walkTimer = Math.floor(Math.random() * 150) + 120;
+                if (Math.random() < 0.5) shibaState.direction *= -1;
+            }
+        }
+
+        // 闲置约 20 秒后入睡
+        if (shibaState.idleTimer > 1200) {
+            shibaState.mode = 'SLEEPING';
+            shibaState.walkSpeed = 0;
+        }
+    }
+
+    // ---- 睡眠中说话会醒来 ----
+    if (shibaState.mode === 'SLEEPING') {
+        if (shibaState.speechTimer > 155) {
+            shibaState.mode = 'IDLE';
+            shibaState.idleTimer = 0;
+        }
+    }
+
+    // ---- 计算位置 ----
+    var posX = SHIBA_SPRITE_OFFSET_X + shibaState.walkOffset;
+    var posY = SHIBA_SPRITE_OFFSET_Y;
+
+    // ---- 气泡跟随宠物水平位置 ----
+    var bubble = document.getElementById('shiba-bubble');
+    if (bubble && bubble.style.opacity === '1') {
+        var petCenterX = posX + SHIBA_SPRITE_W / 2;
+        var bubbleLeftPct = (petCenterX / SHIBA_CANVAS_W) * 100;
+        bubble.style.left = bubbleLeftPct + '%';
+    }
+
+    // ---- 绘制阴影 ----
+    var shadowScale = 1;
+    if (shibaState.isJumping) {
+        shadowScale = Math.max(0.4, 1 + shibaState.jumpOffset / 30);
+    }
+    ctx.fillStyle = 'rgba(28, 25, 23, 0.08)';
     ctx.beginPath();
-    ctx.ellipse(40, 74, 14 * shadowScale, 2.5 * shadowScale, 0, 0, Math.PI * 2);
+    ctx.ellipse(
+        posX + SHIBA_SPRITE_W / 2,
+        SHIBA_CANVAS_H - 5,
+        8 * shadowScale,
+        2 * shadowScale,
+        0, 0, Math.PI * 2
+    );
     ctx.fill();
 
-    // 选择精灵帧
+    // ---- 选择精灵帧 ----
     var sprite = SHIBA_SPRITES.side_idle;
+    var flipX = shibaState.direction === -1;
+
     if (shibaState.mode === 'HOVERED') {
         sprite = SHIBA_SPRITES.front_look;
+        flipX = false;
     } else if (shibaState.isJumping) {
         sprite = SHIBA_SPRITES.side_jump;
+    } else if (shibaState.mode === 'SLEEPING') {
+        sprite = SHIBA_SPRITES.side_sleep;
+    } else if (shibaState.walkSpeed > 0) {
+        // 行走：交替 idle / walk 帧
+        sprite = Math.floor(shibaState.walkAnimPhase) % 2 === 0
+            ? SHIBA_SPRITES.side_idle
+            : SHIBA_SPRITES.side_walk;
     }
 
-    // 闲置呼吸弹跳
+    // ---- 呼吸偏移 ----
     var breathOffset = 0;
-    if (shibaState.mode === 'IDLE' && !shibaState.isJumping) {
-        breathOffset = Math.sin(shibaState.ticks * 0.08) * 0.5;
+    if (!shibaState.isJumping) {
+        if (shibaState.mode === 'SLEEPING') {
+            breathOffset = Math.sin(shibaState.ticks * 0.04) * 1.2;
+        } else {
+            breathOffset = Math.sin(shibaState.ticks * 0.08) * 0.5;
+        }
     }
 
-    // 跳跃偏移
+    // ---- 行走弹跳 ----
+    var walkBob = 0;
+    if (shibaState.walkSpeed > 0 && !shibaState.isJumping) {
+        walkBob = Math.abs(Math.sin(shibaState.walkAnimPhase)) * 1.5;
+    }
+
+    // ---- 绘制柴犬 ----
     ctx.save();
-    ctx.translate(0, shibaState.jumpOffset + breathOffset);
+    ctx.translate(0, shibaState.jumpOffset + breathOffset - walkBob);
+    drawShibaPixelFrame(ctx, sprite, flipX, posX, posY);
 
-    var flipX = shibaState.direction === -1;
-    drawShibaPixelFrame(ctx, sprite, flipX);
+    // ---- Hover：头顶像素心心 ----
+    if (shibaState.mode === 'HOVERED') {
+        var heartBob = Math.sin(shibaState.ticks * 0.12) * 2;
+        drawPixelHeart(ctx, posX + SHIBA_SPRITE_W / 2 - 3, posY - 8 + heartBob);
+    }
 
-    // hover 时头顶冒心心
-    if (shibaState.mode === 'HOVERED' && shibaState.ticks % 30 < 15) {
-        ctx.fillStyle = '#ef4444';
-        ctx.font = '10px serif';
-        ctx.fillText('❤️', 14 + Math.sin(shibaState.ticks * 0.1) * 3, 16);
+    // ---- 睡觉：Zzz ----
+    if (shibaState.mode === 'SLEEPING') {
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 5px sans-serif';
+        ctx.textAlign = 'left';
+        var p1 = (shibaState.ticks % 120) / 120;
+        ctx.globalAlpha = 1 - p1 * 0.7;
+        ctx.fillText('Z', posX + SHIBA_SPRITE_W - 4 + p1 * 6, posY - 1 - p1 * 8);
+        var p2 = ((shibaState.ticks + 40) % 120) / 120;
+        ctx.globalAlpha = 1 - p2 * 0.7;
+        ctx.fillText('z', posX + SHIBA_SPRITE_W + p2 * 5, posY + 3 - p2 * 6);
+        ctx.globalAlpha = 1;
     }
 
     ctx.restore();

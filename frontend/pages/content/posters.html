@@ -21,6 +21,7 @@
     <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
+<script src="../../js/poster-form.js"></script>
 </head>
 <!-- 将所有样式内联 -->
 <body class="flex h-screen overflow-hidden text-sm bg-gray-50 text-gray-700">
@@ -44,13 +45,19 @@
                         <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">草稿箱 (6)</button>
                     </div>
 
-                    <!-- Platform Filters -->
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-500 mr-2">发布平台:</span>
-                        <button class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-brand-500 hover:text-brand-500 transition-colors bg-white tooltip" title="全部"><i class="ph ph-squares-four"></i></button>
-                        <button class="w-8 h-8 rounded-full border border-yellow-400 bg-yellow-50 flex items-center justify-center text-yellow-600 transition-colors font-bold text-xs shadow-sm tooltip" title="闲鱼">闲</button>
-                        <button class="w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center text-red-500 hover:border-red-500 hover:bg-red-50 transition-colors font-bold text-[10px] tooltip" title="小红书">小红书</button>
-                        <button class="w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-800 hover:border-gray-800 hover:bg-gray-100 transition-colors tooltip" title="抖音"><i class="ph-fill ph-tiktok-logo"></i></button>
+                    <div class="flex items-center gap-3">
+                        <!-- Platform Filters -->
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-500 mr-1">平台:</span>
+                            <button class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-brand-500 hover:text-brand-500 transition-colors bg-white tooltip" title="全部"><i class="ph ph-squares-four"></i></button>
+                            <button class="w-8 h-8 rounded-full border border-yellow-400 bg-yellow-50 flex items-center justify-center transition-colors shadow-sm tooltip overflow-hidden" title="闲鱼" data-platform="xianyu">闲</button>
+                            <button class="w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center transition-colors tooltip overflow-hidden" title="小红书" data-platform="xiaohongshu">小红书</button>
+                            <button class="w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-800 hover:border-gray-800 hover:bg-gray-100 transition-colors tooltip" title="抖音"><i class="ph-fill ph-tiktok-logo"></i></button>
+                        </div>
+                        <!-- 上传按钮 -->
+                        <button id="btn-upload-poster" class="flex items-center gap-1.5 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition text-sm font-medium shadow-sm shadow-brand-500/30">
+                            <i class="ph ph-plus"></i>上传海报
+                        </button>
                     </div>
                 </div>
 
@@ -87,7 +94,7 @@
                             <div>
                                 <div class="flex justify-between items-start mb-1">
                                     <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">闲鱼引流主图-07</h4>
-                                    <div class="w-5 h-5 rounded bg-yellow-100 text-yellow-600 flex flex-shrink-0 items-center justify-center text-[10px] font-bold">闲</div>
+                                    <div class="w-5 h-5 rounded bg-yellow-100 text-yellow-600 flex flex-shrink-0 items-center justify-center text-[10px] font-bold" data-platform="xianyu">闲</div>
                                 </div>
                                 <p class="text-xs text-gray-400 mb-2">更新于 2026-07-01</p>
                             </div>
@@ -127,7 +134,7 @@
                             <div>
                                 <div class="flex justify-between items-start mb-1">
                                     <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">小红书干货封面-爆款</h4>
-                                    <div class="w-5 h-5 rounded bg-red-50 text-red-500 flex flex-shrink-0 items-center justify-center text-[10px] font-bold">红</div>
+                                    <div class="w-5 h-5 rounded bg-red-50 text-red-500 flex flex-shrink-0 items-center justify-center text-[10px] font-bold" data-platform="xiaohongshu">红</div>
                                 </div>
                                 <p class="text-xs text-gray-400 mb-2">更新于 2026-06-28</p>
                             </div>
@@ -241,7 +248,7 @@
                             <div>
                                 <div class="flex justify-between items-start mb-1">
                                     <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">闲鱼-毕设代做(新版)</h4>
-                                    <div class="w-5 h-5 rounded bg-yellow-100 text-yellow-600 flex flex-shrink-0 items-center justify-center text-[10px] font-bold">闲</div>
+                                    <div class="w-5 h-5 rounded bg-yellow-100 text-yellow-600 flex flex-shrink-0 items-center justify-center text-[10px] font-bold" data-platform="xianyu">闲</div>
                                 </div>
                                 <p class="text-xs text-gray-400 mb-2">更新于 2026-06-15</p>
                             </div>
@@ -260,6 +267,101 @@
         </div>
     </div>
 </main>
+
+<script>
+(function () {
+    'use strict';
+
+    /**
+     * 从海报卡片 DOM 中提取编辑数据
+     * 各卡片元素结构：
+     *   h4.font-semibold  → 海报标题
+     *   div[data-platform] → 平台标识
+     *   span (状态标签)   → 状态文字
+     *   p.text-xs.text-gray-400 → 更新时间
+     */
+    function extractCardData(card) {
+        if (!card) return null;
+
+        var titleEl = card.querySelector('h4.font-semibold');
+        var platformEl = card.querySelector('[data-platform]');
+        var statusSpan = card.querySelector('.p-4 span.inline-block');
+        var timeEl = card.querySelector('p.text-xs.text-gray-400');
+
+        var title = titleEl ? titleEl.textContent.trim() : '';
+        var platform = platformEl ? platformEl.getAttribute('data-platform') : 'other';
+
+        // 状态映射
+        var statusText = statusSpan ? statusSpan.textContent.trim() : '';
+        var statusMap = { '使用中': 'active', '即将到期': 'expiring', '草稿箱': 'draft', '已归档': 'archived' };
+        var status = statusMap[statusText] || 'active';
+
+        // 比例（海报卡片都是 3/4）
+        var ratioEl = card.querySelector('.aspect-\[3\/4\]');
+        var ratio = ratioEl ? '3/4' : '1/1';
+
+        return {
+            title: title,
+            platform: platform,
+            status: status,
+            ratio: ratio,
+            tags: []
+        };
+    }
+
+    /**
+     * 绑定所有卡片中的编辑按钮
+     */
+    function bindEditButtons() {
+        var cards = document.querySelectorAll('.grid > div.group');
+        cards.forEach(function (card) {
+            // 找到“编辑信息” / “继续编辑”按钮
+            var editBtns = card.querySelectorAll('button');
+            editBtns.forEach(function (btn) {
+                var text = btn.textContent.trim();
+                if (text === '编辑信息' || text === '继续编辑') {
+                    if (btn.dataset.posterBound) return;
+                    btn.dataset.posterBound = '1';
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var data = extractCardData(card);
+                        if (window.openPosterForm) {
+                            window.openPosterForm(data);
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    // 绑定上传按钮
+    function bindUploadButton() {
+        var btn = document.getElementById('btn-upload-poster');
+        if (btn && !btn.dataset.posterBound) {
+            btn.dataset.posterBound = '1';
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (window.openPosterForm) window.openPosterForm();
+            });
+        }
+    }
+
+    // 初始化
+    function init() {
+        bindUploadButton();
+        bindEditButtons();
+    }
+
+    // DOMContentLoaded + SPA 切换后重新绑定
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    window.addEventListener('spa:ready', init);
+})();
+</script>
 
 </body>
 </html>

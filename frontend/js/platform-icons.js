@@ -28,6 +28,13 @@
         douyin: '抖音',
     };
 
+    // 各平台图标的缩放比例（小红书 logo 内容占比较小，需要放大撑满）
+    var ICON_SCALE = {
+        xianyu: 1,
+        xiaohongshu: 1.2,
+        douyin: 1,
+    };
+
     /**
      * 运行时计算 SVG 绝对路径
      * 优先使用 spa-router.js 提供的 ROOT_URL（绝对 URL），
@@ -50,6 +57,11 @@
         img.alt = PLATFORM_NAMES[platform];
         img.className = 'block w-full h-full';
         img.loading = 'lazy';
+        var scale = ICON_SCALE[platform] || 1;
+        if (scale !== 1) {
+            img.style.objectFit = 'cover';
+            img.style.transform = 'scale(' + scale + ')';
+        }
         return img;
     }
 
@@ -57,15 +69,25 @@
      * 移除元素的品牌背景色和文字样式类（SVG 自带背景）
      */
     function removeBrandClasses(el) {
+        // 移除所有 bg-yellow-*, bg-red-*, bg-black, bg-gray-900 背景色
+        el.className = el.className.replace(/\bbg-yellow-\S+/g, '');
+        el.className = el.className.replace(/\bbg-red-\S+/g, '');
+        el.className = el.className.replace(/\bbg-black\b/g, '');
+        el.className = el.className.replace(/\bbg-gray-900\b/g, '');
+        // 移除文字色
+        el.className = el.className.replace(/\btext-yellow-\S+/g, '');
+        el.className = el.className.replace(/\btext-red-\S+/g, '');
+        el.classList.remove('text-black', 'text-white');
+        // 移除文字大小和样式
         el.classList.remove(
-            'bg-yellow-400', 'bg-red-500', 'bg-black', 'bg-gray-900',
-            'text-black', 'text-white',
-            'font-bold', 'text-[10px]', 'text-xs', 'text-sm', 'text-lg', 'text-xl', 'text-2xl',
+            'font-bold',
+            'text-[10px]', 'text-xs', 'text-sm', 'text-lg', 'text-xl', 'text-2xl',
             'leading-none',
             'flex', 'inline-flex', 'items-center', 'justify-center'
         );
         // 确保容器裁剪图片（配合 rounded-* 实现圆角）
         el.classList.add('overflow-hidden');
+        el.className = el.className.replace(/\s+/g, ' ').trim();
     }
 
     /**
@@ -82,8 +104,24 @@
     function matchPlatformByText(text) {
         text = (text || '').trim();
         if (text === '闲' || text === '闲鱼') return 'xianyu';
-        if (text === '小红书') return 'xiaohongshu';
+        if (text === '红' || text === '小红书') return 'xiaohongshu';
         return null;
+    }
+
+    /**
+     * 检查元素是否包含某颜色的背景类（bg-yellow-*, bg-red-* 等）
+     */
+    function hasBgColor(el, color) {
+        return new RegExp('\\bbg-' + color + '-\\d+\\b').test(el.className) ||
+               new RegExp('\\bbg-' + color + '\\b').test(el.className);
+    }
+
+    /**
+     * 检查元素是否包含某颜色的文字色类（text-yellow-*, text-red-* 等）
+     */
+    function hasTextColor(el, color) {
+        return new RegExp('\\btext-' + color + '-\\d+\\b').test(el.className) ||
+               new RegExp('\\btext-' + color + '\\b').test(el.className);
     }
 
     /**
@@ -126,9 +164,10 @@
             icon.parentNode.replaceChild(wrapper, icon);
         });
 
-        // ===== 2. 替换含"闲"/"闲鱼"文字 + bg-yellow-400 的容器（须有明确尺寸） =====
-        document.querySelectorAll('[class*="bg-yellow-400"]').forEach(function (el) {
+        // ===== 2. 替换含"闲"/"闲鱼"文字 + 黄色背景/文字色的容器（须有明确尺寸） =====
+        document.querySelectorAll('[class*="bg-yellow"], [class*="text-yellow"]').forEach(function (el) {
             if (!hasExplicitSize(el)) return;
+            if (!hasBgColor(el, 'yellow') && !hasTextColor(el, 'yellow')) return;
             var platform = matchPlatformByText(el.textContent);
             if (platform === 'xianyu') {
                 removeBrandClasses(el);
@@ -137,9 +176,10 @@
             }
         });
 
-        // ===== 3. 替换含"小红书"文字 + bg-red-500 的容器（须有明确尺寸） =====
-        document.querySelectorAll('[class*="bg-red-500"]').forEach(function (el) {
+        // ===== 3. 替换含"红"/"小红书"文字 + 红色背景/文字色的容器（须有明确尺寸） =====
+        document.querySelectorAll('[class*="bg-red"], [class*="text-red"]').forEach(function (el) {
             if (!hasExplicitSize(el)) return;
+            if (!hasBgColor(el, 'red') && !hasTextColor(el, 'red')) return;
             var platform = matchPlatformByText(el.textContent);
             if (platform === 'xiaohongshu') {
                 removeBrandClasses(el);
