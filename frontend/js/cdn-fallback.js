@@ -17,8 +17,14 @@
         if (hasChart && typeof echarts === 'undefined') {
             console.error('[Health] ECharts 未加载，请检查 assets/echarts.min.js 是否存在');
             // 尝试重新加载本地 ECharts
+            // 使用 ROOT_URL 绝对路径，避免 SPA 切换后相对路径解析错误
+            var echartsUrl = (window.ROOT_URL || '') + 'assets/echarts.min.js';
+            if (!window.ROOT_URL) {
+                // 首次整页加载时 ROOT_URL 尚未定义，回退到 PAGE_BASE
+                echartsUrl = (window.PAGE_BASE || '') + 'assets/echarts.min.js';
+            }
             var script = document.createElement('script');
-            script.src = 'assets/echarts.min.js';
+            script.src = echartsUrl;
             script.onload = function () {
                 console.log('[Health] ECharts 重新加载成功');
                 window.dispatchEvent(new CustomEvent('echarts-ready'));

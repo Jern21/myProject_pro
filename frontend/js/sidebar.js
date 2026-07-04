@@ -2,13 +2,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // 防重复插入保护：SPA 切换时不会二次执行
     if (document.querySelector('#sidebar-nav')) return;
 
+    var PB = window.PAGE_BASE || '';
+
+    // 页面路由表：短文件名 → 相对于 frontend 根目录的完整路径
+    var ROUTES = {
+        'index.html': 'index.html',
+        'orders.html': 'pages/business/orders.html',
+        'quote.html': 'pages/business/quote.html',
+        'customer.html': 'pages/business/customer.html',
+        'platform.html': 'pages/platform/platform.html',
+        'xianyu.html': 'pages/platform/xianyu.html',
+        'xiaohongshu.html': 'pages/platform/xiaohongshu.html',
+        'douyin.html': 'pages/platform/douyin.html',
+        'posters.html': 'pages/content/posters.html',
+        'stats.html': 'pages/content/stats.html',
+        'project.html': 'pages/content/project.html',
+        'resume.html': 'pages/personal/resume.html',
+        'memo.html': 'pages/personal/memo.html',
+        'settings.html': 'pages/personal/settings.html'
+    };
+
     const sidebarHTML = `
-    <aside class="w-64 bg-white border-r border-gray-100 flex flex-col justify-between h-full flex-shrink-0 relative z-40">
+    <aside class="w-56 bg-white border-r border-gray-100 flex flex-col justify-between h-full flex-shrink-0 relative z-40">
         <div class="overflow-y-auto h-full pb-6">
             <!-- Logo area -->
             <div class="p-6 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">
-                    <img src="assets/jpg/logo.jpg" alt="Logo" class="w-full h-full object-cover">
+                    <img src="${PB}assets/gif/logo.gif" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <h1 class="font-bold text-gray-800 text-base">文的项目工作台</h1>
@@ -18,23 +38,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <!-- Navigation -->
             <nav class="space-y-1 mt-2" id="sidebar-nav">
-                <a href="index.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="index.html">
+                <a href="${PB}${ROUTES['index.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="index.html">
                     <i class="ph ph-house text-lg mr-3 icon-base text-gray-500"></i>首页
                 </a>
-                <a href="orders.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="orders.html">
+                <a href="${PB}${ROUTES['orders.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="orders.html">
                     <i class="ph ph-receipt text-lg mr-3 icon-base text-gray-500"></i>接单记录
                 </a>
-                <a href="quote.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="quote.html">
+                <a href="${PB}${ROUTES['quote.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="quote.html">
                     <i class="ph ph-currency-cny text-lg mr-3 icon-base text-gray-500"></i>报价管理
                 </a>
-                <a href="posters.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="posters.html">
+                <a href="${PB}${ROUTES['posters.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="posters.html">
                     <i class="ph ph-image text-lg mr-3 icon-base text-gray-500"></i>宣传海报
                 </a>
                 
                 <!-- Expanded Menu: Platform Management -->
                 <div class="mt-2">
                     <div class="flex items-center mx-2 rounded-lg hover:bg-gray-100 transition-colors">
-                        <a href="platform.html" class="nav-link flex items-center flex-1 px-4 py-2.5 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="platform.html">
+                        <a href="${PB}${ROUTES['platform.html']}" class="nav-link flex items-center flex-1 px-4 py-2.5 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="platform.html">
                             <i class="ph ph-squares-four text-lg mr-3 icon-base text-gray-500"></i>平台管理
                         </a>
                         <button id="platform-toggle" class="px-3 py-2.5 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
@@ -43,29 +63,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <!-- Sub-menu items -->
                     <div class="space-y-1 mt-1 hidden" id="platform-submenu">
-                        <a href="platform.html" class="flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg bg-brand-50 text-brand-600 font-medium transition-colors cursor-pointer text-sm">总览看板</a>
-                        <a href="xianyu.html" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm" data-page="xianyu.html">闲鱼</a>
-                        <a href="xiaohongshu.html" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm" data-page="xiaohongshu.html">小红书</a>
-                        <a href="douyin.html" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm" data-page="douyin.html">抖音</a>
+                        <a href="${PB}${ROUTES['platform.html']}" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg bg-brand-50 text-brand-600 font-medium transition-colors cursor-pointer text-sm" data-page="platform.html">总览看板</a>
+                        <a href="${PB}${ROUTES['xianyu.html']}" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm" data-page="xianyu.html">闲鱼</a>
+                        <a href="${PB}${ROUTES['xiaohongshu.html']}" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm" data-page="xiaohongshu.html">小红书</a>
+                        <a href="${PB}${ROUTES['douyin.html']}" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm" data-page="douyin.html">抖音</a>
                     </div>
                 </div>
 
-                <a href="customer.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium mt-2" data-page="customer.html">
+                <a href="${PB}${ROUTES['customer.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium mt-2" data-page="customer.html">
                     <i class="ph ph-users text-lg mr-3 icon-base text-gray-500"></i>客户管理
                 </a>
-                <a href="stats.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="stats.html">
+                <a href="${PB}${ROUTES['stats.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="stats.html">
                     <i class="ph ph-chart-bar text-lg mr-3 icon-base text-gray-500"></i>数据统计
                 </a>
-                <a href="project.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="project.html">
+                <a href="${PB}${ROUTES['project.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="project.html">
                     <i class="ph ph-kanban text-lg mr-3 icon-base text-gray-500"></i>项目管理
                 </a>
-                <a href="resume.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="resume.html">
+                <a href="${PB}${ROUTES['resume.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="resume.html">
                     <i class="ph ph-file-text text-lg mr-3 icon-base text-gray-500"></i>简历迭代
                 </a>
-                <a href="memo.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="memo.html">
+                <a href="${PB}${ROUTES['memo.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="memo.html">
                     <i class="ph ph-notepad text-lg mr-3 icon-base text-gray-500"></i>信息备忘录
                 </a>
-                <a href="settings.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="settings.html">
+                <a href="${PB}${ROUTES['settings.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="settings.html">
                     <i class="ph ph-gear text-lg mr-3 icon-base text-gray-500"></i>设置中心
                 </a>
             </nav>

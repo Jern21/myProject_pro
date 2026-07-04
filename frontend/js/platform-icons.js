@@ -15,10 +15,11 @@
 (function () {
     'use strict';
 
-    var ICON_PATHS = {
-        xianyu: 'assets/svg/闲鱼.svg',
-        xiaohongshu: 'assets/svg/小红书.svg',
-        douyin: 'assets/svg/抖音.svg',
+    // SVG 文件名映射（不含路径前缀，路径在运行时动态拼接）
+    var ICON_FILES = {
+        xianyu: '闲鱼.svg',
+        xiaohongshu: '小红书.svg',
+        douyin: '抖音.svg',
     };
 
     var PLATFORM_NAMES = {
@@ -28,6 +29,16 @@
     };
 
     /**
+     * 运行时计算 SVG 绝对路径
+     * 优先使用 spa-router.js 提供的 ROOT_URL（绝对 URL），
+     * 确保 SPA 切换到任意子目录后路径始终正确
+     */
+    function getIconUrl(platform) {
+        var base = window.ROOT_URL || window.PAGE_BASE || '';
+        return base + 'assets/svg/' + ICON_FILES[platform];
+    }
+
+    /**
      * 创建平台图标 <img> 元素
      * 统一使用 w-full h-full 填满父容器，由容器控制实际大小
      * @param {string} platform - 平台名称
@@ -35,7 +46,7 @@
      */
     function createIconImg(platform) {
         var img = document.createElement('img');
-        img.src = ICON_PATHS[platform];
+        img.src = getIconUrl(platform);
         img.alt = PLATFORM_NAMES[platform];
         img.className = 'block w-full h-full';
         img.loading = 'lazy';
@@ -140,7 +151,7 @@
         // ===== 4. 替换 data-platform 属性的元素 =====
         document.querySelectorAll('[data-platform]').forEach(function (el) {
             var platform = el.getAttribute('data-platform');
-            if (!ICON_PATHS[platform]) return;
+            if (!ICON_FILES[platform]) return;
             removeBrandClasses(el);
             el.innerHTML = '';
             el.appendChild(createIconImg(platform));

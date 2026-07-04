@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>window.PAGE_BASE='../../';</script>
     <title>数据统计 - 文的项目工作台</title>
-    <script src="assets/tailwind.min.js"></script>
+    <script src="../../assets/tailwind.min.js"></script>
     <!-- ECharts：本地引入，离线可用，cdn-fallback.js 自动处理加载失败 -->
-    <script src="assets/echarts.min.js"></script>
+    <script src="../../assets/echarts.min.js"></script>
     <!-- Phosphor Icons（本地引入） -->
-    <link rel="stylesheet" href="assets/fonts/phosphor-regular.css">
-    <link rel="stylesheet" href="assets/fonts/phosphor-fill.css">
-    <link rel="stylesheet" href="assets/fonts/inter.css">
-    <script src="js/tailwind-config.js"></script>
-    <script src="js/cdn-fallback.js"></script>
-    <link rel="stylesheet" href="css/common.css">
-    <script src="js/sidebar.js"></script>
-    <script src="js/spa-router.js"></script>
-    <script src="js/avatar.js"></script>
-    <script src="js/platform-icons.js"></script>
+    <link rel="stylesheet" href="../../assets/fonts/phosphor-regular.css">
+    <link rel="stylesheet" href="../../assets/fonts/phosphor-fill.css">
+    <link rel="stylesheet" href="../../assets/fonts/inter.css">
+    <script src="../../js/tailwind-config.js"></script>
+    <script src="../../js/cdn-fallback.js"></script>
+    <link rel="stylesheet" href="../../css/common.css">
+    <script src="../../js/sidebar.js"></script>
+    <script src="../../js/spa-router.js"></script>
+    <script src="../../js/avatar.js"></script>
+    <script src="../../js/platform-icons.js"></script>
 </head>
 <body class="flex h-screen overflow-hidden text-sm font-sans">
 
@@ -596,10 +597,12 @@
             }
         }
 
-        // 尝试初始化：DOM 加载完成时
+        // 尝试初始化：DOM 加载完成时（首次整页加载）
         document.addEventListener('DOMContentLoaded', initCharts);
         // 备用：cdn-fallback.js 加载 echarts 成功后
         window.addEventListener('echarts-ready', initCharts);
+        // SPA 局部刷新后重新初始化
+        window.addEventListener('spa:ready', initCharts);
     </script>
 </body>
 </html>
