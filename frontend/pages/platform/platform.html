@@ -14,7 +14,8 @@
     <script src="../../js/cdn-fallback.js"></script>
     <link rel="stylesheet" href="../../css/common.css">
     <script src="../../js/sidebar.js"></script>
-<script src="../../js/spa-router.js"></script>
+<script src="../../js/header.js"></script>
+    <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
 </head>
@@ -25,42 +26,7 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
-        
-        <!-- Header -->
-        <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0">
-            <!-- Breadcrumb -->
-            <div class="flex items-center text-sm">
-                <span class="text-gray-400">平台管理</span>
-                <span class="text-gray-300 mx-2">/</span>
-                <span class="text-gray-800 font-medium">总览看板</span>
-            </div>
-
-            <div class="flex items-center gap-5">
-                <!-- Search -->
-                <div class="relative hidden md:block">
-                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" placeholder="搜索文案、内容、话题..." class="pl-9 pr-12 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm w-72 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">
-                    <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] text-gray-400 bg-white px-1.5 py-0.5 rounded border border-gray-200">
-                        <i class="ph ph-command"></i> K
-                    </div>
-                </div>
-
-                <!-- Notifications -->
-                <button class="relative w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                    <i class="ph ph-bell text-base"></i>
-                    <span class="absolute top-0 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">12</span>
-                </button>
-
-                <!-- Profile -->
-                <div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">
-                    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-7 h-7 rounded-full">
-                    <span class="text-sm font-medium text-gray-700">JERN</span>
-                    <i class="ph ph-caret-down text-gray-400 text-xs"></i>
-                </div>
-            </div>
-        </header>
-
-        <!-- Scrollable Content Area -->
+    <div id="page-view" class="flex-1 flex flex-col overflow-hidden"><!-- Scrollable Content Area -->
         <div class="flex-1 overflow-y-auto p-6 lg:p-8">
             <div class="max-w-[1600px] mx-auto">
                 
@@ -533,7 +499,8 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
 </body>
 </html>

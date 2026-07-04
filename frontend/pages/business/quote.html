@@ -34,7 +34,8 @@
         }
     </style>
     <script src="../../js/sidebar.js"></script>
-<script src="../../js/spa-router.js"></script>
+<script src="../../js/header.js"></script>
+    <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
 </head>
@@ -45,27 +46,7 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
-        
-        <!-- Header -->
-        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 relative z-10">
-            <div>
-                <h2 class="text-xl font-bold text-gray-800">生成报价单</h2>
-                <p class="text-sm text-gray-500 mt-0.5">规范化开发报价，支持一键生成文本或导出PDF</p>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <button class="px-4 py-2 border border-gray-200 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2">
-                    <i class="ph ph-floppy-disk"></i> 保存为模板
-                </button>
-                <div class="w-px h-6 bg-gray-200"></div>
-                <div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1.5 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">
-                    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">
-                    <span class="text-sm font-medium text-gray-700">JERN</span>
-                </div>
-            </div>
-        </header>
-
-        <!-- Editor & Preview Area -->
+    <div id="page-view" class="flex-1 flex flex-col overflow-hidden"><!-- Editor & Preview Area -->
         <div class="flex-1 overflow-y-auto p-6 lg:p-8">
             <div class="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-6 items-start">
                 
@@ -353,7 +334,8 @@
 
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
     <!-- Toast Notification (Hidden by default) -->
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-50">

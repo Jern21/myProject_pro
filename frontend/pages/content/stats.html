@@ -16,6 +16,7 @@
     <script src="../../js/cdn-fallback.js"></script>
     <link rel="stylesheet" href="../../css/common.css">
     <script src="../../js/sidebar.js"></script>
+    <script src="../../js/header.js"></script>
     <script src="../../js/spa-router.js"></script>
     <script src="../../js/avatar.js"></script>
     <script src="../../js/platform-icons.js"></script>
@@ -26,43 +27,7 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
-
-        <!-- Header -->
-        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 relative z-10">
-            <div>
-                <h2 class="text-xl font-bold text-gray-800">数据统计</h2>
-                <p class="text-sm text-gray-500 mt-0.5">多维度数据分析，辅助业务决策</p>
-            </div>
-            <div class="flex items-center gap-5">
-                <!-- Time Range Selector -->
-                <div class="flex bg-gray-100 rounded-lg p-1">
-                    <button class="px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium transition-colors">本周</button>
-                    <button class="px-3 py-1.5 bg-white shadow-sm rounded-md text-gray-800 text-xs font-medium transition-colors">本月</button>
-                    <button class="px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium transition-colors">本季</button>
-                    <button class="px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium transition-colors">本年</button>
-                    <button class="px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium transition-colors flex items-center gap-1">
-                        <i class="ph ph-calendar-blank"></i> 自定义
-                    </button>
-                </div>
-                <!-- Notifications -->
-                <button class="relative w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                    <i class="ph ph-bell text-lg"></i>
-                    <span class="absolute top-0 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">12</span>
-                </button>
-                <!-- Profile -->
-                <div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1.5 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">
-                    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">
-                    <span class="text-sm font-medium text-gray-700">JERN</span>
-                    <i class="ph ph-caret-down text-gray-400 text-xs"></i>
-                </div>
-                <!-- Export -->
-                <button class="px-4 py-2 border border-gray-200 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2">
-                    <i class="ph ph-export"></i> 导出报表
-                </button>
-            </div>
-        </header>
-
-        <!-- Scrollable Content Area -->
+    <div id="page-view" class="flex-1 flex flex-col overflow-hidden"><!-- Scrollable Content Area -->
         <div class="flex-1 overflow-y-auto p-6 lg:p-8">
             <div class="max-w-[1600px] mx-auto space-y-6">
 
@@ -294,7 +259,8 @@
 
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
     <script>
         // ECharts 图表初始化（防御性：等待 echarts 加载完成）

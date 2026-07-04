@@ -40,7 +40,8 @@
         }
     </style>
     <script src="../../js/sidebar.js"></script>
-<script src="../../js/spa-router.js"></script>
+<script src="../../js/header.js"></script>
+    <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
 </head>
@@ -51,46 +52,7 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-white relative">
-        
-        <!-- Header -->
-        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 relative z-10">
-            <div>
-                <h2 class="text-xl font-bold text-gray-800">接单记录</h2>
-                <p class="text-sm text-gray-500 mt-0.5">共 128 条记录</p>
-            </div>
-
-            <div class="flex items-center gap-5">
-                <!-- Search -->
-                <div class="relative">
-                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" placeholder="搜索订单号、客户、项目名称..." class="pl-9 pr-12 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm w-[320px] focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">
-                    <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] text-gray-400 bg-white px-1.5 py-0.5 rounded border border-gray-200">
-                        <i class="ph ph-command"></i> K
-                    </div>
-                </div>
-
-                <!-- Notifications -->
-                <button class="relative w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                    <i class="ph ph-bell text-lg"></i>
-                    <span class="absolute top-0 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">12</span>
-                </button>
-
-                <!-- Profile -->
-                <div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1.5 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">
-                    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">
-                    <span class="text-sm font-medium text-gray-700">JERN</span>
-                    <i class="ph ph-caret-down text-gray-400 text-xs"></i>
-                </div>
-
-                <!-- Create Button -->
-                <button class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm shadow-brand-500/30">
-                    <i class="ph ph-plus"></i>
-                    新建接单
-                </button>
-            </div>
-        </header>
-
-        <!-- Dashboard Scrollable Area -->
+    <div id="page-view" class="flex-1 flex flex-col overflow-hidden"><!-- Dashboard Scrollable Area -->
         <div class="flex-1 overflow-y-auto pr-[380px]"> <!-- Added padding right to accommodate the fixed drawer -->
             <div class="p-6 lg:p-8">
                 
@@ -613,8 +575,8 @@
                 </button>
             </div>
         </div>
-
-    </main>
+    </div>
+</main>
 
 </body>
 </html>

@@ -164,15 +164,15 @@
         if (isNavigating) return;
         isNavigating = true;
 
-        var main = document.querySelector('main');
-        if (!main) {
+        var pageView = document.querySelector('#page-view');
+        if (!pageView) {
             window.location.href = fetchUrl;
             return;
         }
 
         // 淡出过渡
-        main.style.opacity = '0.4';
-        main.style.transition = 'opacity 0.12s ease';
+        pageView.style.opacity = '0.4';
+        pageView.style.transition = 'opacity 0.12s ease';
 
         try {
             var response = await fetch(fetchUrl);
@@ -202,19 +202,19 @@
 
             // 4.5 清理旧 <main> 中的 ECharts 实例，防止内存泄漏和重复初始化警告
             if (typeof echarts !== 'undefined') {
-                main.querySelectorAll('[id$="Chart"], [id$="chart"], [_echarts_instance_]').forEach(function (el) {
+                pageView.querySelectorAll('[id$="Chart"], [id$="chart"], [_echarts_instance_]').forEach(function (el) {
                     var instance = echarts.getInstanceByDom(el);
                     if (instance) instance.dispose();
                 });
             }
 
             // 5. 替换 <main> 内容
-            var newMain = doc.querySelector('main');
-            if (!newMain) {
+            var newPageView = doc.querySelector('#page-view');
+            if (!newPageView) {
                 window.location.href = fetchUrl;
                 return;
             }
-            main.innerHTML = newMain.innerHTML;
+            pageView.innerHTML = newPageView.innerHTML;
 
             // 6. 执行页面专属内联脚本（无 src 的 <script>）
             //    跳过 PAGE_BASE 声明，避免覆盖全局 PAGE_BASE 导致路径错乱
@@ -224,7 +224,7 @@
                 if (text && text.indexOf('PAGE_BASE') !== -1) return;
                 var newScript = document.createElement('script');
                 newScript.textContent = text;
-                main.appendChild(newScript);
+                pageView.appendChild(newScript);
                 newScript.remove();
             });
 
@@ -237,13 +237,13 @@
             updateActiveNav(pageName);
 
             // 9. 淡入 & 滚动到顶部
-            main.style.opacity = '1';
+            pageView.style.opacity = '1';
 
-            var scrollEl = main.querySelector('.overflow-y-auto, .overflow-auto');
+            var scrollEl = pageView.querySelector('.overflow-y-auto, .overflow-auto');
             if (scrollEl) {
                 scrollEl.scrollTop = 0;
             } else {
-                main.scrollTop = 0;
+                pageView.scrollTop = 0;
             }
 
             // 10. 派发 spa:ready 事件（使用 requestAnimationFrame 确保浏览器完成布局）
