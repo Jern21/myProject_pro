@@ -38,6 +38,9 @@
     <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
+<script src="../../js/order-form.js"></script>
+<!-- html2canvas：本地引入，用于导出 PNG -->
+<script src="../../assets/html2canvas.min.js"></script>
 </head>
 <body class="flex h-screen overflow-hidden text-sm">
 
@@ -62,19 +65,19 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="form-label">项目名称</label>
-                                <input type="text" value="企业官网定制开发 (双端自适应)" class="form-input">
+                                <input type="text" data-field="projectName" value="企业官网定制开发 (双端自适应)" class="form-input">
                             </div>
                             <div>
                                 <label class="form-label">客户名称</label>
-                                <input type="text" value="张先生" class="form-input">
+                                <input type="text" data-field="customerName" value="张先生" class="form-input">
                             </div>
                             <div>
                                 <label class="form-label">报价日期</label>
-                                <input type="date" value="2025-07-03" class="form-input">
+                                <input type="date" data-field="quoteDate" value="2025-07-03" class="form-input">
                             </div>
                             <div>
                                 <label class="form-label">预计周期 (天)</label>
-                                <input type="number" value="15" class="form-input">
+                                <input type="number" data-field="cycle" value="15" class="form-input">
                             </div>
                         </div>
                     </div>
@@ -91,78 +94,13 @@
                             </button>
                         </div>
                         
-                        <!-- List of items (Dev Breakdown) -->
-                        <div class="space-y-4">
-                            <!-- Item 1 -->
-                            <div class="bg-gray-50/50 p-4 rounded-lg border border-gray-100 relative group">
-                                <button class="absolute -right-2 -top-2 w-6 h-6 bg-white border border-gray-200 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-x text-xs"></i></button>
-                                <div class="grid grid-cols-12 gap-3 mb-2">
-                                    <div class="col-span-7">
-                                        <label class="form-label">模块名称</label>
-                                        <input type="text" value="基础架构与UI/UX设计" class="form-input bg-white">
-                                    </div>
-                                    <div class="col-span-2">
-                                        <label class="form-label">数量</label>
-                                        <input type="number" value="1" class="form-input bg-white text-center">
-                                    </div>
-                                    <div class="col-span-3">
-                                        <label class="form-label">单价 (¥)</label>
-                                        <input type="number" value="2000" class="form-input bg-white text-right">
-                                    </div>
-                                </div>
-                                <div>
-                                    <input type="text" value="包含首页、关于我们、产品展示等5个核心页面的设计与前端重构 (响应式)" class="form-input bg-white text-xs text-gray-500" placeholder="模块功能简述...">
-                                </div>
-                            </div>
-
-                            <!-- Item 2 -->
-                            <div class="bg-gray-50/50 p-4 rounded-lg border border-gray-100 relative group">
-                                <button class="absolute -right-2 -top-2 w-6 h-6 bg-white border border-gray-200 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-x text-xs"></i></button>
-                                <div class="grid grid-cols-12 gap-3 mb-2">
-                                    <div class="col-span-7">
-                                        <label class="form-label">模块名称</label>
-                                        <input type="text" value="后端管理系统开发" class="form-input bg-white">
-                                    </div>
-                                    <div class="col-span-2">
-                                        <label class="form-label">数量</label>
-                                        <input type="number" value="1" class="form-input bg-white text-center">
-                                    </div>
-                                    <div class="col-span-3">
-                                        <label class="form-label">单价 (¥)</label>
-                                        <input type="number" value="3500" class="form-input bg-white text-right">
-                                    </div>
-                                </div>
-                                <div>
-                                    <input type="text" value="总览看板(CMS)、产品管理、基础权限分配、API接口开发" class="form-input bg-white text-xs text-gray-500" placeholder="模块功能简述...">
-                                </div>
-                            </div>
-
-                            <!-- Item 3 -->
-                            <div class="bg-gray-50/50 p-4 rounded-lg border border-gray-100 relative group">
-                                <button class="absolute -right-2 -top-2 w-6 h-6 bg-white border border-gray-200 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-x text-xs"></i></button>
-                                <div class="grid grid-cols-12 gap-3 mb-2">
-                                    <div class="col-span-7">
-                                        <label class="form-label">模块名称</label>
-                                        <input type="text" value="服务器部署与备案协助" class="form-input bg-white">
-                                    </div>
-                                    <div class="col-span-2">
-                                        <label class="form-label">数量</label>
-                                        <input type="number" value="1" class="form-input bg-white text-center">
-                                    </div>
-                                    <div class="col-span-3">
-                                        <label class="form-label">单价 (¥)</label>
-                                        <input type="number" value="800" class="form-input bg-white text-right">
-                                    </div>
-                                </div>
-                                <div>
-                                    <input type="text" value="Linux环境配置、SSL证书配置、域名解析及上线测试" class="form-input bg-white text-xs text-gray-500" placeholder="模块功能简述...">
-                                </div>
-                            </div>
-
+                        <!-- List of items (Dynamic) -->
+                        <div id="quote-items-container" class="space-y-4">
+                            <!-- Items rendered by JS -->
                         </div>
 
                         <!-- Add Button -->
-                        <button class="w-full mt-4 py-2.5 border border-dashed border-brand-300 text-brand-600 bg-brand-50/50 rounded-lg hover:bg-brand-50 transition-colors text-sm flex items-center justify-center gap-2">
+                        <button id="add-item-btn" class="w-full mt-4 py-2.5 border border-dashed border-brand-300 text-brand-600 bg-brand-50/50 rounded-lg hover:bg-brand-50 transition-colors text-sm flex items-center justify-center gap-2">
                             <i class="ph ph-plus-circle text-lg"></i> 添加明细行
                         </button>
                     </div>
@@ -176,20 +114,20 @@
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="form-label">优惠折扣 (减免 ¥)</label>
-                                <input type="number" value="300" class="form-input text-red-500 font-medium">
+                                <input type="number" data-field="discount" value="300" class="form-input text-red-500 font-medium">
                             </div>
                             <div>
                                 <label class="form-label">付款方式 (默认推荐 5-4-1)</label>
-                                <select class="form-input">
-                                    <option>50%预付，40%上线，10%尾款</option>
-                                    <option>40%预付，60%上线交付</option>
-                                    <option>全额预付 (九折优惠)</option>
+                                <select data-field="paymentMethod" class="form-input">
+                                    <option value="50%预付定金启动项目，40%测试上线无误后支付，10%为尾款交付源码时支付。">50%预付，40%上线，10%尾款</option>
+                                    <option value="40%预付定金启动项目，60%上线交付无误后一次性支付。">40%预付，60%上线交付</option>
+                                    <option value="全额预付（九折优惠），项目完成后交付全部源码。">全额预付 (九折优惠)</option>
                                 </select>
                             </div>
                         </div>
                         <div>
                             <label class="form-label">补充说明 (将显示在报价单底部)</label>
-                            <textarea rows="3" class="form-input resize-none">1. 本报价有效期为 7 天。
+                            <textarea data-field="notes" rows="3" class="form-input resize-none">1. 本报价有效期为 7 天。
 2. 免费提供首年服务器日常维护及程序Bug修复。
 3. 超出上述需求范围的新增功能，需另行评估报价。</textarea>
                         </div>
@@ -204,8 +142,11 @@
                         <button onclick="copyQuote()" class="flex-1 bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
                             <i class="ph ph-copy text-lg"></i> 复制为文本
                         </button>
-                        <button onclick="alert('PDF生成功能开发中...\n实际项目中可接入 html2pdf.js 或服务端 puppeteer 生成。')" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors shadow-sm shadow-brand-500/30">
+                        <button onclick="exportPDF()" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors shadow-sm shadow-brand-500/30">
                             <i class="ph ph-file-pdf text-lg"></i> 导出 PDF
+                        </button>
+                        <button onclick="exportPNG()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors shadow-sm shadow-green-500/30">
+                            <i class="ph ph-file-image text-lg"></i> 导出 PNG
                         </button>
                         <button class="w-11 h-11 border border-gray-200 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors tooltip" title="预览设置">
                             <i class="ph ph-sliders text-lg"></i>
@@ -235,19 +176,19 @@
                         <div class="bg-gray-50/80 rounded-md p-4 mb-6 grid grid-cols-2 gap-y-2 text-sm border border-gray-100/50">
                             <div class="flex">
                                 <span class="text-gray-500 w-16">项目名称：</span>
-                                <span class="text-gray-800 font-medium truncate">企业官网定制开发 (双端)</span>
+                                <span class="text-gray-800 font-medium truncate" id="pv-projectName">企业官网定制开发 (双端)</span>
                             </div>
                             <div class="flex">
                                 <span class="text-gray-500 w-16">报价日期：</span>
-                                <span class="text-gray-800">2025-07-03</span>
+                                <span class="text-gray-800" id="pv-quoteDate">2025-07-03</span>
                             </div>
                             <div class="flex">
                                 <span class="text-gray-500 w-16">客户名称：</span>
-                                <span class="text-gray-800">张先生</span>
+                                <span class="text-gray-800" id="pv-customerName">张先生</span>
                             </div>
                             <div class="flex">
                                 <span class="text-gray-500 w-16">预计周期：</span>
-                                <span class="text-gray-800">15 工作日</span>
+                                <span class="text-gray-800" id="pv-cycle">15 工作日</span>
                             </div>
                         </div>
 
@@ -259,37 +200,9 @@
                         </div>
                         <div class="h-px bg-gray-800 mb-3"></div>
 
-                        <!-- Items -->
-                        <div class="space-y-4 text-sm px-2 min-h-[200px]">
-                            <!-- Preview Item 1 -->
-                            <div class="grid grid-cols-12 gap-2 items-start">
-                                <div class="col-span-7">
-                                    <p class="font-semibold text-gray-800">1. 基础架构与UI/UX设计</p>
-                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">包含首页、关于我们、产品展示等5个核心页面的设计与前端重构 (响应式)</p>
-                                </div>
-                                <div class="col-span-2 text-center text-gray-600 mt-0.5">1</div>
-                                <div class="col-span-3 text-right font-medium text-gray-800 mt-0.5">2,000.00</div>
-                            </div>
-
-                            <!-- Preview Item 2 -->
-                            <div class="grid grid-cols-12 gap-2 items-start">
-                                <div class="col-span-7">
-                                    <p class="font-semibold text-gray-800">2. 后端管理系统开发</p>
-                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">总览看板(CMS)、产品管理、基础权限分配、API接口开发</p>
-                                </div>
-                                <div class="col-span-2 text-center text-gray-600 mt-0.5">1</div>
-                                <div class="col-span-3 text-right font-medium text-gray-800 mt-0.5">3,500.00</div>
-                            </div>
-
-                            <!-- Preview Item 3 -->
-                            <div class="grid grid-cols-12 gap-2 items-start">
-                                <div class="col-span-7">
-                                    <p class="font-semibold text-gray-800">3. 服务器部署与备案协助</p>
-                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">Linux环境配置、SSL证书配置、域名解析及上线测试</p>
-                                </div>
-                                <div class="col-span-2 text-center text-gray-600 mt-0.5">1</div>
-                                <div class="col-span-3 text-right font-medium text-gray-800 mt-0.5">800.00</div>
-                            </div>
+                        <!-- Items (Dynamic) -->
+                        <div class="space-y-4 text-sm px-2 min-h-[200px]" id="pv-items">
+                            <!-- Preview items rendered by JS -->
                         </div>
 
                         <div class="paper-dash-line"></div>
@@ -299,16 +212,16 @@
                             <div class="w-1/2 space-y-2">
                                 <div class="flex justify-between text-sm text-gray-600">
                                     <span>小计：</span>
-                                    <span>¥ 6,300.00</span>
+                                    <span id="pv-subtotal">¥ 6,300.00</span>
                                 </div>
                                 <div class="flex justify-between text-sm text-red-500">
                                     <span>优惠折扣：</span>
-                                    <span>- ¥ 300.00</span>
+                                    <span id="pv-discount">- ¥ 300.00</span>
                                 </div>
                                 <div class="h-px bg-gray-200 my-1"></div>
                                 <div class="flex justify-between items-end">
                                     <span class="font-medium text-gray-800">总计金额：</span>
-                                    <span class="text-xl font-bold text-gray-900 font-mono">¥ 6,000.00</span>
+                                    <span class="text-xl font-bold text-gray-900 font-mono" id="pv-total">¥ 6,000.00</span>
                                 </div>
                             </div>
                         </div>
@@ -318,11 +231,8 @@
                             <h4 class="text-xs font-semibold text-gray-800 mb-2 flex items-center gap-1">
                                 <i class="ph-fill ph-warning-circle text-blue-500"></i> 补充说明及付款方式
                             </h4>
-                            <div class="text-[11px] text-gray-600 leading-relaxed space-y-1">
-                                <p><strong>付款方式：</strong> 50%预付定金启动项目，40%测试上线无误后支付，10%为尾款交付源码时支付。</p>
-                                <p>1. 本报价有效期为 7 天，逾期可能重新评估。</p>
-                                <p>2. 免费提供首年服务器日常维护及程序Bug修复。</p>
-                                <p>3. 超出上述需求范围的新增功能，需双方确认并另行评估报价。</p>
+                            <div class="text-[11px] text-gray-600 leading-relaxed space-y-1" id="pv-notes">
+                                <!-- Notes rendered by JS -->
                             </div>
                         </div>
                         
@@ -344,44 +254,203 @@
     </div>
 
     <script>
-        // Simple function to simulate copying to clipboard
+        // ========== 报价数据模型 ==========
+        var quoteData = {
+            projectName: '企业官网定制开发 (双端自适应)',
+            customerName: '张先生',
+            quoteDate: '2025-07-03',
+            cycle: '15',
+            discount: '300',
+            paymentMethod: '50%预付定金启动项目，40%测试上线无误后支付，10%为尾款交付源码时支付。',
+            notes: '1. 本报价有效期为 7 天。\n2. 免费提供首年服务器日常维护及程序Bug修复。\n3. 超出上述需求范围的新增功能，需另行评估报价。',
+            items: [
+                { name: '基础架构与UI/UX设计', qty: 1, price: 2000, desc: '包含首页、关于我们、产品展示等5个核心页面的设计与前端重构 (响应式)' },
+                { name: '后端管理系统开发', qty: 1, price: 3500, desc: '总览看板(CMS)、产品管理、基础权限分配、API接口开发' },
+                { name: '服务器部署与备案协助', qty: 1, price: 800, desc: 'Linux环境配置、SSL证书配置、域名解析及上线测试' }
+            ]
+        };
+
+        // ========== 工具函数 ==========
+        function formatMoney(n) {
+            return parseFloat(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function calcSubtotal() {
+            return quoteData.items.reduce(function (sum, item) {
+                return sum + (item.qty * item.price);
+            }, 0);
+        }
+
+        function calcTotal() {
+            return calcSubtotal() - parseFloat(quoteData.discount || 0);
+        }
+
+        // ========== 渲染表单明细行 ==========
+        function renderFormItems() {
+            var container = document.getElementById('quote-items-container');
+            container.innerHTML = quoteData.items.map(function (item, index) {
+                return [
+                    '<div class="bg-gray-50/50 p-4 rounded-lg border border-gray-100 relative group">',
+                    '  <button onclick="removeItem(' + index + ')" class="absolute -right-2 -top-2 w-6 h-6 bg-white border border-gray-200 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-x text-xs"></i></button>',
+                    '  <div class="grid grid-cols-12 gap-3 mb-2">',
+                    '    <div class="col-span-7">',
+                    '      <label class="form-label">模块名称</label>',
+                    '      <input type="text" value="' + (item.name || '') + '" data-item="' + index + '" data-key="name" class="form-input bg-white" placeholder="模块名称...">',
+                    '    </div>',
+                    '    <div class="col-span-2">',
+                    '      <label class="form-label">数量</label>',
+                    '      <input type="number" value="' + item.qty + '" data-item="' + index + '" data-key="qty" class="form-input bg-white text-center">',
+                    '    </div>',
+                    '    <div class="col-span-3">',
+                    '      <label class="form-label">单价 (¥)</label>',
+                    '      <input type="number" value="' + item.price + '" data-item="' + index + '" data-key="price" class="form-input bg-white text-right">',
+                    '    </div>',
+                    '  </div>',
+                    '  <div>',
+                    '    <input type="text" value="' + (item.desc || '') + '" data-item="' + index + '" data-key="desc" class="form-input bg-white text-xs text-gray-500" placeholder="模块功能简述...">',
+                    '  </div>',
+                    '</div>'
+                ].join('');
+            }).join('');
+        }
+
+        // ========== 渲染预览 ==========
+        function renderPreview() {
+            // 基础信息
+            document.getElementById('pv-projectName').textContent = quoteData.projectName || '—';
+            document.getElementById('pv-customerName').textContent = quoteData.customerName || '—';
+            document.getElementById('pv-quoteDate').textContent = quoteData.quoteDate || '—';
+            document.getElementById('pv-cycle').textContent = (quoteData.cycle || '0') + ' 工作日';
+
+            // 明细列表
+            var itemsHtml = quoteData.items.map(function (item, i) {
+                var amount = item.qty * item.price;
+                return [
+                    '<div class="grid grid-cols-12 gap-2 items-start">',
+                    '  <div class="col-span-7">',
+                    '    <p class="font-semibold text-gray-800">' + (i + 1) + '. ' + (item.name || '未命名模块') + '</p>',
+                    item.desc ? '<p class="text-xs text-gray-500 mt-1 leading-relaxed">' + item.desc + '</p>' : '',
+                    '  </div>',
+                    '  <div class="col-span-2 text-center text-gray-600 mt-0.5">' + item.qty + '</div>',
+                    '  <div class="col-span-3 text-right font-medium text-gray-800 mt-0.5">' + formatMoney(amount) + '</div>',
+                    '</div>'
+                ].join('');
+            }).join('');
+            document.getElementById('pv-items').innerHTML = itemsHtml || '<p class="text-center text-gray-300 py-8">暂无报价明细</p>';
+
+            // 金额合计
+            var subtotal = calcSubtotal();
+            var discount = parseFloat(quoteData.discount || 0);
+            var total = subtotal - discount;
+
+            document.getElementById('pv-subtotal').textContent = '¥ ' + formatMoney(subtotal);
+            document.getElementById('pv-discount').textContent = '- ¥ ' + formatMoney(discount);
+            document.getElementById('pv-total').textContent = '¥ ' + formatMoney(total);
+
+            // 补充说明
+            var notesHtml = '';
+            notesHtml += '<p><strong>付款方式：</strong> ' + (quoteData.paymentMethod || '') + '</p>';
+            if (quoteData.notes) {
+                quoteData.notes.split('\n').forEach(function (line) {
+                    if (line.trim()) notesHtml += '<p>' + line.trim() + '</p>';
+                });
+            }
+            document.getElementById('pv-notes').innerHTML = notesHtml;
+        }
+
+        // ========== 全量刷新 ==========
+        function renderAll() {
+            renderFormItems();
+            renderPreview();
+            bindItemEvents();
+        }
+
+        // ========== 事件绑定 ==========
+        function bindFieldEvents() {
+            document.querySelectorAll('[data-field]').forEach(function (input) {
+                var field = input.getAttribute('data-field');
+                input.value = quoteData[field] !== undefined ? quoteData[field] : '';
+                input.addEventListener('input', function () {
+                    quoteData[field] = input.value;
+                    renderPreview();
+                });
+            });
+        }
+
+        function bindItemEvents() {
+            document.querySelectorAll('[data-item]').forEach(function (input) {
+                var index = parseInt(input.getAttribute('data-item'));
+                var key = input.getAttribute('data-key');
+                input.addEventListener('input', function () {
+                    if (key === 'qty' || key === 'price') {
+                        quoteData.items[index][key] = parseFloat(input.value) || 0;
+                    } else {
+                        quoteData.items[index][key] = input.value;
+                    }
+                    renderPreview();
+                });
+            });
+        }
+
+        // ========== 添加 / 删除明细 ==========
+        function addItem() {
+            quoteData.items.push({ name: '', qty: 1, price: 0, desc: '' });
+            renderAll();
+        }
+
+        function removeItem(index) {
+            quoteData.items.splice(index, 1);
+            renderAll();
+        }
+
+        // ========== 复制报价文本 ==========
         function copyQuote() {
-            const quoteText = `【项目报价单：企业官网定制开发 (双端自适应)】
-客户：张先生 | 周期：15天 | 日期：2025-07-03
-----------------------------------------
-1. 基础架构与UI/UX设计
-   (包含首页、关于我们等5个核心页面)
-   ¥2,000.00
+            var lines = [];
+            lines.push('【项目报价单：' + quoteData.projectName + '】');
+            lines.push('客户：' + quoteData.customerName + ' | 周期：' + quoteData.cycle + '天 | 日期：' + quoteData.quoteDate);
+            lines.push('----------------------------------------');
+            quoteData.items.forEach(function (item, i) {
+                lines.push((i + 1) + '. ' + item.name);
+                if (item.desc) lines.push('   (' + item.desc + ')');
+                lines.push('   ¥' + formatMoney(item.qty * item.price));
+            });
+            lines.push('----------------------------------------');
+            lines.push('小计：¥' + formatMoney(calcSubtotal()));
+            lines.push('优惠折扣：-¥' + formatMoney(parseFloat(quoteData.discount || 0)));
+            lines.push('【总计金额：¥' + formatMoney(calcTotal()) + '】');
+            lines.push('');
+            lines.push('付款方式：' + quoteData.paymentMethod);
+            if (quoteData.notes) lines.push('补充说明：' + quoteData.notes.replace(/\n/g, '；'));
 
-2. 后端管理系统开发
-   (CMS、产品管理、API接口开发)
-   ¥3,500.00
-
-3. 服务器部署与备案协助
-   (Linux环境、SSL、解析上线)
-   ¥800.00
-----------------------------------------
-小计：¥6,300.00
-优惠折扣：-¥300.00
-【总计金额：¥6,000.00】
-
-付款方式：50%预付，40%上线，10%尾款
-补充说明：本报价有效期为7天；提供首年免费维护；超出范围的新增功能需另行评估。`;
-
-            navigator.clipboard.writeText(quoteText).then(() => {
+            navigator.clipboard.writeText(lines.join('\n')).then(function () {
                 showToast();
-            }).catch(err => {
+            }).catch(function (err) {
                 console.error('Copy failed', err);
             });
         }
 
         function showToast() {
-            const toast = document.getElementById('toast');
+            var toast = document.getElementById('toast');
             toast.classList.remove('translate-y-10', 'opacity-0');
-            setTimeout(() => {
+            setTimeout(function () {
                 toast.classList.add('translate-y-10', 'opacity-0');
             }, 3000);
         }
+
+        // ========== 初始化 ==========
+        document.addEventListener('DOMContentLoaded', function () {
+            renderAll();
+            bindFieldEvents();
+            document.getElementById('add-item-btn').addEventListener('click', addItem);
+        });
+
+        // SPA 切换后重新初始化
+        window.addEventListener('spa:ready', function () {
+            renderAll();
+            bindFieldEvents();
+            var addBtn = document.getElementById('add-item-btn');
+            if (addBtn) addBtn.addEventListener('click', addItem);
+        });
     </script>
 </body>
 </html>

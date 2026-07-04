@@ -76,7 +76,7 @@
     // 已知共享脚本（已在全局加载，SPA 切换时无需重复加载）
     var SHARED_SCRIPT_KEYWORDS = [
         'tailwind', 'tailwind-config', 'cdn-fallback',
-        'sidebar.js', 'spa-router', 'avatar.js', 'platform-icons'
+        'sidebar.js', 'spa-router', 'avatar.js', 'platform-icons', 'order-form'
     ];
 
     // ECharts 本地路径（SPA 切换时如需加载）
