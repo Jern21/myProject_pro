@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简历迭代 - 接单管理平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="js/tailwind-config.js"></script>
+    <script src="js/cdn-fallback.js"></script>
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/sidebar.js"></script>
+</head>
+<body class="flex h-screen overflow-hidden text-sm font-sans">
+
+    <!-- Sidebar -->
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
+
+        <!-- Header -->
+        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 relative z-10">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">简历迭代</h2>
+                <p class="text-sm text-gray-500 mt-0.5">管理简历版本，持续优化求职竞争力</p>
+            </div>
+            <div class="flex items-center gap-5">
+                <!-- Search -->
+                <div class="relative">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="搜索版本、内容..." class="pl-9 pr-12 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">
+                </div>
+                <!-- Notifications -->
+                <button class="relative w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                    <i class="ph ph-bell text-lg"></i>
+                    <span class="absolute top-0 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">12</span>
+                </button>
+                <!-- Profile -->
+                <div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1.5 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">
+                    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">
+                    <span class="text-sm font-medium text-gray-700">JERN</span>
+                    <i class="ph ph-caret-down text-gray-400 text-xs"></i>
+                </div>
+                <!-- Create Button -->
+                <button class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm shadow-brand-500/30">
+                    <i class="ph ph-plus"></i> 新建版本
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8">
+            <div class="max-w-[1400px] mx-auto">
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-gray-500 text-xs">版本总数</p>
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
+                                <i class="ph-fill ph-git-branch text-lg"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-0.5">8</h3>
+                        <p class="text-[10px] text-gray-400">从 v1.0 至 v2.3</p>
+                    </div>
+                    <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-gray-500 text-xs">当前使用</p>
+                            <div class="w-8 h-8 rounded-lg bg-green-50 text-green-500 flex items-center justify-center">
+                                <i class="ph-fill ph-check-circle text-lg"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-0.5">v2.3</h3>
+                        <p class="text-[10px] text-green-500">2025-07-01 更新</p>
+                    </div>
+                    <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-gray-500 text-xs">投递次数</p>
+                            <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
+                                <i class="ph-fill ph-paper-plane-tilt text-lg"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-0.5">156</h3>
+                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 本月 +28</p>
+                    </div>
+                    <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-gray-500 text-xs">面试邀约率</p>
+                            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center">
+                                <i class="ph-fill ph-chart-line-up text-lg"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-0.5">18%</h3>
+                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 较上版本 +4%</p>
+                    </div>
+                </div>
+
+                <!-- Two Column Layout -->
+                <div class="flex flex-col lg:flex-row gap-6">
+
+                    <!-- Left Column: Version Timeline -->
+                    <div class="w-full lg:w-[380px] flex-shrink-0">
+                        <div class="bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                            <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                                <h3 class="font-bold text-gray-800 text-base flex items-center gap-2">
+                                    <i class="ph-fill ph-clock-countdown text-brand-500"></i> 版本历史
+                                </h3>
+                                <button class="text-xs text-brand-600 hover:underline">对比版本</button>
+                            </div>
+
+                            <!-- Version Timeline -->
+                            <div class="p-5">
+                                <div class="relative">
+                                    <!-- Timeline Line -->
+                                    <div class="absolute left-[15px] top-2 bottom-2 w-0.5 bg-gray-100"></div>
+
+                                    <!-- Version Items -->
+                                    <div class="space-y-5">
+                                        <!-- v2.3 (Current) -->
+                                        <div class="relative pl-10 cursor-pointer group">
+                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-200 z-10">
+                                                <i class="ph-fill ph-check text-sm"></i>
+                                            </div>
+                                            <div class="bg-brand-50/50 border border-brand-100 rounded-lg p-4 group-hover:bg-brand-50 transition-colors">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="font-bold text-gray-800 text-sm">v2.3</span>
+                                                        <span class="text-[10px] text-brand-600 bg-brand-100 px-1.5 py-0.5 rounded font-medium">当前版本</span>
+                                                    </div>
+                                                    <span class="text-xs text-gray-400">2025-07-01</span>
+                                                </div>
+                                                <p class="text-xs text-gray-600 mb-2">更新项目案例，优化技术栈描述，新增2个实战项目经验</p>
+                                                <div class="flex items-center gap-3 text-[10px] text-gray-400">
+                                                    <span class="flex items-center gap-1"><i class="ph ph-file-text"></i> 3页</span>
+                                                    <span class="flex items-center gap-1"><i class="ph ph-paper-plane-tilt"></i> 投递 28次</span>
+                                                    <span class="flex items-center gap-1 text-green-500"><i class="ph ph-arrow-up"></i> 邀约率 18%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- v2.2 -->
+                                        <div class="relative pl-10 cursor-pointer group">
+                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
+                                                <span class="text-[10px] font-bold">2.2</span>
+                                            </div>
+                                            <div class="bg-gray-50/50 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="font-medium text-gray-700 text-sm">v2.2</span>
+                                                    <span class="text-xs text-gray-400">2025-06-15</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mb-2">优化自我介绍部分，调整排版结构，突出核心竞争力</p>
+                                                <div class="flex items-center gap-3 text-[10px] text-gray-400">
+                                                    <span class="flex items-center gap-1"><i class="ph ph-file-text"></i> 3页</span>
+                                                    <span class="flex items-center gap-1"><i class="ph ph-paper-plane-tilt"></i> 投递 42次</span>
+                                                    <span class="flex items-center gap-1"><i class="ph ph-arrow-up"></i> 邀约率 14%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- v2.1 -->
+                                        <div class="relative pl-10 cursor-pointer group">
+                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
+                                                <span class="text-[10px] font-bold">2.1</span>
+                                            </div>
+                                            <div class="bg-gray-50/50 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="font-medium text-gray-700 text-sm">v2.1</span>
+                                                    <span class="text-xs text-gray-400">2025-05-20</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mb-2">新增技能栈：Vue3、TypeScript、Node.js，更新联系方式</p>
+                                                <div class="flex items-center gap-3 text-[10px] text-gray-400">
+                                                    <span class="flex items-center gap-1"><i class="ph ph-file-text"></i> 2页</span>
+                                                    <span class="flex items-center gap-1"><i class="ph ph-paper-plane-tilt"></i> 投递 36次</span>
+                                                    <span class="flex items-center gap-1"><i class="ph ph-arrow-up"></i> 邀约率 12%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- v2.0 -->
+                                        <div class="relative pl-10 cursor-pointer group">
+                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
+                                                <span class="text-[10px] font-bold">2.0</span>
+                                            </div>
+                                            <div class="bg-gray-50/50 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="font-medium text-gray-700 text-sm">v2.0</span>
+                                                    <span class="text-xs text-gray-400">2025-04-10</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mb-2">全面改版，重新设计排版风格，采用极简设计语言</p>
+                                                <div class="flex items-center gap-3 text-[10px] text-gray-400">
+                                                    <span class="flex items-center gap-1"><i class="ph ph-file-text"></i> 2页</span>
+                                                    <span class="flex items-center gap-1"><i class="ph ph-paper-plane-tilt"></i> 投递 30次</span>
+                                                    <span class="flex items-center gap-1"><i class="ph ph-arrow-up"></i> 邀约率 10%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- v1.3 -->
+                                        <div class="relative pl-10 cursor-pointer group">
+                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
+                                                <span class="text-[10px] font-bold">1.3</span>
+                                            </div>
+                                            <div class="bg-gray-50/30 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all opacity-80">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="font-medium text-gray-500 text-sm">v1.3</span>
+                                                    <span class="text-xs text-gray-400">2025-03-05</span>
+                                                </div>
+                                                <p class="text-xs text-gray-400 mb-2">修正排版错位，补充教育背景信息</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- v1.2 -->
+                                        <div class="relative pl-10 cursor-pointer group">
+                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
+                                                <span class="text-[10px] font-bold">1.2</span>
+                                            </div>
+                                            <div class="bg-gray-50/30 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all opacity-80">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="font-medium text-gray-500 text-sm">v1.2</span>
+                                                    <span class="text-xs text-gray-400">2025-02-18</span>
+                                                </div>
+                                                <p class="text-xs text-gray-400 mb-2">补充项目经历，增加工作年限说明</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Load More -->
+                                <div class="text-center mt-5">
+                                    <button class="text-xs text-gray-400 hover:text-brand-600 transition-colors flex items-center gap-1 mx-auto">
+                                        <i class="ph ph-caret-down"></i> 查看更早版本
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Resume Preview -->
+                    <div class="flex-1">
+                        <!-- Action Bar -->
+                        <div class="flex items-center gap-3 bg-white p-3 rounded-xl shadow-soft border border-gray-100 mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold text-gray-800">v2.3</span>
+                                <span class="text-[10px] text-brand-600 bg-brand-100 px-1.5 py-0.5 rounded font-medium">当前版本</span>
+                                <span class="text-xs text-gray-400 ml-2">最后更新: 2025-07-01</span>
+                            </div>
+                            <div class="flex items-center gap-2 ml-auto">
+                                <button class="px-3 py-1.5 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-xs font-medium flex items-center gap-1.5">
+                                    <i class="ph ph-eye"></i> 预览
+                                </button>
+                                <button class="px-3 py-1.5 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-xs font-medium flex items-center gap-1.5">
+                                    <i class="ph ph-download-simple"></i> 下载PDF
+                                </button>
+                                <button class="px-3 py-1.5 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-xs font-medium flex items-center gap-1.5">
+                                    <i class="ph ph-copy"></i> 复制为新版本
+                                </button>
+                                <button class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors shadow-sm">
+                                    <i class="ph ph-pencil-simple"></i> 编辑
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Resume Preview (A4 style) -->
+                        <div class="bg-white rounded-xl shadow-soft border border-gray-100 p-8 lg:p-10 mx-auto" style="max-width: 620px;">
+                            <!-- Resume Header -->
+                            <div class="flex items-center gap-4 pb-6 border-b-2 border-gray-800 mb-6">
+                                <div class="w-16 h-16 rounded-full bg-brand-600 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+                                    JERN
+                                </div>
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-900">JERN · 全栈开发工程师</h1>
+                                    <div class="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                                        <span class="flex items-center gap-1"><i class="ph ph-phone"></i> 138****5678</span>
+                                        <span class="flex items-center gap-1"><i class="ph ph-envelope-simple"></i> jern@email.com</span>
+                                        <span class="flex items-center gap-1"><i class="ph ph-map-pin"></i> 深圳</span>
+                                        <span class="flex items-center gap-1"><i class="ph ph-github-logo"></i> github.com/jern</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Summary -->
+                            <div class="mb-6">
+                                <h2 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <i class="ph-fill ph-user-circle text-base"></i> 个人简介
+                                </h2>
+                                <p class="text-xs text-gray-600 leading-relaxed">
+                                    5年全栈开发经验，精通Vue3/React前端技术栈及Spring Boot/Node.js后端开发。独立完成20+商业项目，涵盖企业官网、小程序、后台管理系统等。擅长从需求分析到上线部署的全流程开发，注重代码质量与用户体验。
+                                </p>
+                            </div>
+
+                            <!-- Skills -->
+                            <div class="mb-6">
+                                <h2 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <i class="ph-fill ph-code text-base"></i> 技能栈
+                                </h2>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded font-medium">Vue3</span>
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded font-medium">React</span>
+                                    <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded font-medium">TypeScript</span>
+                                    <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded font-medium">Node.js</span>
+                                    <span class="px-2 py-1 bg-orange-50 text-orange-600 text-xs rounded font-medium">Spring Boot</span>
+                                    <span class="px-2 py-1 bg-orange-50 text-orange-600 text-xs rounded font-medium">Java</span>
+                                    <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded font-medium">MySQL</span>
+                                    <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded font-medium">Redis</span>
+                                    <span class="px-2 py-1 bg-cyan-50 text-cyan-600 text-xs rounded font-medium">Docker</span>
+                                    <span class="px-2 py-1 bg-cyan-50 text-cyan-600 text-xs rounded font-medium">Linux</span>
+                                </div>
+                            </div>
+
+                            <!-- Experience -->
+                            <div class="mb-6">
+                                <h2 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                    <i class="ph-fill ph-briefcase text-base"></i> 项目经验
+                                </h2>
+                                <div class="space-y-4">
+                                    <!-- Project 1 -->
+                                    <div class="border-l-2 border-brand-200 pl-4 relative">
+                                        <div class="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-brand-500"></div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <h3 class="text-sm font-bold text-gray-800">企业官网定制开发</h3>
+                                            <span class="text-[10px] text-gray-400">2025.06 - 2025.07</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mb-1">技术栈: Vue3 + Spring Boot + MySQL</p>
+                                        <p class="text-xs text-gray-600 leading-relaxed">基于Vue3+Spring Boot的企业官网全栈开发，包含CMS后台管理、产品展示、SEO优化。支持响应式布局和双端自适应，部署于Linux服务器。</p>
+                                    </div>
+                                    <!-- Project 2 -->
+                                    <div class="border-l-2 border-brand-200 pl-4 relative">
+                                        <div class="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-brand-500"></div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <h3 class="text-sm font-bold text-gray-800">小程序电商平台</h3>
+                                            <span class="text-[10px] text-gray-400">2025.04 - 2025.05</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mb-1">技术栈: Uni-app + Node.js + MongoDB</p>
+                                        <p class="text-xs text-gray-600 leading-relaxed">独立开发微信小程序电商平台，包含商品管理、购物车、支付对接、订单管理全流程，日活用户500+。</p>
+                                    </div>
+                                    <!-- Project 3 -->
+                                    <div class="border-l-2 border-brand-200 pl-4 relative">
+                                        <div class="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-brand-500"></div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <h3 class="text-sm font-bold text-gray-800">后台管理系统</h3>
+                                            <span class="text-[10px] text-gray-400">2025.02 - 2025.03</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mb-1">技术栈: React + Ant Design + Express</p>
+                                        <p class="text-xs text-gray-600 leading-relaxed">开发企业级后台管理系统，包含权限管理、数据可视化、工作流审批等模块，支撑30人团队日常使用。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Education -->
+                            <div>
+                                <h2 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <i class="ph-fill ph-graduation-cap text-base"></i> 教育背景
+                                </h2>
+                                <div class="flex items-center justify-between text-xs">
+                                    <div>
+                                        <span class="font-medium text-gray-800">XX大学</span>
+                                        <span class="text-gray-500 ml-2">计算机科学与技术 · 本科</span>
+                                    </div>
+                                    <span class="text-gray-400">2018 - 2022</span>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="text-center mt-8 pt-4 border-t border-gray-100 text-[10px] text-gray-300">
+                                v2.3 · 生成自 接单管理平台
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

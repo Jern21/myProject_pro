@@ -1,0 +1,400 @@
+﻿﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报价管理 - 接单管理平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="js/tailwind-config.js"></script>
+    <script src="js/cdn-fallback.js"></script>
+    <link rel="stylesheet" href="css/common.css">
+    <style type="text/tailwindcss">
+        /* 页面专属：表单样式 */
+        .form-input {
+            @apply w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all text-gray-800 placeholder-gray-400;
+        }
+        .form-label {
+            @apply block text-xs font-medium text-gray-500 mb-1.5;
+        }
+
+        /* 页面专属：报价单预览 */
+        .paper-preview {
+            @apply bg-white rounded-lg shadow-paper border border-gray-200 p-8 mx-auto relative;
+            width: 100%;
+            max-width: 500px;
+            min-height: 700px;
+        }
+        .paper-dash-line {
+            @apply border-b border-dashed border-gray-300 my-4;
+        }
+    </style>
+    <script src="js/sidebar.js"></script>
+</head>
+<body class="flex h-screen overflow-hidden text-sm">
+
+    <!-- Sidebar (Reused from previous designs) -->
+    
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
+        
+        <!-- Header -->
+        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 relative z-10">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">生成报价单</h2>
+                <p class="text-sm text-gray-500 mt-0.5">规范化开发报价，支持一键生成文本或导出PDF</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="px-4 py-2 border border-gray-200 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2">
+                    <i class="ph ph-floppy-disk"></i> 保存为模板
+                </button>
+                <div class="w-px h-6 bg-gray-200"></div>
+                <div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1.5 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">
+                    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">
+                    <span class="text-sm font-medium text-gray-700">JERN</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Editor & Preview Area -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8">
+            <div class="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-6 items-start">
+                
+                <!-- LEFT COLUMN: Editor Form -->
+                <div class="w-full lg:w-[55%] flex flex-col gap-5">
+                    
+                    <!-- Basic Info Section -->
+                    <div class="card">
+                        <div class="flex items-center gap-2 mb-4 border-b border-gray-50 pb-3">
+                            <i class="ph-fill ph-info text-brand-500 text-lg"></i>
+                            <h3 class="font-semibold text-gray-800 text-base">基础信息</h3>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="form-label">项目名称</label>
+                                <input type="text" value="企业官网定制开发 (双端自适应)" class="form-input">
+                            </div>
+                            <div>
+                                <label class="form-label">客户名称</label>
+                                <input type="text" value="张先生" class="form-input">
+                            </div>
+                            <div>
+                                <label class="form-label">报价日期</label>
+                                <input type="date" value="2025-07-03" class="form-input">
+                            </div>
+                            <div>
+                                <label class="form-label">预计周期 (天)</label>
+                                <input type="number" value="15" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quoation Items Section -->
+                    <div class="card">
+                        <div class="flex items-center justify-between mb-4 border-b border-gray-50 pb-3">
+                            <div class="flex items-center gap-2">
+                                <i class="ph-fill ph-list-numbers text-orange-500 text-lg"></i>
+                                <h3 class="font-semibold text-gray-800 text-base">报价明细</h3>
+                            </div>
+                            <button class="text-brand-600 hover:text-brand-700 text-sm font-medium flex items-center gap-1">
+                                <i class="ph ph-squares-four"></i> 从模板导入
+                            </button>
+                        </div>
+                        
+                        <!-- List of items (Dev Breakdown) -->
+                        <div class="space-y-4">
+                            <!-- Item 1 -->
+                            <div class="bg-gray-50/50 p-4 rounded-lg border border-gray-100 relative group">
+                                <button class="absolute -right-2 -top-2 w-6 h-6 bg-white border border-gray-200 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-x text-xs"></i></button>
+                                <div class="grid grid-cols-12 gap-3 mb-2">
+                                    <div class="col-span-7">
+                                        <label class="form-label">模块名称</label>
+                                        <input type="text" value="基础架构与UI/UX设计" class="form-input bg-white">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label class="form-label">数量</label>
+                                        <input type="number" value="1" class="form-input bg-white text-center">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <label class="form-label">单价 (¥)</label>
+                                        <input type="number" value="2000" class="form-input bg-white text-right">
+                                    </div>
+                                </div>
+                                <div>
+                                    <input type="text" value="包含首页、关于我们、产品展示等5个核心页面的设计与前端重构 (响应式)" class="form-input bg-white text-xs text-gray-500" placeholder="模块功能简述...">
+                                </div>
+                            </div>
+
+                            <!-- Item 2 -->
+                            <div class="bg-gray-50/50 p-4 rounded-lg border border-gray-100 relative group">
+                                <button class="absolute -right-2 -top-2 w-6 h-6 bg-white border border-gray-200 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-x text-xs"></i></button>
+                                <div class="grid grid-cols-12 gap-3 mb-2">
+                                    <div class="col-span-7">
+                                        <label class="form-label">模块名称</label>
+                                        <input type="text" value="后端管理系统开发" class="form-input bg-white">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label class="form-label">数量</label>
+                                        <input type="number" value="1" class="form-input bg-white text-center">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <label class="form-label">单价 (¥)</label>
+                                        <input type="number" value="3500" class="form-input bg-white text-right">
+                                    </div>
+                                </div>
+                                <div>
+                                    <input type="text" value="内容管理(CMS)、产品管理、基础权限分配、API接口开发" class="form-input bg-white text-xs text-gray-500" placeholder="模块功能简述...">
+                                </div>
+                            </div>
+
+                            <!-- Item 3 -->
+                            <div class="bg-gray-50/50 p-4 rounded-lg border border-gray-100 relative group">
+                                <button class="absolute -right-2 -top-2 w-6 h-6 bg-white border border-gray-200 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-x text-xs"></i></button>
+                                <div class="grid grid-cols-12 gap-3 mb-2">
+                                    <div class="col-span-7">
+                                        <label class="form-label">模块名称</label>
+                                        <input type="text" value="服务器部署与备案协助" class="form-input bg-white">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label class="form-label">数量</label>
+                                        <input type="number" value="1" class="form-input bg-white text-center">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <label class="form-label">单价 (¥)</label>
+                                        <input type="number" value="800" class="form-input bg-white text-right">
+                                    </div>
+                                </div>
+                                <div>
+                                    <input type="text" value="Linux环境配置、SSL证书配置、域名解析及上线测试" class="form-input bg-white text-xs text-gray-500" placeholder="模块功能简述...">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Add Button -->
+                        <button class="w-full mt-4 py-2.5 border border-dashed border-brand-300 text-brand-600 bg-brand-50/50 rounded-lg hover:bg-brand-50 transition-colors text-sm flex items-center justify-center gap-2">
+                            <i class="ph ph-plus-circle text-lg"></i> 添加明细行
+                        </button>
+                    </div>
+
+                    <!-- Additional Terms -->
+                    <div class="card">
+                        <div class="flex items-center gap-2 mb-4 border-b border-gray-50 pb-3">
+                            <i class="ph-fill ph-file-text text-purple-500 text-lg"></i>
+                            <h3 class="font-semibold text-gray-800 text-base">附加条款与备注</h3>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="form-label">优惠折扣 (减免 ¥)</label>
+                                <input type="number" value="300" class="form-input text-red-500 font-medium">
+                            </div>
+                            <div>
+                                <label class="form-label">付款方式 (默认推荐 5-4-1)</label>
+                                <select class="form-input">
+                                    <option>50%预付，40%上线，10%尾款</option>
+                                    <option>40%预付，60%上线交付</option>
+                                    <option>全额预付 (九折优惠)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">补充说明 (将显示在报价单底部)</label>
+                            <textarea rows="3" class="form-input resize-none">1. 本报价有效期为 7 天。
+2. 免费提供首年服务器日常维护及程序Bug修复。
+3. 超出上述需求范围的新增功能，需另行评估报价。</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Sticky Preview -->
+                <div class="w-full lg:w-[45%] lg:sticky lg:top-8 flex flex-col gap-4">
+                    
+                    <!-- Action Bar -->
+                    <div class="flex items-center gap-3 bg-white p-3 rounded-xl shadow-soft border border-gray-100">
+                        <button onclick="copyQuote()" class="flex-1 bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors">
+                            <i class="ph ph-copy text-lg"></i> 复制为文本
+                        </button>
+                        <button onclick="alert('PDF生成功能开发中...\n实际项目中可接入 html2pdf.js 或服务端 puppeteer 生成。')" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors shadow-sm shadow-brand-500/30">
+                            <i class="ph ph-file-pdf text-lg"></i> 导出 PDF
+                        </button>
+                        <button class="w-11 h-11 border border-gray-200 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors tooltip" title="预览设置">
+                            <i class="ph ph-sliders text-lg"></i>
+                        </button>
+                    </div>
+
+                    <!-- Actual A4 Preview -->
+                    <div class="paper-preview overflow-hidden" id="quote-preview-content">
+                        <!-- Watermark/Brand element -->
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 opacity-50"></div>
+                        
+                        <!-- Header -->
+                        <div class="flex justify-between items-end mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900 tracking-wide mb-1">开发报价单</h2>
+                                <p class="text-xs text-gray-400 font-mono">NO: QUO-20250703-001</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="w-8 h-8 bg-brand-600 rounded flex items-center justify-center text-white ml-auto mb-1">
+                                    <i class="ph-fill ph-bag text-sm"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-gray-800">JERN工作室</p>
+                            </div>
+                        </div>
+
+                        <!-- Meta Info -->
+                        <div class="bg-gray-50/80 rounded-md p-4 mb-6 grid grid-cols-2 gap-y-2 text-sm border border-gray-100/50">
+                            <div class="flex">
+                                <span class="text-gray-500 w-16">项目名称：</span>
+                                <span class="text-gray-800 font-medium truncate">企业官网定制开发 (双端)</span>
+                            </div>
+                            <div class="flex">
+                                <span class="text-gray-500 w-16">报价日期：</span>
+                                <span class="text-gray-800">2025-07-03</span>
+                            </div>
+                            <div class="flex">
+                                <span class="text-gray-500 w-16">客户名称：</span>
+                                <span class="text-gray-800">张先生</span>
+                            </div>
+                            <div class="flex">
+                                <span class="text-gray-500 w-16">预计周期：</span>
+                                <span class="text-gray-800">15 工作日</span>
+                            </div>
+                        </div>
+
+                        <!-- Table Headers -->
+                        <div class="grid grid-cols-12 gap-2 text-xs font-medium text-gray-500 mb-2 px-2">
+                            <div class="col-span-7">服务明细 (内容描述)</div>
+                            <div class="col-span-2 text-center">数量</div>
+                            <div class="col-span-3 text-right">金额 (¥)</div>
+                        </div>
+                        <div class="h-px bg-gray-800 mb-3"></div>
+
+                        <!-- Items -->
+                        <div class="space-y-4 text-sm px-2 min-h-[200px]">
+                            <!-- Preview Item 1 -->
+                            <div class="grid grid-cols-12 gap-2 items-start">
+                                <div class="col-span-7">
+                                    <p class="font-semibold text-gray-800">1. 基础架构与UI/UX设计</p>
+                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">包含首页、关于我们、产品展示等5个核心页面的设计与前端重构 (响应式)</p>
+                                </div>
+                                <div class="col-span-2 text-center text-gray-600 mt-0.5">1</div>
+                                <div class="col-span-3 text-right font-medium text-gray-800 mt-0.5">2,000.00</div>
+                            </div>
+
+                            <!-- Preview Item 2 -->
+                            <div class="grid grid-cols-12 gap-2 items-start">
+                                <div class="col-span-7">
+                                    <p class="font-semibold text-gray-800">2. 后端管理系统开发</p>
+                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">内容管理(CMS)、产品管理、基础权限分配、API接口开发</p>
+                                </div>
+                                <div class="col-span-2 text-center text-gray-600 mt-0.5">1</div>
+                                <div class="col-span-3 text-right font-medium text-gray-800 mt-0.5">3,500.00</div>
+                            </div>
+
+                            <!-- Preview Item 3 -->
+                            <div class="grid grid-cols-12 gap-2 items-start">
+                                <div class="col-span-7">
+                                    <p class="font-semibold text-gray-800">3. 服务器部署与备案协助</p>
+                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">Linux环境配置、SSL证书配置、域名解析及上线测试</p>
+                                </div>
+                                <div class="col-span-2 text-center text-gray-600 mt-0.5">1</div>
+                                <div class="col-span-3 text-right font-medium text-gray-800 mt-0.5">800.00</div>
+                            </div>
+                        </div>
+
+                        <div class="paper-dash-line"></div>
+
+                        <!-- Totals -->
+                        <div class="w-full flex justify-end mb-8">
+                            <div class="w-1/2 space-y-2">
+                                <div class="flex justify-between text-sm text-gray-600">
+                                    <span>小计：</span>
+                                    <span>¥ 6,300.00</span>
+                                </div>
+                                <div class="flex justify-between text-sm text-red-500">
+                                    <span>优惠折扣：</span>
+                                    <span>- ¥ 300.00</span>
+                                </div>
+                                <div class="h-px bg-gray-200 my-1"></div>
+                                <div class="flex justify-between items-end">
+                                    <span class="font-medium text-gray-800">总计金额：</span>
+                                    <span class="text-xl font-bold text-gray-900 font-mono">¥ 6,000.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer notes -->
+                        <div class="bg-blue-50/50 rounded p-4 border border-blue-100/50">
+                            <h4 class="text-xs font-semibold text-gray-800 mb-2 flex items-center gap-1">
+                                <i class="ph-fill ph-warning-circle text-blue-500"></i> 补充说明及付款方式
+                            </h4>
+                            <div class="text-[11px] text-gray-600 leading-relaxed space-y-1">
+                                <p><strong>付款方式：</strong> 50%预付定金启动项目，40%测试上线无误后支付，10%为尾款交付源码时支付。</p>
+                                <p>1. 本报价有效期为 7 天，逾期可能重新评估。</p>
+                                <p>2. 免费提供首年服务器日常维护及程序Bug修复。</p>
+                                <p>3. 超出上述需求范围的新增功能，需双方确认并另行评估报价。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-8 text-[10px] text-gray-400">
+                            生成自 接单管理平台 - 科技赋能自由开发
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification (Hidden by default) -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-50">
+        <i class="ph-fill ph-check-circle text-green-400"></i>
+        <span>报价文本已复制到剪贴板！</span>
+    </div>
+
+    <script>
+        // Simple function to simulate copying to clipboard
+        function copyQuote() {
+            const quoteText = `【项目报价单：企业官网定制开发 (双端自适应)】
+客户：张先生 | 周期：15天 | 日期：2025-07-03
+----------------------------------------
+1. 基础架构与UI/UX设计
+   (包含首页、关于我们等5个核心页面)
+   ¥2,000.00
+
+2. 后端管理系统开发
+   (CMS、产品管理、API接口开发)
+   ¥3,500.00
+
+3. 服务器部署与备案协助
+   (Linux环境、SSL、解析上线)
+   ¥800.00
+----------------------------------------
+小计：¥6,300.00
+优惠折扣：-¥300.00
+【总计金额：¥6,000.00】
+
+付款方式：50%预付，40%上线，10%尾款
+补充说明：本报价有效期为7天；提供首年免费维护；超出范围的新增功能需另行评估。`;
+
+            navigator.clipboard.writeText(quoteText).then(() => {
+                showToast();
+            }).catch(err => {
+                console.error('Copy failed', err);
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-10', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目管理 - 接单管理平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="js/tailwind-config.js"></script>
+    <script src="js/cdn-fallback.js"></script>
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/sidebar.js"></script>
+</head>
+<body class="flex h-screen overflow-hidden text-sm font-sans">
+
+    <!-- Sidebar -->
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
+
+        <!-- Header -->
+        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 relative z-10">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">项目管理</h2>
+                <p class="text-sm text-gray-500 mt-0.5">共 24 个项目 · 12 个进行中</p>
+            </div>
+            <div class="flex items-center gap-5">
+                <!-- Search -->
+                <div class="relative">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="搜索项目名称、客户..." class="pl-9 pr-12 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm w-72 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">
+                    <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] text-gray-400 bg-white px-1.5 py-0.5 rounded border border-gray-200">
+                        <i class="ph ph-command"></i> K
+                    </div>
+                </div>
+                <!-- Notifications -->
+                <button class="relative w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                    <i class="ph ph-bell text-lg"></i>
+                    <span class="absolute top-0 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">12</span>
+                </button>
+                <!-- Profile -->
+                <div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1.5 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">
+                    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">
+                    <span class="text-sm font-medium text-gray-700">JERN</span>
+                    <i class="ph ph-caret-down text-gray-400 text-xs"></i>
+                </div>
+                <!-- Create Button -->
+                <button class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm shadow-brand-500/30">
+                    <i class="ph ph-plus"></i> 新建项目
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8">
+            <div class="max-w-[1600px] mx-auto">
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+                    <!-- Card 1 -->
+                    <div class="rounded-xl border border-gray-100 bg-white p-4 shadow-soft relative overflow-hidden">
+                        <p class="text-gray-500 text-xs">全部项目</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1 mb-0.5">24</h3>
+                        <p class="text-[10px] text-green-500 flex items-center"><span class="text-gray-400 mr-1">较上月</span> <i class="ph ph-arrow-up mr-0.5"></i> 15%</p>
+                        <div class="absolute right-3 top-3 w-9 h-9 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
+                            <i class="ph-fill ph-kanban text-lg"></i>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="rounded-xl border border-gray-100 bg-white p-4 shadow-soft relative overflow-hidden">
+                        <p class="text-gray-500 text-xs">进行中</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1 mb-0.5">12</h3>
+                        <p class="text-[10px] text-gray-400">占比 50%</p>
+                        <div class="absolute right-3 top-3 w-9 h-9 rounded-lg bg-green-50 text-green-500 flex items-center justify-center">
+                            <i class="ph-fill ph-arrows-clockwise text-lg"></i>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="rounded-xl border border-gray-100 bg-white p-4 shadow-soft relative overflow-hidden">
+                        <p class="text-gray-500 text-xs">待验收</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1 mb-0.5">5</h3>
+                        <p class="text-[10px] text-gray-400">占比 20.8%</p>
+                        <div class="absolute right-3 top-3 w-9 h-9 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
+                            <i class="ph-fill ph-hourglass-high text-lg"></i>
+                        </div>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="rounded-xl border border-gray-100 bg-white p-4 shadow-soft relative overflow-hidden">
+                        <p class="text-gray-500 text-xs">已完成</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1 mb-0.5">6</h3>
+                        <p class="text-[10px] text-gray-400">占比 25%</p>
+                        <div class="absolute right-3 top-3 w-9 h-9 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center">
+                            <i class="ph-fill ph-check-circle text-lg"></i>
+                        </div>
+                    </div>
+                    <!-- Card 5 -->
+                    <div class="rounded-xl border border-red-100 bg-red-50/30 p-4 shadow-soft relative overflow-hidden">
+                        <p class="text-red-500 text-xs">已逾期</p>
+                        <h3 class="text-2xl font-bold text-red-600 mt-1 mb-0.5">1</h3>
+                        <p class="text-[10px] text-red-400">需及时处理</p>
+                        <div class="absolute right-3 top-3 w-9 h-9 rounded-lg bg-red-100 text-red-500 flex items-center justify-center">
+                            <i class="ph-fill ph-warning text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="flex items-center gap-3 mb-6 bg-white p-4 rounded-xl border border-gray-100 shadow-soft flex-wrap">
+                    <div class="w-36">
+                        <label class="block text-xs text-gray-500 mb-1.5">项目类型</label>
+                        <select class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
+                            <option>全部类型</option>
+                        </select>
+                    </div>
+                    <div class="w-36">
+                        <label class="block text-xs text-gray-500 mb-1.5">优先级</label>
+                        <select class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
+                            <option>全部优先级</option>
+                        </select>
+                    </div>
+                    <div class="w-36">
+                        <label class="block text-xs text-gray-500 mb-1.5">客户来源</label>
+                        <select class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
+                            <option>全部来源</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-2 ml-auto items-end">
+                        <div class="flex bg-gray-100 rounded-lg p-1">
+                            <button class="px-3 py-1.5 bg-white shadow-sm rounded-md text-gray-800 text-xs font-medium flex items-center gap-1.5"><i class="ph-fill ph-kanban"></i> 看板</button>
+                            <button class="px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors"><i class="ph ph-list"></i> 列表</button>
+                        </div>
+                        <button class="px-5 py-1.5 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">重置</button>
+                    </div>
+                </div>
+
+                <!-- Kanban Board -->
+                <div class="flex gap-4 overflow-x-auto pb-4">
+
+                    <!-- Column 1: 待确认需求 -->
+                    <div class="flex-shrink-0 w-72 bg-gray-50 rounded-xl border border-gray-100 flex flex-col max-h-[calc(100vh-340px)]">
+                        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+                                <h3 class="font-semibold text-gray-700 text-sm">待确认需求</h3>
+                            </div>
+                            <span class="text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border border-gray-200">2</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-3 space-y-3">
+                            <!-- Card 1 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-red-600 bg-red-50 border border-red-100 px-1.5 py-0.5 rounded font-medium">高优先级</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">电商平台重构</h4>
+                                <p class="text-xs text-gray-500 mb-3 line-clamp-2">基于Vue3+Spring Boot的电商平台全面重构，包含商品管理...</p>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-blue-50 text-blue-600 border border-blue-100">网站开发</span>
+                                    <span class="tag bg-yellow-50 text-yellow-600 border border-yellow-100">闲鱼</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=刘&background=bfdbfe&color=1d4ed8" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">刘总</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400 flex items-center gap-1"><i class="ph ph-calendar"></i> 07-05</span>
+                                </div>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-yellow-600 bg-yellow-50 border border-yellow-100 px-1.5 py-0.5 rounded font-medium">中优先级</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">企业APP UI设计</h4>
+                                <p class="text-xs text-gray-500 mb-3 line-clamp-2">设计企业内部管理APP的UI界面，约12个页面...</p>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-purple-50 text-purple-600 border border-purple-100">UI/设计</span>
+                                    <span class="tag bg-red-50 text-red-500 border border-red-100">小红书</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=陈&background=d1fae5&color=047857" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">陈女士</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400 flex items-center gap-1"><i class="ph ph-calendar"></i> 07-08</span>
+                                </div>
+                            </div>
+                            <!-- Add Card -->
+                            <button class="w-full py-2.5 border border-dashed border-gray-300 text-gray-400 rounded-lg hover:text-brand-600 hover:border-brand-400 transition-colors text-xs flex items-center justify-center gap-1">
+                                <i class="ph ph-plus"></i> 添加项目
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: 开发/设计中 -->
+                    <div class="flex-shrink-0 w-72 bg-green-50/30 rounded-xl border border-green-100/50 flex flex-col max-h-[calc(100vh-340px)]">
+                        <div class="p-4 border-b border-green-100/50 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                <h3 class="font-semibold text-gray-700 text-sm">开发/设计中</h3>
+                            </div>
+                            <span class="text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border border-gray-200">4</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-3 space-y-3">
+                            <!-- Card 1 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-red-600 bg-red-50 border border-red-100 px-1.5 py-0.5 rounded font-medium">高优先级</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">企业官网定制开发</h4>
+                                <p class="text-xs text-gray-500 mb-2">DD20250703001 · ¥6,800</p>
+                                <!-- Progress -->
+                                <div class="mb-3">
+                                    <div class="flex justify-between text-[10px] text-gray-400 mb-1">
+                                        <span>进度</span><span>65%</span>
+                                    </div>
+                                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="bg-brand-500 h-full rounded-full" style="width:65%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-blue-50 text-blue-600 border border-blue-100">网站开发</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=张&background=bfdbfe&color=1d4ed8" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">张先生</span>
+                                    </div>
+                                    <span class="text-xs text-orange-500 flex items-center gap-1"><i class="ph ph-clock"></i> 剩余8天</span>
+                                </div>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-red-600 bg-red-50 border border-red-100 px-1.5 py-0.5 rounded font-medium">高优先级</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">小程序功能开发</h4>
+                                <p class="text-xs text-gray-500 mb-2">DD20250702013 · ¥8,500</p>
+                                <div class="mb-3">
+                                    <div class="flex justify-between text-[10px] text-gray-400 mb-1">
+                                        <span>进度</span><span>40%</span>
+                                    </div>
+                                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="bg-brand-500 h-full rounded-full" style="width:40%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-cyan-50 text-cyan-600 border border-cyan-100">小程序</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=赵&background=e5e7eb&color=374151" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">赵先生</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400 flex items-center gap-1"><i class="ph ph-clock"></i> 剩余12天</span>
+                                </div>
+                            </div>
+                            <!-- Card 3 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-yellow-600 bg-yellow-50 border border-yellow-100 px-1.5 py-0.5 rounded font-medium">中优先级</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">后台管理系统开发</h4>
+                                <p class="text-xs text-gray-500 mb-2">DD20250630011 · ¥12,000</p>
+                                <div class="mb-3">
+                                    <div class="flex justify-between text-[10px] text-gray-400 mb-1">
+                                        <span>进度</span><span>80%</span>
+                                    </div>
+                                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="bg-green-500 h-full rounded-full" style="width:80%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-blue-50 text-blue-600 border border-blue-100">网站开发</span>
+                                    <span class="tag bg-red-50 text-red-500 border border-red-100">已逾期</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=刘&background=bfdbfe&color=1d4ed8" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">刘总</span>
+                                    </div>
+                                    <span class="text-xs text-red-500 flex items-center gap-1"><i class="ph ph-warning"></i> 逾期2天</span>
+                                </div>
+                            </div>
+                            <!-- Card 4 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-gray-500 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded font-medium">低优先级</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">海报设计批量制作</h4>
+                                <p class="text-xs text-gray-500 mb-2">DD20250702015 · ¥980</p>
+                                <div class="mb-3">
+                                    <div class="flex justify-between text-[10px] text-gray-400 mb-1">
+                                        <span>进度</span><span>30%</span>
+                                    </div>
+                                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="bg-brand-500 h-full rounded-full" style="width:30%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-orange-50 text-orange-600 border border-orange-100">平面设计</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=李&background=fecaca&color=b91c1c" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">李女士</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400 flex items-center gap-1"><i class="ph ph-clock"></i> 剩余2天</span>
+                                </div>
+                            </div>
+                            <button class="w-full py-2.5 border border-dashed border-gray-300 text-gray-400 rounded-lg hover:text-brand-600 hover:border-brand-400 transition-colors text-xs flex items-center justify-center gap-1">
+                                <i class="ph ph-plus"></i> 添加项目
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: 待验收 -->
+                    <div class="flex-shrink-0 w-72 bg-orange-50/30 rounded-xl border border-orange-100/50 flex flex-col max-h-[calc(100vh-340px)]">
+                        <div class="p-4 border-b border-orange-100/50 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                                <h3 class="font-semibold text-gray-700 text-sm">待验收</h3>
+                            </div>
+                            <span class="text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border border-gray-200">2</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-3 space-y-3">
+                            <!-- Card 1 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-yellow-600 bg-yellow-50 border border-yellow-100 px-1.5 py-0.5 rounded font-medium">中优先级</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">小红书推广设计</h4>
+                                <p class="text-xs text-gray-500 mb-2">DD20250702015 · ¥980</p>
+                                <div class="mb-3">
+                                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="bg-green-500 h-full rounded-full" style="width:100%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-purple-50 text-purple-600 border border-purple-100">UI/设计</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=李&background=fecaca&color=b91c1c" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">李女士</span>
+                                    </div>
+                                    <span class="text-xs text-orange-500 flex items-center gap-1"><i class="ph ph-hourglass"></i> 等待验收</span>
+                                </div>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-gray-500 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded font-medium">低优先级</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">Logo设计</h4>
+                                <p class="text-xs text-gray-500 mb-2">DD20250629010 · ¥300</p>
+                                <div class="mb-3">
+                                    <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="bg-green-500 h-full rounded-full" style="width:100%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-purple-50 text-purple-600 border border-purple-100">UI/设计</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=孙&background=f3f4f6&color=6b7280" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">孙女士</span>
+                                    </div>
+                                    <span class="text-xs text-orange-500 flex items-center gap-1"><i class="ph ph-hourglass"></i> 等待验收</span>
+                                </div>
+                            </div>
+                            <button class="w-full py-2.5 border border-dashed border-gray-300 text-gray-400 rounded-lg hover:text-brand-600 hover:border-brand-400 transition-colors text-xs flex items-center justify-center gap-1">
+                                <i class="ph ph-plus"></i> 添加项目
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Column 4: 已完成 -->
+                    <div class="flex-shrink-0 w-72 bg-purple-50/30 rounded-xl border border-purple-100/50 flex flex-col max-h-[calc(100vh-340px)]">
+                        <div class="p-4 border-b border-purple-100/50 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                                <h3 class="font-semibold text-gray-700 text-sm">已完成</h3>
+                            </div>
+                            <span class="text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border border-gray-200">3</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-3 space-y-3">
+                            <!-- Card 1 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group opacity-90">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-green-600 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5"><i class="ph ph-check"></i> 已交付</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">抖音短视频剪辑</h4>
+                                <p class="text-xs text-gray-500 mb-2">DD20250702014 · ¥1,250</p>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-gray-100 text-gray-600 border border-gray-200">视频剪辑</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=王&background=fde68a&color=b45309" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">王同学</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">07-02 完成</span>
+                                </div>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group opacity-90">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-green-600 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5"><i class="ph ph-check"></i> 已交付</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">宣传海报设计</h4>
+                                <p class="text-xs text-gray-500 mb-2">DD20250701012 · ¥580</p>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-gray-100 text-gray-600 border border-gray-200">平面设计</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=陈&background=d1fae5&color=047857" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">陈女士</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">07-01 完成</span>
+                                </div>
+                            </div>
+                            <!-- Card 3 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group opacity-90">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-green-600 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5"><i class="ph ph-check"></i> 已交付</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-800 text-sm mb-1">PPT美化设计</h4>
+                                <p class="text-xs text-gray-500 mb-2">DD20250628009 · ¥450</p>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-gray-100 text-gray-600 border border-gray-200">平面设计</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=周&background=fef3c7&color=92400e" class="w-6 h-6 rounded-full">
+                                        <span class="text-xs text-gray-600">周先生</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">06-28 完成</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 5: 已关闭 -->
+                    <div class="flex-shrink-0 w-72 bg-gray-50 rounded-xl border border-gray-100 flex flex-col max-h-[calc(100vh-340px)]">
+                        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+                                <h3 class="font-semibold text-gray-500 text-sm">已关闭</h3>
+                            </div>
+                            <span class="text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border border-gray-200">1</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-3 space-y-3">
+                            <!-- Card 1 -->
+                            <div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group opacity-70">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-[10px] text-gray-500 bg-gray-100 border border-gray-200 px-1.5 py-0.5 rounded font-medium">已关闭</span>
+                                    <button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>
+                                </div>
+                                <h4 class="font-medium text-gray-600 text-sm mb-1">旧版网站改版</h4>
+                                <p class="text-xs text-gray-400 mb-2">DD20250620005 · ¥2,000</p>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="tag bg-gray-100 text-gray-500 border border-gray-200">网站开发</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <img src="https://ui-avatars.com/api/?name=吴&background=e0e7ff&color=4338ca" class="w-6 h-6 rounded-full grayscale">
+                                        <span class="text-xs text-gray-400">吴先生</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400">06-20 关闭</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

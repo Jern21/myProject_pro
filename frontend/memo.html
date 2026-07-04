@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息备忘录 - 接单管理平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="js/tailwind-config.js"></script>
+    <script src="js/cdn-fallback.js"></script>
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/sidebar.js"></script>
+</head>
+<body class="flex h-screen overflow-hidden text-sm font-sans">
+
+    <!-- Sidebar -->
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
+
+        <!-- Header -->
+        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 relative z-10">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">信息备忘录</h2>
+                <p class="text-sm text-gray-500 mt-0.5">记录重要信息，快速检索与回顾</p>
+            </div>
+            <div class="flex items-center gap-5">
+                <!-- Search -->
+                <div class="relative">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="搜索备忘录内容..." class="pl-9 pr-12 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm w-72 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">
+                    <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] text-gray-400 bg-white px-1.5 py-0.5 rounded border border-gray-200">
+                        <i class="ph ph-command"></i> K
+                    </div>
+                </div>
+                <!-- Notifications -->
+                <button class="relative w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                    <i class="ph ph-bell text-lg"></i>
+                    <span class="absolute top-0 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">12</span>
+                </button>
+                <!-- Profile -->
+                <div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1.5 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">
+                    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">
+                    <span class="text-sm font-medium text-gray-700">JERN</span>
+                    <i class="ph ph-caret-down text-gray-400 text-xs"></i>
+                </div>
+                <!-- Create Button -->
+                <button class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm shadow-brand-500/30">
+                    <i class="ph ph-plus"></i> 新建备忘
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8">
+            <div class="max-w-[1400px] mx-auto">
+
+                <!-- Quick Add Bar -->
+                <div class="bg-white rounded-xl border border-gray-100 shadow-soft p-4 mb-6 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center flex-shrink-0">
+                        <i class="ph-fill ph-pencil-simple text-lg"></i>
+                    </div>
+                    <input type="text" placeholder="快速记录一条备忘... (按 Enter 保存)" class="flex-1 text-sm outline-none text-gray-700 placeholder-gray-400">
+                    <div class="flex items-center gap-2">
+                        <select class="border border-gray-200 rounded-lg px-3 py-1.5 text-xs outline-none bg-gray-50 focus:border-brand-500 text-gray-600">
+                            <option>选择分类</option>
+                            <option>客户信息</option>
+                            <option>项目笔记</option>
+                            <option>技术方案</option>
+                            <option>报价参考</option>
+                            <option>灵感记录</option>
+                            <option>其他</option>
+                        </select>
+                        <button class="px-4 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors">
+                            <i class="ph ph-check"></i> 保存
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Two Column Layout -->
+                <div class="flex gap-6">
+
+                    <!-- Left Sidebar: Categories -->
+                    <div class="w-56 flex-shrink-0">
+                        <div class="bg-white rounded-xl border border-gray-100 shadow-soft p-4 sticky top-0">
+                            <h3 class="font-bold text-gray-800 text-sm mb-3 flex items-center gap-2">
+                                <i class="ph-fill ph-folders text-brand-500"></i> 分类
+                            </h3>
+                            <div class="space-y-1">
+                                <button class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-brand-50 text-brand-600 text-sm font-medium transition-colors">
+                                    <span class="flex items-center gap-2"><i class="ph ph-squares-four"></i> 全部笔记</span>
+                                    <span class="text-[10px] bg-white px-1.5 py-0.5 rounded-full">28</span>
+                                </button>
+                                <button class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm transition-colors">
+                                    <span class="flex items-center gap-2"><i class="ph ph-users text-blue-500"></i> 客户信息</span>
+                                    <span class="text-[10px] text-gray-400">8</span>
+                                </button>
+                                <button class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm transition-colors">
+                                    <span class="flex items-center gap-2"><i class="ph ph-kanban text-green-500"></i> 项目笔记</span>
+                                    <span class="text-[10px] text-gray-400">6</span>
+                                </button>
+                                <button class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm transition-colors">
+                                    <span class="flex items-center gap-2"><i class="ph ph-code text-purple-500"></i> 技术方案</span>
+                                    <span class="text-[10px] text-gray-400">5</span>
+                                </button>
+                                <button class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm transition-colors">
+                                    <span class="flex items-center gap-2"><i class="ph ph-currency-cny text-orange-500"></i> 报价参考</span>
+                                    <span class="text-[10px] text-gray-400">4</span>
+                                </button>
+                                <button class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm transition-colors">
+                                    <span class="flex items-center gap-2"><i class="ph ph-lightbulb text-yellow-500"></i> 灵感记录</span>
+                                    <span class="text-[10px] text-gray-400">3</span>
+                                </button>
+                                <button class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm transition-colors">
+                                    <span class="flex items-center gap-2"><i class="ph ph-tag text-gray-400"></i> 其他</span>
+                                    <span class="text-[10px] text-gray-400">2</span>
+                                </button>
+                            </div>
+
+                            <!-- Divider -->
+                            <div class="border-t border-gray-100 my-3"></div>
+
+                            <!-- Tags -->
+                            <h3 class="font-bold text-gray-800 text-sm mb-2 flex items-center gap-2">
+                                <i class="ph-fill ph-tag text-gray-400"></i> 标签
+                            </h3>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="px-2 py-0.5 text-[10px] text-blue-600 bg-blue-50 border border-blue-100 rounded cursor-pointer hover:bg-blue-100 transition-colors">重要</span>
+                                <span class="px-2 py-0.5 text-[10px] text-red-600 bg-red-50 border border-red-100 rounded cursor-pointer hover:bg-red-100 transition-colors">紧急</span>
+                                <span class="px-2 py-0.5 text-[10px] text-green-600 bg-green-50 border border-green-100 rounded cursor-pointer hover:bg-green-100 transition-colors">已处理</span>
+                                <span class="px-2 py-0.5 text-[px] text-orange-600 bg-orange-50 border border-orange-100 rounded cursor-pointer hover:bg-orange-100 transition-colors">待跟进</span>
+                                <span class="px-2 py-0.5 text-[10px] text-purple-600 bg-purple-50 border border-purple-100 rounded cursor-pointer hover:bg-purple-100 transition-colors">参考</span>
+                                <span class="px-2 py-0.5 text-[10px] text-gray-500 bg-gray-50 border border-gray-200 rounded cursor-pointer hover:bg-gray-100 transition-colors">备忘</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Notes Grid -->
+                    <div class="flex-1 min-w-0">
+
+                        <!-- Filter & Sort Bar -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-gray-600">全部笔记</span>
+                                <span class="text-xs text-gray-400">28 条</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="flex bg-gray-100 rounded-lg p-1">
+                                    <button class="px-3 py-1 bg-white shadow-sm rounded text-gray-800 text-xs font-medium flex items-center gap-1"><i class="ph ph-squares-four"></i> 网格</button>
+                                    <button class="px-3 py-1 text-gray-500 hover:text-gray-800 rounded text-xs font-medium flex items-center gap-1 transition-colors"><i class="ph ph-list"></i> 列表</button>
+                                </div>
+                                <select class="border border-gray-200 rounded-lg px-3 py-1.5 text-xs outline-none bg-gray-50 focus:border-brand-500 text-gray-600">
+                                    <option>按时间排序</option>
+                                    <option>按标题排序</option>
+                                    <option>按分类排序</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Pinned Section -->
+                        <div class="mb-5">
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                <i class="ph-fill ph-push-pin text-brand-500"></i> 置顶笔记
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Pinned Note 1 -->
+                                <div class="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group relative">
+                                    <button class="absolute top-3 right-3 text-brand-500 hover:text-brand-700"><i class="ph-fill ph-push-pin text-sm"></i></button>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded font-medium">客户信息</span>
+                                        <span class="text-[10px] text-red-600 bg-red-50 border border-red-100 px-1.5 py-0.5 rounded">重要</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">刘总 · 后台管理系统开发</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        高价值客户，累计消费¥28,600。需求明确，付款爽快。当前项目：后台管理系统开发，已逾期2天，需尽快推进。联系方式：139****9921，微信同号。偏好晚间沟通，通常22:00后在线。
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">2025-07-03 14:32</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Pinned Note 2 -->
+                                <div class="bg-gradient-to-br from-orange-50 to-white border border-orange-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group relative">
+                                    <button class="absolute top-3 right-3 text-brand-500 hover:text-brand-700"><i class="ph-fill ph-push-pin text-sm"></i></button>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded font-medium">报价参考</span>
+                                        <span class="text-[10px] text-purple-600 bg-purple-50 border border-purple-100 px-1.5 py-0.5 rounded">参考</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">2025标准报价表</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        网站开发：¥3000-8000（含后台）；小程序：¥5000-15000；UI设计：¥500-2000/套；视频剪辑：¥300-1500/条。付款方式默认5-4-1。急单加收30%，复购客户9折。
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">2025-06-28 10:15</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- All Notes -->
+                        <div>
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                <i class="ph ph-clock text-gray-400"></i> 最近笔记
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+                                <!-- Note 1 -->
+                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded font-medium">项目笔记</span>
+                                        <span class="text-[10px] text-orange-600 bg-orange-50 border border-orange-100 px-1.5 py-0.5 rounded">待跟进</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">企业官网开发进度</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        首页已完成，关于我们页面进行中。后端API已完成60%，CMS后台框架搭建完毕。待办：1.产品展示页对接 2.SEO优化 3.移动端适配测试。预计7.18交付。
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">今天 14:32</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Note 2 -->
+                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded font-medium">技术方案</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">小程序微信支付对接流程</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        1.申请微信支付商户号 2.配置支付回调域名 3.后端统一下单接口获取prepay_id 4.前端调起支付 5.支付结果回调处理。注意：回调需做签名验证，防止伪造。
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">昨天 16:20</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Note 3 -->
+                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded font-medium">客户信息</span>
+                                        <span class="text-[10px] text-green-600 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded">已处理</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">张先生需求确认</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        企业官网定制开发，需要5个核心页面（首页、关于我们、产品展示、新闻动态、联系方式）。要求双端自适应，含CMS后台管理。预算¥6,800，周期15天。已签合同，50%预付已到账。
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">07-03 11:20</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Note 4 -->
+                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-yellow-600 bg-yellow-50 px-1.5 py-0.5 rounded font-medium">灵感记录</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">小红书引流文案思路</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        爆款标题公式：数字+痛点+解决方案。例："3个技巧让你的网站转化率翻倍"。封面用对比图（Before/After），文案结尾加CTA引导私信。最佳发布时间：12:00、18:00、21:00。
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">07-02 20:30</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Note 5 -->
+                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded font-medium">项目笔记</span>
+                                        <span class="text-[10px] text-red-600 bg-red-50 border border-red-100 px-1.5 py-0.5 rounded">紧急</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">后台管理系统逾期处理</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        刘总项目已逾期2天，进度80%。剩余：权限模块收尾+测试+部署。今日需完成权限模块，明天测试，后天上线。已与客户沟通延期至7.05，需加班赶工。
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">07-02 09:15</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Note 6 -->
+                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded font-medium">技术方案</span>
+                                        <span class="text-[10px] text-gray-500 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded">备忘</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">服务器部署Checklist</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        1.Nginx配置HTTPS 2.配置反向代理 3.防火墙开放端口 4.MySQL安全初始化 5.设置定时备份 6.配置PM2进程守护 7.日志轮转配置 8.监控告警接入
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">07-01 15:45</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Note 7 -->
+                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded font-medium">报价参考</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">毕设代做报价参考</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        Java管理系统：¥1500-3000；Python数据分析：¥1200-2500；Vue前端项目：¥800-2000；全栈项目：¥2500-5000。含论文指导加收¥500。注意：需评估工作量，复杂需求另算。
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">06-30 22:10</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Note 8 -->
+                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded font-medium">其他</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">常用工具网站收藏</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        图标：Phosphor Icons、Iconify；配色：Coolors、ColorHunt；占位图：placehold.co；UI灵感：Dribbble、Mobbin；代码片段：CodePen、GitHub Gist；部署：Vercel、Railway
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">06-29 18:00</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Note 9 -->
+                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[10px] text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded font-medium">客户信息</span>
+                                        <span class="text-[10px] text-orange-600 bg-orange-50 border border-orange-100 px-1.5 py-0.5 rounded">待跟进</span>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-sm mb-2">赵先生 · 小程序开发跟进</h4>
+                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+                                        潜在客户，预算有限，还在比价。需求：小程序功能开发（商品展示+在线下单）。报价¥8,500，客户觉得偏高。可适当让步至¥7,500，需强调包含售后维护。计划7.05再次跟进。
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">06-28 14:00</span>
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
+                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Load More -->
+                        <div class="text-center mt-6">
+                            <button class="px-6 py-2 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2 mx-auto">
+                                <i class="ph ph-arrow-clockwise"></i> 加载更多 (19)
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
