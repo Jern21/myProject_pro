@@ -31,6 +31,7 @@
         'project.html': 'pages/content/project.html',
         'resume.html': 'pages/personal/resume.html',
         'memo.html': 'pages/personal/memo.html',
+        'reminder.html': 'pages/personal/reminder.html',
         'settings.html': 'pages/personal/settings.html'
     };
 

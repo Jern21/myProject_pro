@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'project.html': 'pages/content/project.html',
         'resume.html': 'pages/personal/resume.html',
         'memo.html': 'pages/personal/memo.html',
+        'reminder.html': 'pages/personal/reminder.html',
         'settings.html': 'pages/personal/settings.html'
     };
 
@@ -84,6 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </a>
                 <a href="${PB}${ROUTES['memo.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="memo.html">
                     <i class="ph ph-notepad text-lg mr-3 icon-base text-gray-500"></i>信息备忘录
+                </a>
+                <a href="${PB}${ROUTES['reminder.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="reminder.html">
+                    <i class="ph ph-bell-ringing text-lg mr-3 icon-base text-gray-500"></i>日期提醒
                 </a>
                 <a href="${PB}${ROUTES['settings.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="settings.html">
                     <i class="ph ph-gear text-lg mr-3 icon-base text-gray-500"></i>设置中心
