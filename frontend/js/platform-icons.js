@@ -58,6 +58,14 @@
     }
 
     /**
+     * 检查元素是否有明确的宽高尺寸类（如 w-6 h-6）
+     * 用于区分图标容器和小内联标签
+     */
+    function hasExplicitSize(el) {
+        return /\bw-\d+/.test(el.className) && /\bh-\d+/.test(el.className);
+    }
+
+    /**
      * 检查元素文本是否匹配某平台
      */
     function matchPlatformByText(text) {
@@ -76,8 +84,9 @@
         tiktokIcons.forEach(function (icon) {
             var parent = icon.parentElement;
 
-            // 情况 A：父元素是纯图标容器（bg-black/bg-gray-900），替换整个父元素内容
-            if (parent && (parent.classList.contains('bg-black') || parent.classList.contains('bg-gray-900'))) {
+            // 情况 A：父元素是纯图标容器（bg-black/bg-gray-900 且有明确尺寸），替换整个父元素内容
+            if (parent && hasExplicitSize(parent) &&
+                (parent.classList.contains('bg-black') || parent.classList.contains('bg-gray-900'))) {
                 var parentText = parent.textContent.trim();
                 if (parentText === '' || parentText === '抖音') {
                     removeBrandClasses(parent);
@@ -95,14 +104,20 @@
             }
 
             // 情况 C：独立的 <i> 标签，包裹一个固定尺寸的 span 容器
+            // 跳过小内联标签（有 px-/py- padding 但无明确尺寸的徽章）
+            if (parent && !hasExplicitSize(parent) &&
+                /\bpx-/.test(parent.className) && /\bpy-/.test(parent.className)) {
+                return; // 小标签内的 <i> 不替换，保留原始 Phosphor 图标
+            }
             var wrapper = document.createElement('span');
             wrapper.className = 'inline-block overflow-hidden w-5 h-5';
             wrapper.appendChild(createIconImg('douyin'));
             icon.parentNode.replaceChild(wrapper, icon);
         });
 
-        // ===== 2. 替换含"闲"/"闲鱼"文字 + bg-yellow-400 的容器 =====
+        // ===== 2. 替换含"闲"/"闲鱼"文字 + bg-yellow-400 的容器（须有明确尺寸） =====
         document.querySelectorAll('[class*="bg-yellow-400"]').forEach(function (el) {
+            if (!hasExplicitSize(el)) return;
             var platform = matchPlatformByText(el.textContent);
             if (platform === 'xianyu') {
                 removeBrandClasses(el);
@@ -111,8 +126,9 @@
             }
         });
 
-        // ===== 3. 替换含"小红书"文字 + bg-red-500 的容器 =====
+        // ===== 3. 替换含"小红书"文字 + bg-red-500 的容器（须有明确尺寸） =====
         document.querySelectorAll('[class*="bg-red-500"]').forEach(function (el) {
+            if (!hasExplicitSize(el)) return;
             var platform = matchPlatformByText(el.textContent);
             if (platform === 'xiaohongshu') {
                 removeBrandClasses(el);

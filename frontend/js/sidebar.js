@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const sidebarHTML = `
     <aside class="w-64 bg-white border-r border-gray-100 flex flex-col justify-between h-full flex-shrink-0 relative z-40">
-        <div class="overflow-y-auto h-full pb-24">
+        <div class="overflow-y-auto h-full pb-6">
             <!-- Logo area -->
             <div class="p-6 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-blue-200 flex-shrink-0">
+                <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">
                     <img src="assets/jpg/logo.jpg" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
@@ -33,19 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 <!-- Expanded Menu: Platform Management -->
                 <div class="mt-2">
-                    <a href="platform.html" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium justify-between" data-page="platform.html">
-                        <div class="flex items-center">
+                    <div class="flex items-center mx-2 rounded-lg hover:bg-gray-100 transition-colors">
+                        <a href="platform.html" class="nav-link flex items-center flex-1 px-4 py-2.5 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="platform.html">
                             <i class="ph ph-squares-four text-lg mr-3 icon-base text-gray-500"></i>平台管理
-                        </div>
-                        <i class="ph ph-caret-right text-gray-400 caret-icon"></i>
-                    </a>
+                        </a>
+                        <button id="platform-toggle" class="px-3 py-2.5 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
+                            <i class="ph ph-caret-right caret-icon"></i>
+                        </button>
+                    </div>
                     <!-- Sub-menu items -->
                     <div class="space-y-1 mt-1 hidden" id="platform-submenu">
-                        <a href="platform.html" class="flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm">总览看板</a>
-                        <a href="platform.html" class="flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg bg-brand-50 text-brand-600 font-medium transition-colors cursor-pointer text-sm">内容管理</a>
-                        <a href="#" class="flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm">闲鱼</a>
-                        <a href="#" class="flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm">小红书</a>
-                        <a href="#" class="flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm">抖音</a>
+                        <a href="platform.html" class="flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg bg-brand-50 text-brand-600 font-medium transition-colors cursor-pointer text-sm">总览看板</a>
+                        <a href="xianyu.html" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm" data-page="xianyu.html">闲鱼</a>
+                        <a href="xiaohongshu.html" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm" data-page="xiaohongshu.html">小红书</a>
+                        <a href="douyin.html" class="nav-link flex items-center pl-11 pr-4 py-2 mx-2 rounded-lg text-gray-500 hover:text-gray-900 transition-colors cursor-pointer text-sm" data-page="douyin.html">抖音</a>
                     </div>
                 </div>
 
@@ -70,30 +71,48 @@ document.addEventListener('DOMContentLoaded', () => {
             </nav>
         </div>
 
-        <!-- Bottom Section: Upgrade & Collapse -->
-        <div class="absolute bottom-0 left-0 w-full bg-white border-t border-gray-50 p-4 z-20">
-            <div class="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
-                <div class="flex items-center gap-2 mb-1">
-                    <i class="ph-fill ph-crown text-yellow-500 text-lg"></i>
-                    <span class="font-semibold text-gray-800 text-sm">专业版</span>
-                </div>
-                <p class="text-xs text-gray-500 mb-3">2025-12-31 到期</p>
-                <button class="w-full py-2 bg-white border border-brand-100 text-brand-600 rounded-lg text-xs font-medium hover:bg-brand-50 transition-colors">
-                    升级续费
-                </button>
-            </div>
-            
-            <div class="flex justify-center">
-                <button class="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors">
-                    <i class="ph ph-caret-double-left"></i>
-                </button>
-            </div>
-        </div>
     </aside>
     `;
 
     // 将侧边栏插入到 body 最前面
     document.body.insertAdjacentHTML('afterbegin', sidebarHTML);
+
+    // 平台管理：点击文字导航并自动展开子菜单
+    const platformLink = document.querySelector('.nav-link[data-page="platform.html"]');
+    if (platformLink) {
+        platformLink.addEventListener('click', function () {
+            const submenu = document.getElementById('platform-submenu');
+            const caret = document.querySelector('#platform-toggle .caret-icon');
+            if (submenu) {
+                submenu.classList.remove('hidden');
+            }
+            if (caret) {
+                caret.classList.remove('ph-caret-right', 'text-gray-400');
+                caret.classList.add('ph-caret-up', 'text-brand-600');
+            }
+        });
+    }
+
+    // 平台管理：箭头按钮自由展开/收起子菜单
+    const platformToggle = document.getElementById('platform-toggle');
+    if (platformToggle) {
+        platformToggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const submenu = document.getElementById('platform-submenu');
+            const caret = platformToggle.querySelector('.caret-icon');
+            if (submenu) {
+                submenu.classList.toggle('hidden');
+            }
+            if (caret) {
+                const expanded = submenu && !submenu.classList.contains('hidden');
+                caret.classList.toggle('ph-caret-right', !expanded);
+                caret.classList.toggle('text-gray-400', !expanded);
+                caret.classList.toggle('ph-caret-up', expanded);
+                caret.classList.toggle('text-brand-600', expanded);
+            }
+        });
+    }
 
     // 获取当前页面文件名
     let currentPage = window.location.pathname.split('/').pop();
@@ -123,17 +142,7 @@ function updateSidebarActive(targetPage) {
             icon.classList.add('text-gray-500');
         }
 
-        // 重置平台管理箭头
-        const caret = link.querySelector('.caret-icon');
-        if (caret) {
-            caret.classList.remove('ph-caret-up', 'text-brand-600');
-            caret.classList.add('ph-caret-right', 'text-gray-400');
-        }
     });
-
-    // 收起平台子菜单
-    const submenu = document.getElementById('platform-submenu');
-    if (submenu) submenu.classList.add('hidden');
 
     // 第二步：激活目标页面对应的导航项
     navLinks.forEach(link => {
@@ -145,18 +154,6 @@ function updateSidebarActive(targetPage) {
             if (icon) {
                 icon.classList.remove('text-gray-500');
                 icon.classList.add('text-brand-600');
-            }
-
-            // 平台管理：展开子菜单 + 箭头朝上
-            if (targetPage === 'platform.html') {
-                const sub = document.getElementById('platform-submenu');
-                if (sub) sub.classList.remove('hidden');
-
-                const caret = link.querySelector('.caret-icon');
-                if (caret) {
-                    caret.classList.remove('ph-caret-right', 'text-gray-400');
-                    caret.classList.add('ph-caret-up', 'text-brand-600');
-                }
             }
         }
     });
