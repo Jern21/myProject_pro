@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>设置中心 - 接单管理平台</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>设置中心 - 文的项目工作台</title>
+    <script src="assets/tailwind.min.js"></script>
+    <!-- Phosphor Icons（本地引入） -->
+    <link rel="stylesheet" href="assets/fonts/phosphor-regular.css">
+    <link rel="stylesheet" href="assets/fonts/phosphor-fill.css">
+    <link rel="stylesheet" href="assets/fonts/inter.css">
     <script src="js/tailwind-config.js"></script>
     <script src="js/cdn-fallback.js"></script>
     <link rel="stylesheet" href="css/common.css">
     <script src="js/sidebar.js"></script>
+<script src="js/spa-router.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/platform-icons.js"></script>
     <style type="text/tailwindcss">
         /* 页面专属：设置表单样式 */
         .form-input {
@@ -612,7 +617,7 @@
                                     <i class="ph-fill ph-bag text-3xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="text-xl font-bold text-gray-800">接单管理平台</h4>
+                                    <h4 class="text-xl font-bold text-gray-800">文的项目工作台</h4>
                                     <p class="text-sm text-gray-500">高效管理 · 轻松接单</p>
                                     <div class="flex items-center gap-2 mt-1">
                                         <span class="text-xs text-gray-400">版本</span>
@@ -658,8 +663,8 @@
     </main>
 
     <script>
-        // 设置导航点击高亮
-        document.addEventListener('DOMContentLoaded', function() {
+        // 设置导航点击高亮 + 滚动高亮
+        function initSettingsNav() {
             var navItems = document.querySelectorAll('.settings-nav-item');
             navItems.forEach(function(item) {
                 item.addEventListener('click', function() {
@@ -687,7 +692,12 @@
             document.querySelectorAll('#account, #security, #notification, #export, #backup, #cleanup, #recycle, #about').forEach(function(sec) {
                 observer.observe(sec);
             });
-        });
+        }
+
+        // 初始化：DOM 加载完成时
+        document.addEventListener('DOMContentLoaded', initSettingsNav);
+        // SPA 局部刷新后重新初始化
+        window.addEventListener('spa:ready', initSettingsNav);
     </script>
 </body>
 </html>

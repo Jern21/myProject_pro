@@ -1,14 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 防重复插入保护：SPA 切换时不会二次执行
+    if (document.querySelector('#sidebar-nav')) return;
+
     const sidebarHTML = `
     <aside class="w-64 bg-white border-r border-gray-100 flex flex-col justify-between h-full flex-shrink-0 relative z-40">
         <div class="overflow-y-auto h-full pb-24">
             <!-- Logo area -->
             <div class="p-6 flex items-center gap-3">
-                <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                    <i class="ph-fill ph-bag text-xl"></i>
+                <div class="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-blue-200 flex-shrink-0">
+                    <img src="assets/jpg/logo.jpg" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
-                    <h1 class="font-bold text-gray-800 text-base">接单管理平台</h1>
+                    <h1 class="font-bold text-gray-800 text-base">文的项目工作台</h1>
                     <p class="text-xs text-gray-400">高效管理 · 轻松接单</p>
                 </div>
             </div>
@@ -98,27 +101,57 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPage = 'index.html';
     }
 
-    // 处理导航激活状态
+    // 设置初始激活状态
+    updateSidebarActive(currentPage);
+});
+
+/**
+ * 更新侧边栏导航激活状态（同时供 SPA 路由器调用）
+ * @param {string} targetPage - 目标页面文件名，如 'index.html'
+ */
+function updateSidebarActive(targetPage) {
     const navLinks = document.querySelectorAll('.nav-link');
+
+    // 第一步：清除所有激活状态，恢复默认样式
     navLinks.forEach(link => {
-        if (link.dataset.page === currentPage) {
-            // 移除默认样式
+        link.classList.remove('bg-brand-50', 'text-brand-600');
+        link.classList.add('text-gray-700', 'hover:bg-gray-100');
+
+        const icon = link.querySelector('.icon-base');
+        if (icon) {
+            icon.classList.remove('text-brand-600');
+            icon.classList.add('text-gray-500');
+        }
+
+        // 重置平台管理箭头
+        const caret = link.querySelector('.caret-icon');
+        if (caret) {
+            caret.classList.remove('ph-caret-up', 'text-brand-600');
+            caret.classList.add('ph-caret-right', 'text-gray-400');
+        }
+    });
+
+    // 收起平台子菜单
+    const submenu = document.getElementById('platform-submenu');
+    if (submenu) submenu.classList.add('hidden');
+
+    // 第二步：激活目标页面对应的导航项
+    navLinks.forEach(link => {
+        if (link.dataset.page === targetPage) {
             link.classList.remove('text-gray-700', 'hover:bg-gray-100');
-            // 添加激活样式
             link.classList.add('bg-brand-50', 'text-brand-600');
-            
-            // 切换图标颜色
+
             const icon = link.querySelector('.icon-base');
             if (icon) {
                 icon.classList.remove('text-gray-500');
                 icon.classList.add('text-brand-600');
             }
 
-            // 处理平台管理的子菜单展开状态
-            if (currentPage === 'platform.html') {
-                const submenu = document.getElementById('platform-submenu');
-                if (submenu) submenu.classList.remove('hidden');
-                
+            // 平台管理：展开子菜单 + 箭头朝上
+            if (targetPage === 'platform.html') {
+                const sub = document.getElementById('platform-submenu');
+                if (sub) sub.classList.remove('hidden');
+
                 const caret = link.querySelector('.caret-icon');
                 if (caret) {
                     caret.classList.remove('ph-caret-right', 'text-gray-400');
@@ -127,4 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-});
+}
+
+// 暴露为全局函数，供 spa-router.js 调用
+window.updateSidebarActive = updateSidebarActive;

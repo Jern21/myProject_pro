@@ -1,9 +1,9 @@
 /**
  * Tailwind CSS 共享配置
  * 所有页面统一引用，避免重复定义
- * 必须在 Tailwind CDN 之后加载
+ * 必须在 Tailwind 脚本之后加载
  *
- * 防御性设计：如果 Tailwind CDN 尚未加载完成，
+ * 防御性设计：如果 Tailwind 尚未加载完成，
  * 会轮询等待，避免 ReferenceError 崩溃
  */
 (function () {
@@ -67,8 +67,8 @@
             setTimeout(applyConfig, 50);
         } else {
             console.warn(
-                '[tailwind-config] Tailwind CSS CDN 加载超时（5秒），' +
-                '页面样式可能无法正常显示。请检查网络连接或使用 VPN。'
+                '[tailwind-config] Tailwind CSS 加载超时（5秒），' +
+                '页面样式可能无法正常显示。请检查 assets/tailwind.min.js 是否存在。'
             );
         }
     }
