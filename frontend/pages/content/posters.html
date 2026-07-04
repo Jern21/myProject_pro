@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -175,7 +175,7 @@
                             <div>
                                 <div class="flex justify-between items-start mb-1">
                                     <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">抖音起号动态封面</h4>
-                                    <div class="w-5 h-5 rounded bg-gray-900 text-white flex flex-shrink-0 items-center justify-center text-sm"><i class="ph-fill ph-tiktok-logo"></i></div>
+                                    <div class="w-5 h-5 rounded bg-gray-900 text-white flex flex-shrink-0 items-center justify-center text-sm" data-platform="douyin"><i class="ph-fill ph-tiktok-logo"></i></div>
                                 </div>
                                 <p class="text-xs text-gray-400 mb-2">更新于 2026-06-20</p>
                             </div>
@@ -211,7 +211,7 @@
                             <div>
                                 <div class="flex justify-between items-start mb-1">
                                     <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">朋友圈服务清单(7月版)</h4>
-                                    <div class="w-5 h-5 rounded bg-green-50 text-green-500 flex flex-shrink-0 items-center justify-center text-sm"><i class="ph-fill ph-wechat-logo"></i></div>
+                                    <div class="w-5 h-5 rounded bg-green-50 text-green-500 flex flex-shrink-0 items-center justify-center text-sm" data-platform="wechat"><i class="ph-fill ph-wechat-logo"></i></div>
                                 </div>
                                 <p class="text-xs text-gray-400 mb-2">更新于 刚刚</p>
                             </div>
@@ -273,39 +273,119 @@
     'use strict';
 
     /**
-     * 从海报卡片 DOM 中提取编辑数据
-     * 各卡片元素结构：
-     *   h4.font-semibold  → 海报标题
-     *   div[data-platform] → 平台标识
-     *   span (状态标签)   → 状态文字
-     *   p.text-xs.text-gray-400 → 更新时间
+     * 从海报卡片 DOM 中提取完整编辑数据
+     *
+     * 提取字段：
+     *   title      → h4.font-semibold 文本
+     *   platform   → div[data-platform] 属性
+     *   status     → 状态标签文字映射
+     *   ratio      → aspect 比例
+     *   desc       → 海报内的 h3 / span 文本（海报主标题）
+     *   effect     → 统计数据（浏览/点赞/播放）
+     *   onlineDate → 从「更新于 YYYY-MM-DD」解析
+     *   remark     → 海报内副标题/描述文本
+     *   imageHtml  → 海报视觉区 DOM 快照（用于表单预览）
      */
     function extractCardData(card) {
         if (!card) return null;
 
+        // === 标题 ===
         var titleEl = card.querySelector('h4.font-semibold');
-        var platformEl = card.querySelector('[data-platform]');
-        var statusSpan = card.querySelector('.p-4 span.inline-block');
-        var timeEl = card.querySelector('p.text-xs.text-gray-400');
-
         var title = titleEl ? titleEl.textContent.trim() : '';
+
+        // === 平台 ===
+        var platformEl = card.querySelector('[data-platform]');
         var platform = platformEl ? platformEl.getAttribute('data-platform') : 'other';
 
-        // 状态映射
+        // === 状态 ===
+        var statusSpan = card.querySelector('.p-4 span.inline-block');
         var statusText = statusSpan ? statusSpan.textContent.trim() : '';
         var statusMap = { '使用中': 'active', '即将到期': 'expiring', '草稿箱': 'draft', '已归档': 'archived' };
         var status = statusMap[statusText] || 'active';
 
-        // 比例（海报卡片都是 3/4）
-        var ratioEl = card.querySelector('.aspect-\[3\/4\]');
+        // === 比例 ===
+        var ratioEl = card.querySelector('.aspect-\\[3\\/4\\]');
         var ratio = ratioEl ? '3/4' : '1/1';
+
+        // === 海报视觉快照（克隆后移除 hover 遮罩） ===
+        var imageHtml = '';
+        if (ratioEl) {
+            var clone = ratioEl.cloneNode(true);
+            // 移除 hover 遮罩层（含 opacity-0 的子元素）
+            var overlays = clone.querySelectorAll('.opacity-0');
+            overlays.forEach(function (el) { el.remove(); });
+            imageHtml = clone.outerHTML;
+        }
+
+        // === 海报内主标题（h3 / span） ===
+        var desc = '';
+        var h3 = card.querySelector('.aspect-\\[3\\/4\\] h3');
+        if (h3) {
+            desc = h3.textContent.replace(/\s+/g, ' ').trim();
+        }
+        if (!desc) {
+            var span = card.querySelector('.aspect-\\[3\\/4\\] span.font-medium');
+            if (span) desc = span.textContent.trim();
+        }
+
+        // === 副标题/备注（p 标签内的描述性文字） ===
+        var remark = '';
+        var subP = card.querySelector('.aspect-\\[3\\/4\\] p');
+        if (subP) {
+            remark = subP.textContent.replace(/\s+/g, ' ').trim();
+        }
+
+        // === 实际效果（浏览/点赞/播放） ===
+        var effect = '';
+        var statsDiv = card.querySelector('.flex.items-center.gap-1.text-gray-400');
+        if (statsDiv) {
+            var icon = statsDiv.querySelector('i');
+            var iconClass = icon ? icon.className : '';
+            var num = statsDiv.textContent.trim();
+            if (iconClass.indexOf('ph-eye') !== -1) {
+                effect = '浏览 ' + num;
+            } else if (iconClass.indexOf('ph-heart') !== -1) {
+                effect = '点赞 ' + num;
+            } else if (iconClass.indexOf('ph-play') !== -1) {
+                effect = '播放 ' + num;
+            } else {
+                effect = num;
+            }
+        }
+
+        // === 更新日期（解析「更新于 YYYY-MM-DD」） ===
+        var onlineDate = '';
+        var timeEl = card.querySelector('p.text-xs.text-gray-400');
+        if (timeEl) {
+            var timeText = timeEl.textContent.trim();
+            var match = timeText.match(/\d{4}-\d{2}-\d{2}/);
+            if (match) onlineDate = match[0];
+        }
+
+        // === 合并设计备注 ===
+        var fullRemark = '';
+        if (desc) fullRemark += '海报文案：' + desc;
+        if (remark) fullRemark += (fullRemark ? '\n' : '') + remark;
+
+        // === 标签推断（根据标题/描述关键词） ===
+        var tags = [];
+        var allText = (title + ' ' + desc + ' ' + remark).toLowerCase();
+        if (allText.indexOf('引流') !== -1 || allText.indexOf('主图') !== -1) tags.push('引流');
+        if (allText.indexOf('爆款') !== -1) tags.push('爆款');
+        if (allText.indexOf('干货') !== -1) tags.push('干货');
+        if (allText.indexOf('特惠') !== -1 || allText.indexOf('促销') !== -1 || allText.indexOf('7月') !== -1) tags.push('促销');
+        if (allText.indexOf('毕设') !== -1 || allText.indexOf('毕业') !== -1) tags.push('品牌');
 
         return {
             title: title,
             platform: platform,
             status: status,
             ratio: ratio,
-            tags: []
+            tags: tags,
+            remark: fullRemark,
+            effect: effect,
+            onlineDate: onlineDate,
+            imageHtml: imageHtml
         };
     }
 

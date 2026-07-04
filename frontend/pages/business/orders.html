@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -38,6 +38,17 @@
         .status-closed {
             @apply bg-gray-50 text-gray-500 border-gray-200;
         }
+
+        /* 页面专属：报价单预览 */
+        .paper-preview {
+            @apply bg-white rounded-lg shadow-paper border border-gray-200 p-8 mx-auto relative;
+            width: 100%;
+            max-width: 500px;
+            min-height: 700px;
+        }
+        .paper-dash-line {
+            @apply border-b border-dashed border-gray-300 my-4;
+        }
     </style>
     <script src="../../js/sidebar.js"></script>
 <script src="../../js/header.js"></script>
@@ -45,6 +56,8 @@
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
 <script src="../../js/order-form.js"></script>
+<!-- html2canvas：本地引入，用于导出报价单 PNG -->
+<script src="../../assets/html2canvas.min.js"></script>
 </head>
 <body class="flex h-screen overflow-hidden text-sm">
 
@@ -207,8 +220,8 @@
                                     </td>
                                     <td class="py-4 px-4">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-dots-three"></i></button>
+                                            <button class="order-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
+                                            <button class="order-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -244,8 +257,8 @@
                                     </td>
                                     <td class="py-4 px-4">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-dots-three"></i></button>
+                                            <button class="order-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
+                                            <button class="order-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -281,8 +294,8 @@
                                     </td>
                                     <td class="py-4 px-4">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-dots-three"></i></button>
+                                            <button class="order-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
+                                            <button class="order-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -318,8 +331,8 @@
                                     </td>
                                     <td class="py-4 px-4">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-dots-three"></i></button>
+                                            <button class="order-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
+                                            <button class="order-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -355,8 +368,8 @@
                                     </td>
                                     <td class="py-4 px-4">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-dots-three"></i></button>
+                                            <button class="order-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
+                                            <button class="order-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -392,8 +405,8 @@
                                     </td>
                                     <td class="py-4 px-4">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-dots-three"></i></button>
+                                            <button class="order-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
+                                            <button class="order-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -429,8 +442,8 @@
                                     </td>
                                     <td class="py-4 px-4">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition"><i class="ph ph-dots-three"></i></button>
+                                            <button class="order-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition"><i class="ph ph-eye"></i></button>
+                                            <button class="order-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition relative"><i class="ph ph-dots-three"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -478,10 +491,10 @@
                 <!-- Title & Status -->
                 <div class="mb-5">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="status-badge status-processing text-[10px] py-0.5">进行中</span>
-                        <span class="text-gray-400 text-xs">DD20250703001</span>
+                        <span id="detail-status-badge" class="status-badge status-processing text-[10px] py-0.5">进行中</span>
+                        <span id="detail-order-no" class="text-gray-400 text-xs">DD20250703001</span>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-900">企业官网定制开发</h2>
+                    <h2 id="detail-order-name" class="text-xl font-bold text-gray-900">企业官网定制开发</h2>
                 </div>
 
                 <!-- Inner Tabs -->
@@ -498,8 +511,8 @@
                             <i class="ph-fill ph-user text-xl"></i>
                         </div>
                         <div>
-                            <p class="font-medium text-gray-800 text-sm">张先生</p>
-                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                            <p id="detail-customer-name" class="font-medium text-gray-800 text-sm">张先生</p>
+                            <p id="detail-customer-phone" class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                                 138****5678 <i class="ph-fill ph-wechat-logo text-green-500"></i>
                             </p>
                         </div>
@@ -510,19 +523,19 @@
                 <div class="grid grid-cols-2 gap-y-4 gap-x-4 mb-6">
                     <div>
                         <p class="text-xs text-gray-400 mb-1">项目类型</p>
-                        <p class="text-sm font-medium text-gray-800">网站开发</p>
+                        <p id="detail-project-type" class="text-sm font-medium text-gray-800">网站开发</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 mb-1">成交金额</p>
-                        <p class="text-sm font-medium text-gray-800">¥ 6,800</p>
+                        <p id="detail-amount" class="text-sm font-medium text-gray-800">¥ 6,800</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 mb-1">实际成本</p>
-                        <p class="text-sm font-medium text-gray-800">¥ 2,600</p>
+                        <p id="detail-cost" class="text-sm font-medium text-gray-800">¥ 2,600</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 mb-1">预计利润</p>
-                        <p class="text-sm font-medium text-gray-800">¥ 4,200</p>
+                        <p id="detail-profit" class="text-sm font-medium text-gray-800">¥ 4,200</p>
                     </div>
                 </div>
 
@@ -530,10 +543,10 @@
                 <div class="mb-6">
                     <div class="flex justify-between items-end mb-2">
                         <p class="text-xs text-gray-400">付款状态</p>
-                        <p class="text-xs font-medium"><span class="text-red-500">已付 50%</span> <span class="text-gray-400">/ ¥ 6,800</span></p>
+                        <p class="text-xs font-medium"><span id="detail-payment-ratio" class="text-red-500">已付 50%</span> <span class="text-gray-400">/ <span id="detail-payment-amount">¥ 6,800</span></span></p>
                     </div>
                     <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden flex">
-                        <div class="bg-brand-500 w-1/2 h-full"></div>
+                        <div id="detail-payment-bar" class="bg-brand-500 w-1/2 h-full"></div>
                     </div>
                 </div>
 
@@ -541,23 +554,23 @@
                 <div class="space-y-4">
                     <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                         <span class="text-sm text-gray-500">接单时间</span>
-                        <span class="text-sm text-gray-800">2025-07-03 14:32</span>
+                        <span id="detail-order-date" class="text-sm text-gray-800">2025-07-03 14:32</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                         <span class="text-sm text-gray-500">交付周期</span>
-                        <span class="text-sm text-gray-800">15 天</span>
+                        <span id="detail-cycle" class="text-sm text-gray-800">15 天</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                         <span class="text-sm text-gray-500">预计交付</span>
-                        <span class="text-sm text-gray-800 font-medium">2025-07-18</span>
+                        <span id="detail-delivery-date" class="text-sm text-gray-800 font-medium">2025-07-18</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                         <span class="text-sm text-gray-500">客户来源</span>
-                        <span class="px-2 py-0.5 bg-yellow-50 text-yellow-600 rounded text-xs font-medium">闲鱼</span>
+                        <span id="detail-source" class="px-2 py-0.5 bg-yellow-50 text-yellow-600 rounded text-xs font-medium">闲鱼</span>
                     </div>
                     <div class="flex justify-between items-start border-b border-gray-50 pb-3">
                         <span class="text-sm text-gray-500 mt-0.5">客户标签</span>
-                        <div class="flex gap-1.5 flex-wrap justify-end">
+                        <div id="detail-tags" class="flex gap-1.5 flex-wrap justify-end">
                             <span class="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">高价值</span>
                             <span class="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">爽快型</span>
                             <span class="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">复购客户</span>
@@ -568,16 +581,672 @@
 
             <!-- Footer Buttons -->
             <div class="p-5 border-t border-gray-100 bg-gray-50/50 flex gap-3">
-                <button class="flex-1 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition">
+                <button id="order-detail-edit-btn" class="flex-1 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition">
                     编辑订单
                 </button>
-                <button class="flex-1 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition shadow-sm shadow-brand-500/30">
-                    查看详情
+                <button id="order-detail-quote-btn" class="flex-1 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition shadow-sm shadow-brand-500/30">
+                    查看报价单
                 </button>
             </div>
         </div>
     </div>
 </main>
 
+    <script>
+        // ========== 订单详情抽屉按钮交互 ==========
+        (function () {
+            'use strict';
+
+            // 当前展示的订单数据（用于编辑时传入表单）
+            function getCurrentOrderData() {
+                return {
+                    customerNick: '张先生',
+                    customerPhone: '138****5678',
+                    customerSource: '闲鱼',
+                    customerTags: ['高价值', '爽快型', '复购客户'],
+                    projectType: '网站开发',
+                    projectName: '企业官网定制开发',
+                    projectDesc: '企业官网定制开发，包含首页、关于我们、产品展示等核心页面的设计与前后端开发，双端自适应。',
+                    amount: 6800,
+                    cost: 2600,
+                    orderDate: '2025-07-03',
+                    finalDate: '2025-07-18',
+                    orderStatus: 'processing',
+                    paymentStatus: '部分付款',
+                    paymentRatio: 50,
+                    quoteRef: 'QUO-20250703-001'
+                };
+            }
+
+            function bindOrderDetailButtons() {
+                var editBtn = document.getElementById('order-detail-edit-btn');
+                var quoteBtn = document.getElementById('order-detail-quote-btn');
+
+                if (editBtn && !editBtn.dataset.bound) {
+                    editBtn.dataset.bound = 'true';
+                    editBtn.addEventListener('click', function () {
+                        if (typeof window.openOrderForm === 'function') {
+                            window.openOrderForm(getCurrentOrderData());
+                        }
+                    });
+                }
+
+                if (quoteBtn && !quoteBtn.dataset.bound) {
+                    quoteBtn.dataset.bound = 'true';
+                    quoteBtn.addEventListener('click', function () {
+                        showQuotePreview();
+                    });
+                }
+            }
+
+            // 页面加载时绑定
+            bindOrderDetailButtons();
+
+            // SPA 切换后重新绑定
+            window.addEventListener('spa:ready', function (e) {
+                var page = (e.detail && e.detail.page) || '';
+                if (page && page.indexOf('orders') === -1) return;
+                if (!document.getElementById('order-detail-edit-btn')) return;
+                bindOrderDetailButtons();
+            });
+
+            // ========== 报价单预览 ==========
+
+            var quoteData = {
+                projectName: '企业官网定制开发 (双端自适应)',
+                customerName: '张先生',
+                quoteDate: '2025-07-03',
+                cycle: '15',
+                discount: '300',
+                paymentMethod: '50%预付定金启动项目，40%测试上线无误后支付，10%为尾款交付源码时支付。',
+                notes: '1. 本报价有效期为 7 天。\n2. 免费提供首年服务器日常维护及程序Bug修复。\n3. 超出上述需求范围的新增功能，需另行评估报价。',
+                items: [
+                    { name: '基础架构与UI/UX设计', qty: 1, price: 2000, desc: '包含首页、关于我们、产品展示等5个核心页面的设计与前端重构 (响应式)' },
+                    { name: '后端管理系统开发', qty: 1, price: 3500, desc: '总览看板(CMS)、产品管理、基础权限分配、API接口开发' },
+                    { name: '服务器部署与备案协助', qty: 1, price: 800, desc: 'Linux环境配置、SSL证书配置、域名解析及上线测试' }
+                ]
+            };
+
+            function formatQuoteMoney(n) {
+                return parseFloat(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+
+            function calcQuoteSubtotal() {
+                return quoteData.items.reduce(function (sum, item) { return sum + (item.qty * item.price); }, 0);
+            }
+
+            function renderQuotePreview() {
+                var container = document.getElementById('quote-modal-items');
+                if (!container) return;
+
+                var itemsHtml = quoteData.items.map(function (item, i) {
+                    var amount = item.qty * item.price;
+                    return [
+                        '<div class="grid grid-cols-12 gap-2 items-start">',
+                        '  <div class="col-span-7">',
+                        '    <p class="font-semibold text-gray-800">' + (i + 1) + '. ' + (item.name || '未命名模块') + '</p>',
+                        item.desc ? '<p class="text-xs text-gray-500 mt-1 leading-relaxed">' + item.desc + '</p>' : '',
+                        '  </div>',
+                        '  <div class="col-span-2 text-center text-gray-600 mt-0.5">' + item.qty + '</div>',
+                        '  <div class="col-span-3 text-right font-medium text-gray-800 mt-0.5">' + formatQuoteMoney(amount) + '</div>',
+                        '</div>'
+                    ].join('');
+                }).join('');
+                container.innerHTML = itemsHtml || '<p class="text-center text-gray-300 py-8">暂无报价明细</p>';
+
+                var subtotal = calcQuoteSubtotal();
+                var discount = parseFloat(quoteData.discount || 0);
+                var total = subtotal - discount;
+
+                var pvSubtotal = document.getElementById('quote-modal-subtotal');
+                if (pvSubtotal) pvSubtotal.textContent = '¥ ' + formatQuoteMoney(subtotal);
+                var pvDiscount = document.getElementById('quote-modal-discount');
+                if (pvDiscount) pvDiscount.textContent = '- ¥ ' + formatQuoteMoney(discount);
+                var pvTotal = document.getElementById('quote-modal-total');
+                if (pvTotal) pvTotal.textContent = '¥ ' + formatQuoteMoney(total);
+
+                var pvProjectName = document.getElementById('quote-modal-projectName');
+                if (pvProjectName) pvProjectName.textContent = quoteData.projectName || '—';
+                var pvCustomerName = document.getElementById('quote-modal-customerName');
+                if (pvCustomerName) pvCustomerName.textContent = quoteData.customerName || '—';
+                var pvQuoteDate = document.getElementById('quote-modal-quoteDate');
+                if (pvQuoteDate) pvQuoteDate.textContent = quoteData.quoteDate || '—';
+                var pvCycle = document.getElementById('quote-modal-cycle');
+                if (pvCycle) pvCycle.textContent = (quoteData.cycle || '0') + ' 工作日';
+
+                var notesHtml = '<p><strong>付款方式：</strong> ' + (quoteData.paymentMethod || '') + '</p>';
+                if (quoteData.notes) {
+                    quoteData.notes.split('\n').forEach(function (line) {
+                        if (line.trim()) notesHtml += '<p>' + line.trim() + '</p>';
+                    });
+                }
+                var pvNotes = document.getElementById('quote-modal-notes');
+                if (pvNotes) pvNotes.innerHTML = notesHtml;
+            }
+
+            function copyQuoteText() {
+                var lines = [];
+                lines.push('【项目报价单：' + quoteData.projectName + '】');
+                lines.push('客户：' + quoteData.customerName + ' | 周期：' + quoteData.cycle + '天 | 日期：' + quoteData.quoteDate);
+                lines.push('----------------------------------------');
+                quoteData.items.forEach(function (item, i) {
+                    lines.push((i + 1) + '. ' + item.name);
+                    if (item.desc) lines.push('   (' + item.desc + ')');
+                    lines.push('   ¥' + formatQuoteMoney(item.qty * item.price));
+                });
+                lines.push('----------------------------------------');
+                lines.push('小计：¥' + formatQuoteMoney(calcQuoteSubtotal()));
+                lines.push('优惠折扣：-¥' + formatQuoteMoney(parseFloat(quoteData.discount || 0)));
+                lines.push('【总计金额：¥' + formatQuoteMoney(calcQuoteSubtotal() - parseFloat(quoteData.discount || 0)) + '】');
+                lines.push('');
+                lines.push('付款方式：' + quoteData.paymentMethod);
+                if (quoteData.notes) lines.push('补充说明：' + quoteData.notes.replace(/\n/g, '；'));
+
+                navigator.clipboard.writeText(lines.join('\n')).then(function () {
+                    var toast = document.getElementById('quote-modal-toast');
+                    if (toast) {
+                        toast.classList.remove('translate-y-10', 'opacity-0');
+                        setTimeout(function () {
+                            toast.classList.add('translate-y-10', 'opacity-0');
+                        }, 3000);
+                    }
+                }).catch(function (err) {
+                    console.error('Copy failed', err);
+                });
+            }
+
+            function exportQuotePDF() {
+                window.print();
+            }
+
+            function exportQuotePNG() {
+                var target = document.getElementById('quote-modal-paper');
+                if (!target || typeof html2canvas === 'undefined') {
+                    alert('图片导出组件尚未加载，请稍后重试');
+                    return;
+                }
+                html2canvas(target, { scale: 2, backgroundColor: '#ffffff' }).then(function (canvas) {
+                    var link = document.createElement('a');
+                    link.download = '报价单-' + (quoteData.projectName || '未命名') + '.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            }
+
+            // 暴露给内联 onclick 使用
+            window.copyQuoteText = copyQuoteText;
+            window.exportQuotePDF = exportQuotePDF;
+            window.exportQuotePNG = exportQuotePNG;
+
+            function showQuotePreview() {
+                // 如果已存在则先移除
+                var existing = document.getElementById('quote-preview-modal');
+                if (existing) existing.remove();
+
+                var modalHtml = [
+                    '<div id="quote-preview-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">',
+                    '  <div id="quote-modal-overlay" class="absolute inset-0 bg-black/40"></div>',
+                    '  <div class="relative bg-[#f9fafb] rounded-2xl shadow-2xl w-full max-w-[600px] max-h-[92vh] flex flex-col z-10">',
+                    // Header
+                    '    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white rounded-t-2xl flex-shrink-0">',
+                    '      <div class="flex items-center gap-2">',
+                    '        <i class="ph-fill ph-file-text text-brand-500 text-lg"></i>',
+                    '        <h3 class="font-bold text-gray-800 text-base">报价单预览</h3>',
+                    '        <span class="text-xs text-gray-400 font-mono ml-1">NO: QUO-20250703-001</span>',
+                    '      </div>',
+                    '      <button id="quote-modal-close" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition">',
+                    '        <i class="ph ph-x text-lg"></i>',
+                    '      </button>',
+                    '    </div>',
+                    // Action bar
+                    '    <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-white flex-shrink-0">',
+                    '      <button onclick="copyQuoteText()" class="flex-1 bg-gray-900 hover:bg-gray-800 text-white py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"><i class="ph ph-copy"></i> 复制文本</button>',
+                    '      <button onclick="exportQuotePDF()" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"><i class="ph ph-file-pdf"></i> 导出 PDF</button>',
+                    '      <button onclick="exportQuotePNG()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"><i class="ph ph-file-image"></i> 导出 PNG</button>',
+                    '    </div>',
+                    // Scrollable preview
+                    '    <div class="flex-1 overflow-y-auto p-6">',
+                    '      <div class="paper-preview overflow-hidden" id="quote-modal-paper">',
+                    '        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 opacity-50"></div>',
+                    '        <div class="flex justify-between items-end mb-6">',
+                    '          <div>',
+                    '            <h2 class="text-2xl font-bold text-gray-900 tracking-wide mb-1">开发报价单</h2>',
+                    '            <p class="text-xs text-gray-400 font-mono">NO: QUO-20250703-001</p>',
+                    '          </div>',
+                    '          <div class="text-right">',
+                    '            <div class="w-8 h-8 bg-brand-600 rounded flex items-center justify-center text-white ml-auto mb-1"><i class="ph-fill ph-bag text-sm"></i></div>',
+                    '            <p class="text-xs font-semibold text-gray-800">JERN工作室</p>',
+                    '          </div>',
+                    '        </div>',
+                    '        <div class="bg-gray-50/80 rounded-md p-4 mb-6 grid grid-cols-2 gap-y-2 text-sm border border-gray-100/50">',
+                    '          <div class="flex"><span class="text-gray-500 w-16">项目名称：</span><span class="text-gray-800 font-medium truncate" id="quote-modal-projectName"></span></div>',
+                    '          <div class="flex"><span class="text-gray-500 w-16">报价日期：</span><span class="text-gray-800" id="quote-modal-quoteDate"></span></div>',
+                    '          <div class="flex"><span class="text-gray-500 w-16">客户名称：</span><span class="text-gray-800" id="quote-modal-customerName"></span></div>',
+                    '          <div class="flex"><span class="text-gray-500 w-16">预计周期：</span><span class="text-gray-800" id="quote-modal-cycle"></span></div>',
+                    '        </div>',
+                    '        <div class="grid grid-cols-12 gap-2 text-xs font-medium text-gray-500 mb-2 px-2">',
+                    '          <div class="col-span-7">服务明细 (内容描述)</div>',
+                    '          <div class="col-span-2 text-center">数量</div>',
+                    '          <div class="col-span-3 text-right">金额 (¥)</div>',
+                    '        </div>',
+                    '        <div class="h-px bg-gray-800 mb-3"></div>',
+                    '        <div class="space-y-4 text-sm px-2 min-h-[200px]" id="quote-modal-items"></div>',
+                    '        <div class="paper-dash-line"></div>',
+                    '        <div class="w-full flex justify-end mb-8">',
+                    '          <div class="w-1/2 space-y-2">',
+                    '            <div class="flex justify-between text-sm text-gray-600"><span>小计：</span><span id="quote-modal-subtotal"></span></div>',
+                    '            <div class="flex justify-between text-sm text-red-500"><span>优惠折扣：</span><span id="quote-modal-discount"></span></div>',
+                    '            <div class="h-px bg-gray-200 my-1"></div>',
+                    '            <div class="flex justify-between items-end"><span class="font-medium text-gray-800">总计金额：</span><span class="text-xl font-bold text-gray-900 font-mono" id="quote-modal-total"></span></div>',
+                    '          </div>',
+                    '        </div>',
+                    '        <div class="bg-blue-50/50 rounded p-4 border border-blue-100/50">',
+                    '          <h4 class="text-xs font-semibold text-gray-800 mb-2 flex items-center gap-1"><i class="ph-fill ph-warning-circle text-blue-500"></i> 补充说明及付款方式</h4>',
+                    '          <div class="text-[11px] text-gray-600 leading-relaxed space-y-1" id="quote-modal-notes"></div>',
+                    '        </div>',
+                    '        <div class="text-center mt-8 text-[10px] text-gray-400">生成自 文的项目工作台 - 科技赋能自由开发</div>',
+                    '      </div>',
+                    '    </div>',
+                    '  </div>',
+                    '</div>',
+                    // Toast
+                    '<div id="quote-modal-toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-[70]">',
+                    '  <i class="ph-fill ph-check-circle text-green-400"></i>',
+                    '  <span>报价文本已复制到剪贴板！</span>',
+                    '</div>'
+                ].join('');
+
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                document.body.style.overflow = 'hidden';
+                renderQuotePreview();
+
+                // 绑定关闭
+                var modal = document.getElementById('quote-preview-modal');
+                var overlay = document.getElementById('quote-modal-overlay');
+                var closeBtn = document.getElementById('quote-modal-close');
+
+                function closeModal() {
+                    modal.remove();
+                    var toast = document.getElementById('quote-modal-toast');
+                    if (toast) toast.remove();
+                    document.body.style.overflow = '';
+                }
+
+                closeBtn.addEventListener('click', closeModal);
+                overlay.addEventListener('click', closeModal);
+                document.addEventListener('keydown', function escHandler(e) {
+                    if (e.key === 'Escape' && document.getElementById('quote-preview-modal')) {
+                        document.removeEventListener('keydown', escHandler);
+                        closeModal();
+                    }
+                });
+            }
+        })();
+
+        // ========== 表格行操作：眼睛查看 + 更多下拉 + 删除 ==========
+        (function () {
+            'use strict';
+
+            // ---- 每行扩展数据（表格中未展示的字段） ----
+            var ROW_EXTRA = {
+                'DD20250703001': { source: '闲鱼', cost: '¥ 2,600', paymentRatio: '50%', deliveryDate: '2025-07-18', tags: [['高价值','blue'],['爽快型','blue'],['复购客户','purple']] },
+                'DD20250702015': { source: '小红书', cost: '¥ 300', paymentRatio: '100%', deliveryDate: '2025-07-06', tags: [['急单','red']] },
+                'DD20250702014': { source: '抖音', cost: '¥ 300', paymentRatio: '100%', deliveryDate: '2025-07-04', tags: [['复购客户','purple']] },
+                'DD20250702013': { source: '微信', cost: '¥ 3,300', paymentRatio: '40%', deliveryDate: '2025-07-22', tags: [['高价值','blue']] },
+                'DD20250701012': { source: '闲鱼', cost: '¥ 200', paymentRatio: '100%', deliveryDate: '2025-07-02', tags: [['新客户','blue']] },
+                'DD20250630011': { source: '朋友推荐', cost: '¥ 4,200', paymentRatio: '30%', deliveryDate: '2025-07-25', tags: [['高价值','blue']] },
+                'DD20250629010': { source: '淘宝', cost: '¥ 120', paymentRatio: '0%', deliveryDate: '2025-07-01', tags: [['新客户','blue']] }
+            };
+
+            // ---- 状态 class 映射 ----
+            var STATUS_MAP = {
+                '进行中': 'status-processing',
+                '待验收': 'status-acceptance',
+                '已完成': 'status-completed',
+                '已逾期': 'status-overdue',
+                '已关闭': 'status-closed'
+            };
+
+            // ---- 从行 DOM 提取数据 ----
+            function extractRowData(row) {
+                var cells = row.querySelectorAll('td');
+                if (cells.length < 8) return null;
+
+                var orderNo = (cells[1].querySelector('p') || {}).textContent || '';
+                orderNo = orderNo.trim();
+                var orderName = (cells[1].querySelector('span.font-medium') || {}).textContent || '';
+                orderName = orderName.trim();
+
+                var customerName = (cells[2].querySelector('p.font-medium') || {}).textContent || '';
+                customerName = customerName.trim();
+                var phoneEl = cells[2].querySelector('p.text-xs');
+                var customerPhone = phoneEl ? phoneEl.textContent.trim() : '';
+
+                var projectType = (cells[3].querySelector('span') || {}).textContent || '';
+                projectType = projectType.trim();
+
+                var amountEl = cells[4].querySelector('p.font-medium');
+                var amount = amountEl ? amountEl.textContent.trim() : '';
+                var profitEl = cells[4].querySelector('p.text-xs');
+                var profit = profitEl ? profitEl.textContent.trim() : '';
+
+                var statusEl = cells[5].querySelector('span');
+                var statusText = statusEl ? statusEl.textContent.trim() : '';
+                var statusClass = statusEl ? (statusEl.className.match(/status-\w+/) || ['status-processing'])[0] : 'status-processing';
+
+                var cycle = cells[6].textContent.trim();
+
+                var dateEl = cells[7].querySelector('p:first-child');
+                var timeEl = cells[7].querySelector('p.text-xs');
+                var orderDate = dateEl ? dateEl.textContent.trim() : '';
+                var orderTime = timeEl ? timeEl.textContent.trim() : '';
+
+                var extra = ROW_EXTRA[orderNo] || {};
+
+                return {
+                    orderNo: orderNo,
+                    orderName: orderName,
+                    customerName: customerName,
+                    customerPhone: customerPhone,
+                    projectType: projectType,
+                    amount: amount,
+                    profit: profit,
+                    cost: extra.cost || '—',
+                    statusText: statusText,
+                    statusClass: statusClass,
+                    cycle: cycle,
+                    orderDate: orderDate,
+                    orderTime: orderTime,
+                    source: extra.source || '—',
+                    paymentRatio: extra.paymentRatio || '0%',
+                    deliveryDate: extra.deliveryDate || '—',
+                    tags: extra.tags || []
+                };
+            }
+
+            // ---- 更新右侧详情面板 ----
+            function updateDetailPanel(data) {
+                if (!data) return;
+                var set = function (id, text) {
+                    var el = document.getElementById(id);
+                    if (el) el.textContent = text;
+                };
+
+                set('detail-order-no', data.orderNo);
+                set('detail-order-name', data.orderName);
+                set('detail-customer-name', data.customerName);
+                set('detail-customer-phone', data.customerPhone);
+                set('detail-project-type', data.projectType);
+                set('detail-amount', data.amount);
+                set('detail-cost', data.cost);
+                set('detail-profit', data.profit);
+                set('detail-order-date', data.orderDate + ' ' + data.orderTime);
+                set('detail-cycle', data.cycle);
+                set('detail-delivery-date', data.deliveryDate);
+                set('detail-source', data.source);
+                set('detail-payment-ratio', '已付 ' + data.paymentRatio);
+                set('detail-payment-amount', data.amount);
+
+                // 状态徽章
+                var badge = document.getElementById('detail-status-badge');
+                if (badge) {
+                    badge.textContent = data.statusText;
+                    badge.className = 'status-badge text-[10px] py-0.5 ' + data.statusClass;
+                }
+
+                // 付款进度条
+                var bar = document.getElementById('detail-payment-bar');
+                if (bar) {
+                    var pct = parseInt(data.paymentRatio) || 0;
+                    bar.style.width = pct + '%';
+                }
+
+                // 客户来源颜色
+                var sourceEl = document.getElementById('detail-source');
+                if (sourceEl) {
+                    var sourceColors = {
+                        '闲鱼': 'bg-yellow-50 text-yellow-600',
+                        '小红书': 'bg-red-50 text-red-600',
+                        '抖音': 'bg-gray-100 text-gray-600',
+                        '微信': 'bg-green-50 text-green-600',
+                        '淘宝': 'bg-orange-50 text-orange-600',
+                        '朋友推荐': 'bg-blue-50 text-blue-600'
+                    };
+                    var sc = sourceColors[data.source] || 'bg-gray-50 text-gray-500';
+                    sourceEl.className = 'px-2 py-0.5 rounded text-xs font-medium ' + sc;
+                }
+
+                // 标签
+                var tagsEl = document.getElementById('detail-tags');
+                if (tagsEl) {
+                    var tagColors = {
+                        blue: 'text-blue-600 bg-blue-50',
+                        red: 'text-red-600 bg-red-50',
+                        purple: 'text-purple-600 bg-purple-50',
+                        green: 'text-green-600 bg-green-50'
+                    };
+                    tagsEl.innerHTML = data.tags.map(function (tag) {
+                        var name = tag[0];
+                        var color = tagColors[tag[1]] || tagColors.blue;
+                        return '<span class="text-[10px] ' + color + ' px-1.5 py-0.5 rounded">' + name + '</span>';
+                    }).join('');
+                }
+            }
+
+            // ---- 眼睛按钮绑定 ----
+            function bindViewButtons() {
+                document.querySelectorAll('.order-view-btn').forEach(function (btn) {
+                    if (btn.dataset.bound) return;
+                    btn.dataset.bound = 'true';
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var row = btn.closest('tr');
+                        if (!row) return;
+                        var data = extractRowData(row);
+                        updateDetailPanel(data);
+                    });
+                });
+            }
+
+            // ========== 更多按钮下拉菜单 + 删除 ==========
+
+            var currentDropdown = null;
+
+            function createDropdown() {
+                var menu = document.createElement('div');
+                menu.className = 'order-action-menu fixed z-[55] bg-white rounded-lg shadow-lg border border-gray-100 py-1 w-36 opacity-0 scale-95 origin-top-right transition-all duration-150 pointer-events-none';
+                menu.innerHTML = [
+                    '<button class="order-action-item w-full px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-50 flex items-center gap-2 transition-colors">',
+                    '  <i class="ph ph-pencil-simple text-base text-gray-400"></i> 编辑订单',
+                    '</button>',
+                    '<button class="order-action-item w-full px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-50 flex items-center gap-2 transition-colors">',
+                    '  <i class="ph ph-copy text-base text-gray-400"></i> 复制订单',
+                    '</button>',
+                    '<div class="my-1 border-t border-gray-50"></div>',
+                    '<button class="order-action-item order-action-delete w-full px-3 py-2 text-left text-sm text-red-500 hover:bg-red-50 flex items-center gap-2 transition-colors">',
+                    '  <i class="ph ph-trash text-base"></i> 删除订单',
+                    '</button>'
+                ].join('');
+                return menu;
+            }
+
+            function showMenu(btn) {
+                closeMenu();
+                var row = btn.closest('tr');
+                var menu = createDropdown();
+                document.body.appendChild(menu);
+                var rect = btn.getBoundingClientRect();
+                menu.style.left = (rect.right - 144) + 'px';
+                menu.style.top = (rect.bottom + 6) + 'px';
+                currentDropdown = menu;
+
+                requestAnimationFrame(function () {
+                    menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                });
+
+                // 删除
+                var deleteBtn = menu.querySelector('.order-action-delete');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', function () {
+                        closeMenu();
+                        showDeleteConfirm(row);
+                    });
+                }
+
+                // 其他项
+                menu.querySelectorAll('.order-action-item:not(.order-action-delete)').forEach(function (item) {
+                    item.addEventListener('click', function () {
+                        closeMenu();
+                    });
+                });
+            }
+
+            function closeMenu() {
+                if (currentDropdown) {
+                    currentDropdown.remove();
+                    currentDropdown = null;
+                }
+            }
+
+            // 删除确认弹窗
+            function showDeleteConfirm(row) {
+                if (!row) return;
+                var orderNo = '';
+                var orderName = '';
+                var noEl = row.querySelector('td:nth-child(2) p');
+                var nameEl = row.querySelector('td:nth-child(2) span.font-medium');
+                if (noEl) orderNo = noEl.textContent.trim();
+                if (nameEl) orderName = nameEl.textContent.trim();
+
+                var modal = document.createElement('div');
+                modal.id = 'order-delete-modal';
+                modal.className = 'fixed inset-0 z-[80] flex items-center justify-center p-4';
+                modal.innerHTML = [
+                    '<div class="absolute inset-0 bg-black/40"></div>',
+                    '<div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 z-10">',
+                    '  <div class="flex items-start gap-3 mb-5">',
+                    '    <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0">',
+                    '      <i class="ph-fill ph-warning text-red-500 text-xl"></i>',
+                    '    </div>',
+                    '    <div>',
+                    '      <h3 class="font-bold text-gray-800 text-base mb-1">确认删除该订单？</h3>',
+                    '      <p class="text-sm text-gray-500 leading-relaxed">订单 <span class="font-medium text-gray-700">' + orderName + '</span>（' + orderNo + '）删除后不可恢复，确定要继续吗？</p>',
+                    '    </div>',
+                    '  </div>',
+                    '  <div class="flex gap-3 justify-end">',
+                    '    <button id="order-delete-cancel" class="px-5 py-2 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition text-sm font-medium">取消</button>',
+                    '    <button id="order-delete-confirm" class="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm font-medium shadow-sm shadow-red-500/30 flex items-center gap-1.5"><i class="ph ph-trash"></i>确认删除</button>',
+                    '  </div>',
+                    '</div>'
+                ].join('');
+                document.body.appendChild(modal);
+                document.body.style.overflow = 'hidden';
+
+                var cancelBtn = modal.querySelector('#order-delete-cancel');
+                var confirmBtn = modal.querySelector('#order-delete-confirm');
+                var overlay = modal.querySelector('.absolute');
+
+                function closeModal() {
+                    modal.remove();
+                    document.body.style.overflow = '';
+                }
+
+                cancelBtn.addEventListener('click', closeModal);
+                overlay.addEventListener('click', closeModal);
+
+                confirmBtn.addEventListener('click', function () {
+                    row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(-20px)';
+                    setTimeout(function () {
+                        row.remove();
+                        updateTotalCount();
+                    }, 300);
+                    closeModal();
+                    showToast('订单已删除');
+                });
+
+                document.addEventListener('keydown', function esc(e) {
+                    if (e.key === 'Escape' && document.getElementById('order-delete-modal')) {
+                        document.removeEventListener('keydown', esc);
+                        closeModal();
+                    }
+                });
+            }
+
+            function updateTotalCount() {
+                var tbody = document.querySelector('table tbody');
+                if (!tbody) return;
+                var count = tbody.querySelectorAll('tr').length;
+                var totalEl = document.querySelector('.p-4.border-t .flex.items-center.justify-between > div:first-child');
+                if (totalEl) totalEl.textContent = '共 ' + count + ' 条';
+            }
+
+            var toastTimer = null;
+            function showToast(msg) {
+                var existing = document.getElementById('order-action-toast');
+                if (existing) existing.remove();
+                if (toastTimer) clearTimeout(toastTimer);
+
+                var toast = document.createElement('div');
+                toast.id = 'order-action-toast';
+                toast.className = 'fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-[90]';
+                toast.innerHTML = '<i class="ph-fill ph-check-circle text-green-400"></i><span>' + msg + '</span>';
+                document.body.appendChild(toast);
+
+                requestAnimationFrame(function () {
+                    toast.classList.remove('translate-y-10', 'opacity-0');
+                });
+
+                toastTimer = setTimeout(function () {
+                    toast.classList.add('translate-y-10', 'opacity-0');
+                    setTimeout(function () { toast.remove(); }, 300);
+                }, 2500);
+            }
+
+            // 绑定更多按钮
+            function bindMoreButtons() {
+                document.querySelectorAll('.order-more-btn').forEach(function (btn) {
+                    if (btn.dataset.bound) return;
+                    btn.dataset.bound = 'true';
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (currentDropdown) {
+                            closeMenu();
+                        }
+                        // 如果点击的不是当前已打开的菜单按钮，则打开新菜单
+                        if (!currentDropdown) {
+                            showMenu(btn);
+                        }
+                    });
+                });
+            }
+
+            // 点击空白处关闭菜单
+            document.addEventListener('click', function (e) {
+                if (currentDropdown && !e.target.closest('.order-action-menu') && !e.target.closest('.order-more-btn')) {
+                    closeMenu();
+                }
+            });
+
+            // 滚动时关闭菜单
+            document.addEventListener('scroll', closeMenu, true);
+
+            // 初始绑定
+            bindMoreButtons();
+            bindViewButtons();
+
+            // SPA 切换后重新绑定
+            window.addEventListener('spa:ready', function (e) {
+                var page = (e.detail && e.detail.page) || '';
+                if (page && page.indexOf('orders') === -1) return;
+                if (!document.querySelector('.order-more-btn')) return;
+                bindMoreButtons();
+                bindViewButtons();
+            });
+        })();
+    </script>
 </body>
 </html>

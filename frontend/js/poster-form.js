@@ -49,6 +49,7 @@
     var editMode = false;
     var selectedTags = [];
     var uploadedImage = null; // dataURL 或远程 URL
+    var previewHtmlContent = null; // CSS 渲染的海报视觉快照 HTML
 
     // ========== 工具函数 ==========
 
@@ -152,7 +153,8 @@
             '          </div>',
             // 预览区（隐藏，上传后显示）
             '          <div id="poster-preview-wrap" class="hidden">',
-            '            <img id="poster-preview-img" class="max-h-48 mx-auto rounded-lg shadow-sm" alt="预览">',
+            '            <img id="poster-preview-img" class="max-h-48 mx-auto rounded-lg shadow-sm hidden" alt="预览">',
+            '            <div id="poster-preview-html" class="max-h-52 mx-auto rounded-lg shadow-sm overflow-hidden hidden relative aspect-[3/4]"></div>',
             '            <div class="mt-3 flex items-center justify-center gap-3">',
             '              <button type="button" id="poster-replace-btn" class="text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1"><i class="ph ph-arrow-clockwise"></i>更换图片</button>',
             '              <button type="button" id="poster-remove-btn" class="text-xs text-red-500 hover:text-red-600 font-medium flex items-center gap-1"><i class="ph ph-trash"></i>移除</button>',
@@ -242,17 +244,41 @@
         var placeholder = document.getElementById('poster-upload-placeholder');
         var previewWrap = document.getElementById('poster-preview-wrap');
         var previewImg = document.getElementById('poster-preview-img');
+        var previewHtmlDiv = document.getElementById('poster-preview-html');
         if (placeholder) placeholder.classList.add('hidden');
         if (previewWrap) previewWrap.classList.remove('hidden');
-        if (previewImg) previewImg.src = src;
+        // 隐藏 HTML 预览，显示 img
+        if (previewHtmlDiv) { previewHtmlDiv.classList.add('hidden'); previewHtmlDiv.innerHTML = ''; }
+        if (previewImg) { previewImg.classList.remove('hidden'); previewImg.src = src; }
+        uploadedImage = src;
+        previewHtmlContent = null;
+    }
+
+    function showPreviewHtml(html) {
+        var placeholder = document.getElementById('poster-upload-placeholder');
+        var previewWrap = document.getElementById('poster-preview-wrap');
+        var previewImg = document.getElementById('poster-preview-img');
+        var previewHtmlDiv = document.getElementById('poster-preview-html');
+        if (placeholder) placeholder.classList.add('hidden');
+        if (previewWrap) previewWrap.classList.remove('hidden');
+        // 隐藏 img，显示 HTML 预览
+        if (previewImg) { previewImg.classList.add('hidden'); previewImg.src = ''; }
+        if (previewHtmlDiv) { previewHtmlDiv.classList.remove('hidden'); previewHtmlDiv.innerHTML = html; }
+        previewHtmlContent = html;
+        uploadedImage = null;
     }
 
     function hidePreview() {
         var placeholder = document.getElementById('poster-upload-placeholder');
         var previewWrap = document.getElementById('poster-preview-wrap');
+        var previewImg = document.getElementById('poster-preview-img');
+        var previewHtmlDiv = document.getElementById('poster-preview-html');
         if (placeholder) placeholder.classList.remove('hidden');
         if (previewWrap) previewWrap.classList.add('hidden');
+        if (previewImg) { previewImg.src = ''; }
+        if (previewHtmlDiv) { previewHtmlDiv.innerHTML = ''; }
         uploadedImage = null;
+        previewHtmlContent = null;
     }
 
     function bindUploadEvents() {
@@ -334,7 +360,7 @@
             form.title.focus();
             return false;
         }
-        if (!editMode && !uploadedImage) {
+        if (!editMode && !uploadedImage && !previewHtmlContent) {
             showHint('请上传海报图片', 'error');
             return false;
         }
@@ -376,7 +402,8 @@
             remark: form.remark.value.trim(),
             sourceUrl: form.sourceUrl.value.trim(),
             projectRef: form.projectRef.value.trim(),
-            image: uploadedImage || null
+            image: uploadedImage || null,
+            imageHtml: previewHtmlContent || null
         };
     }
 
@@ -408,10 +435,11 @@
             }
         });
 
-        // 图片预览
+        // 图片预览：优先使用真实图片，其次使用 HTML 快照
         if (data.image) {
-            uploadedImage = data.image;
             showPreview(data.image);
+        } else if (data.imageHtml) {
+            showPreviewHtml(data.imageHtml);
         }
     }
 

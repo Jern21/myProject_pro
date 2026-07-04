@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div>
                     <h1 class="font-bold text-gray-800 text-base">文的项目工作台</h1>
-                    <p class="text-xs text-gray-400">高效管理 · 轻松接单</p>
+                    <p class="text-xs text-gray-400">大吉大利 · 今晚接单</p>
                 </div>
             </div>
 

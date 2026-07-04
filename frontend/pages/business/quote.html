@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -288,6 +288,7 @@
         // ========== 渲染表单明细行 ==========
         function renderFormItems() {
             var container = document.getElementById('quote-items-container');
+            if (!container) return;
             container.innerHTML = quoteData.items.map(function (item, index) {
                 return [
                     '<div class="bg-gray-50/50 p-4 rounded-lg border border-gray-100 relative group">',
@@ -316,11 +317,19 @@
 
         // ========== 渲染预览 ==========
         function renderPreview() {
+            // 防御：如果关键 DOM 不存在（已离开报价页），直接跳过
+            var pvItems = document.getElementById('pv-items');
+            if (!pvItems) return;
+
             // 基础信息
-            document.getElementById('pv-projectName').textContent = quoteData.projectName || '—';
-            document.getElementById('pv-customerName').textContent = quoteData.customerName || '—';
-            document.getElementById('pv-quoteDate').textContent = quoteData.quoteDate || '—';
-            document.getElementById('pv-cycle').textContent = (quoteData.cycle || '0') + ' 工作日';
+            var pvProjectName = document.getElementById('pv-projectName');
+            if (pvProjectName) pvProjectName.textContent = quoteData.projectName || '—';
+            var pvCustomerName = document.getElementById('pv-customerName');
+            if (pvCustomerName) pvCustomerName.textContent = quoteData.customerName || '—';
+            var pvQuoteDate = document.getElementById('pv-quoteDate');
+            if (pvQuoteDate) pvQuoteDate.textContent = quoteData.quoteDate || '—';
+            var pvCycle = document.getElementById('pv-cycle');
+            if (pvCycle) pvCycle.textContent = (quoteData.cycle || '0') + ' 工作日';
 
             // 明细列表
             var itemsHtml = quoteData.items.map(function (item, i) {
@@ -336,16 +345,19 @@
                     '</div>'
                 ].join('');
             }).join('');
-            document.getElementById('pv-items').innerHTML = itemsHtml || '<p class="text-center text-gray-300 py-8">暂无报价明细</p>';
+            pvItems.innerHTML = itemsHtml || '<p class="text-center text-gray-300 py-8">暂无报价明细</p>';
 
             // 金额合计
             var subtotal = calcSubtotal();
             var discount = parseFloat(quoteData.discount || 0);
             var total = subtotal - discount;
 
-            document.getElementById('pv-subtotal').textContent = '¥ ' + formatMoney(subtotal);
-            document.getElementById('pv-discount').textContent = '- ¥ ' + formatMoney(discount);
-            document.getElementById('pv-total').textContent = '¥ ' + formatMoney(total);
+            var pvSubtotal = document.getElementById('pv-subtotal');
+            if (pvSubtotal) pvSubtotal.textContent = '¥ ' + formatMoney(subtotal);
+            var pvDiscount = document.getElementById('pv-discount');
+            if (pvDiscount) pvDiscount.textContent = '- ¥ ' + formatMoney(discount);
+            var pvTotal = document.getElementById('pv-total');
+            if (pvTotal) pvTotal.textContent = '¥ ' + formatMoney(total);
 
             // 补充说明
             var notesHtml = '';
@@ -355,7 +367,8 @@
                     if (line.trim()) notesHtml += '<p>' + line.trim() + '</p>';
                 });
             }
-            document.getElementById('pv-notes').innerHTML = notesHtml;
+            var pvNotes = document.getElementById('pv-notes');
+            if (pvNotes) pvNotes.innerHTML = notesHtml;
         }
 
         // ========== 全量刷新 ==========
@@ -444,8 +457,15 @@
             document.getElementById('add-item-btn').addEventListener('click', addItem);
         });
 
-        // SPA 切换后重新初始化
-        window.addEventListener('spa:ready', function () {
+        // SPA 切换后重新初始化（仅当前页面为报价页时执行）
+        window.addEventListener('spa:ready', function (e) {
+            // 判断是否为报价页（detail.page 包含目标页面名）
+            var page = (e.detail && e.detail.page) || '';
+            if (page && page.indexOf('quote') === -1) return;
+
+            // 二次确认：关键 DOM 存在才执行
+            if (!document.getElementById('quote-items-container')) return;
+
             renderAll();
             bindFieldEvents();
             var addBtn = document.getElementById('add-item-btn');

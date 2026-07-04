@@ -37,6 +37,7 @@
     var selectedTags = [];
     var isOpen = false;
     var editMode = false;
+    var uploadedFiles = {}; // { screenshot: {name,size,type}, showcase: {...}, quote: {...} }
 
     // ========== 工具函数 ==========
 
@@ -105,6 +106,27 @@
         return ORDER_STATUSES.map(function (s) {
             return '<option value="' + s.value + '">' + s.label + '</option>';
         }).join('');
+    }
+
+    function uploadZoneHtml(type, icon, label, hint, accept) {
+        accept = accept || '';
+        return [
+            '<div class="order-upload-zone border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-brand-300 transition cursor-pointer relative" data-upload-type="' + type + '">',
+            '  <div class="upload-placeholder">',
+            '    <i class="ph ' + icon + ' text-2xl text-gray-300"></i>',
+            '    <p class="text-xs text-gray-400 mt-1">' + label + '</p>',
+            '    <p class="text-[10px] text-gray-300 mt-0.5">' + hint + '</p>',
+            '  </div>',
+            '  <div class="upload-preview hidden">',
+            '    <div class="flex items-center gap-2 px-1">',
+            '      <i class="ph ph-file-pdf text-lg text-red-500 file-icon"></i>',
+            '      <span class="text-xs text-gray-600 flex-1 truncate text-left file-name"></span>',
+            '      <button type="button" class="upload-remove w-5 h-5 flex items-center justify-center text-gray-400 hover:text-red-500 transition flex-shrink-0"><i class="ph ph-x text-xs"></i></button>',
+            '    </div>',
+            '  </div>',
+            '  <input type="file" class="upload-input hidden" accept="' + accept + '">',
+            '</div>'
+        ].join('');
     }
 
     function buildDrawerHTML() {
@@ -212,16 +234,11 @@
             '        </div>',
             // File uploads
             '        <div class="mt-3 grid grid-cols-2 gap-3">',
-            '          <div class="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-brand-300 transition cursor-pointer">',
-            '            <i class="ph ph-chat-circle-dots text-2xl text-gray-300"></i>',
-            '            <p class="text-xs text-gray-400 mt-1">需求沟通截图</p>',
-            '            <p class="text-[10px] text-gray-300 mt-0.5">点击或拖拽上传</p>',
-            '          </div>',
-            '          <div class="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-brand-300 transition cursor-pointer">',
-            '            <i class="ph ph-images text-2xl text-gray-300"></i>',
-            '            <p class="text-xs text-gray-400 mt-1">成品展示图</p>',
-            '            <p class="text-[10px] text-gray-300 mt-0.5">点击或拖拽上传</p>',
-            '          </div>',
+            uploadZoneHtml('screenshot', 'ph-chat-circle-dots', '需求沟通截图', '点击或拖拽上传', 'image/*'),
+            uploadZoneHtml('showcase', 'ph-images', '成品展示图', '点击或拖拽上传', 'image/*'),
+            '        </div>',
+            '        <div class="mt-3">',
+            uploadZoneHtml('quote', 'ph-file-pdf', '报价单', '支持 PDF / Word / 图片，点击或拖拽上传', '.pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp'),
             '        </div>',
             '      </div>',
             '    </form>',
@@ -299,6 +316,84 @@
         }
     }
 
+    // ========== 文件上传 ==========
+
+    function handleFileUpload(type, file, zone) {
+        var placeholder = zone.querySelector('.upload-placeholder');
+        var preview = zone.querySelector('.upload-preview');
+        var fileNameEl = zone.querySelector('.file-name');
+        var fileIcon = zone.querySelector('.file-icon');
+
+        uploadedFiles[type] = { name: file.name, size: file.size, type: file.type };
+
+        placeholder.classList.add('hidden');
+        preview.classList.remove('hidden');
+        if (fileNameEl) fileNameEl.textContent = file.name;
+
+        if (fileIcon) {
+            var iconClass = 'ph file-icon text-lg ';
+            if (file.type.startsWith('image/')) {
+                iconClass += 'ph-image text-blue-500';
+            } else if (file.type.indexOf('pdf') !== -1) {
+                iconClass += 'ph-file-pdf text-red-500';
+            } else if (file.type.indexOf('word') !== -1 || file.name.match(/\.(doc|docx)$/i)) {
+                iconClass += 'ph-file-doc text-blue-600';
+            } else {
+                iconClass += 'ph-file text-gray-500';
+            }
+            fileIcon.className = iconClass;
+        }
+    }
+
+    function bindUploadEvents() {
+        document.querySelectorAll('.order-upload-zone').forEach(function (zone) {
+            var type = zone.getAttribute('data-upload-type');
+            var fileInput = zone.querySelector('.upload-input');
+            var placeholder = zone.querySelector('.upload-placeholder');
+            var removeBtn = zone.querySelector('.upload-remove');
+
+            // 点击上传
+            zone.addEventListener('click', function (e) {
+                if (e.target.closest('.upload-remove')) return;
+                fileInput.click();
+            });
+
+            // 文件选择
+            fileInput.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    handleFileUpload(type, this.files[0], zone);
+                }
+            });
+
+            // 拖拽
+            zone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                zone.classList.add('border-brand-400', 'bg-brand-50/30');
+            });
+            zone.addEventListener('dragleave', function () {
+                zone.classList.remove('border-brand-400', 'bg-brand-50/30');
+            });
+            zone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                zone.classList.remove('border-brand-400', 'bg-brand-50/30');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    handleFileUpload(type, e.dataTransfer.files[0], zone);
+                }
+            });
+
+            // 移除文件
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    uploadedFiles[type] = null;
+                    placeholder.classList.remove('hidden');
+                    zone.querySelector('.upload-preview').classList.add('hidden');
+                    fileInput.value = '';
+                });
+            }
+        });
+    }
+
     // ========== 校验 ==========
 
     function validate() {
@@ -347,7 +442,12 @@
             paymentRatio: form.paymentRatio ? parseInt(form.paymentRatio.value) || 0 : 0,
             payDate: form.payDate.value,
             gitUrl: form.gitUrl.value.trim(),
-            quoteRef: form.quoteRef.value.trim()
+            quoteRef: form.quoteRef.value.trim(),
+            uploadedFiles: {
+                screenshot: uploadedFiles.screenshot || null,
+                showcase: uploadedFiles.showcase || null,
+                quote: uploadedFiles.quote || null
+            }
         };
     }
 
@@ -375,6 +475,35 @@
         form.payDate.value = data.payDate || '';
         form.gitUrl.value = data.gitUrl || '';
         form.quoteRef.value = data.quoteRef || '';
+
+        // 付款比例
+        if (form.paymentRatio && data.paymentRatio) form.paymentRatio.value = data.paymentRatio;
+
+        // 上传文件恢复
+        var files = data.uploadedFiles || {};
+        uploadedFiles = {};
+        ['screenshot', 'showcase', 'quote'].forEach(function (key) {
+            if (files[key]) {
+                uploadedFiles[key] = files[key];
+                var zone = document.querySelector('.order-upload-zone[data-upload-type="' + key + '"]');
+                if (zone) {
+                    var ph = zone.querySelector('.upload-placeholder');
+                    var pv = zone.querySelector('.upload-preview');
+                    var fnEl = zone.querySelector('.file-name');
+                    var iconEl = zone.querySelector('.file-icon');
+                    if (ph) ph.classList.add('hidden');
+                    if (pv) pv.classList.remove('hidden');
+                    if (fnEl) fnEl.textContent = files[key].name;
+                    if (iconEl && files[key].type) {
+                        var ic = 'ph file-icon text-lg ';
+                        if (files[key].type.startsWith('image/')) ic += 'ph-image text-blue-500';
+                        else if (files[key].type.indexOf('pdf') !== -1) ic += 'ph-file-pdf text-red-500';
+                        else ic += 'ph-file text-gray-500';
+                        iconEl.className = ic;
+                    }
+                }
+            }
+        });
 
         // 标签
         selectedTags = (data.customerTags || []).slice();
@@ -432,6 +561,9 @@
             btn.addEventListener('click', function () { toggleTag(btn); });
         });
 
+        // 文件上传
+        bindUploadEvents();
+
         // ESC 关闭
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && isOpen) closeOrderForm();
@@ -448,6 +580,7 @@
         drawer = document.getElementById('order-form-drawer');
         overlay = document.getElementById('order-form-overlay');
         selectedTags = [];
+        uploadedFiles = {};
         editMode = !!data;
 
         // 标题

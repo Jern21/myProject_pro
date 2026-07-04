@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -289,62 +289,28 @@
                     <!-- Recent Orders -->
                     <div class="card xl:col-span-1 h-[420px] flex flex-col">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-semibold text-gray-800 text-base">最新订单</h3>
-                            <a href="#" class="text-sm text-brand-500 hover:text-brand-600">查看全部</a>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-semibold text-gray-800 text-base">最新订单</h3>
+                                <span id="orderLiveDot" class="hidden items-center gap-1 text-[10px] text-gray-400">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>轮播中
+                                </span>
+                            </div>
+                            <a href="#" data-page="orders.html" class="text-sm text-brand-500 hover:text-brand-600">查看全部</a>
                         </div>
-                        <div class="overflow-auto flex-1 -mx-2 px-2">
+                        <div class="overflow-hidden flex-1 -mx-2 px-2 relative">
                             <table class="w-full text-left border-collapse table-fixed">
                                 <thead>
                                     <tr class="text-gray-400 text-xs border-b border-gray-100">
                                         <th class="pb-3 font-normal w-[28%]">订单信息</th>
                                         <th class="pb-3 font-normal w-[12%]">客户</th>
                                         <th class="pb-3 font-normal w-[18%]">服务内容</th>
-                                        <th class="pb-3 font-normal w-[12%]">金额</th>
+                                        <th class="pb-3 font-normal w-[16%]">金额</th>
                                         <th class="pb-3 font-normal w-[8%]">状态</th>
-                                        <th class="pb-3 font-normal w-[22%]">时间</th>
+                                        <th class="pb-3 font-normal w-[14%]">时间</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr class="table-row">
-                                        <td class="py-3 text-gray-500 text-xs truncate">海报设计服务推广</td>
-                                        <td class="py-3 truncate">张先生</td>
-                                        <td class="py-3 text-gray-500 truncate">海报设计</td>
-                                        <td class="py-3 font-medium">¥ 680</td>
-                                        <td class="py-3"><span class="status-icon status-processing" data-tip="进行中"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></span></td>
-                                        <td class="py-3 text-gray-500 text-xs">07-03 14:32</td>
-                                    </tr>
-                                    <tr class="table-row">
-                                        <td class="py-3 text-gray-500 text-xs truncate">小红书推广套餐</td>
-                                        <td class="py-3 truncate">李女士</td>
-                                        <td class="py-3 text-gray-500 truncate">小红书推广</td>
-                                        <td class="py-3 font-medium">¥ 980</td>
-                                        <td class="py-3"><span class="status-icon status-quoted" data-tip="已报价"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></span></td>
-                                        <td class="py-3 text-gray-500 text-xs">07-03 11:20</td>
-                                    </tr>
-                                    <tr class="table-row">
-                                        <td class="py-3 text-gray-500 text-xs truncate">抖音视频剪辑制作</td>
-                                        <td class="py-3 truncate">王同学</td>
-                                        <td class="py-3 text-gray-500 truncate">抖音视频剪辑</td>
-                                        <td class="py-3 font-medium">¥ 1250</td>
-                                        <td class="py-3"><span class="status-icon status-completed" data-tip="已完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></span></td>
-                                        <td class="py-3 text-gray-500 text-xs">07-02 18:45</td>
-                                    </tr>
-                                    <tr class="table-row">
-                                        <td class="py-3 text-gray-500 text-xs truncate">闲鱼文案优化服务</td>
-                                        <td class="py-3 truncate">赵先生</td>
-                                        <td class="py-3 text-gray-500 truncate">闲鱼文案优化</td>
-                                        <td class="py-3 font-medium">¥ 380</td>
-                                        <td class="py-3"><span class="status-icon status-processing" data-tip="进行中"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></span></td>
-                                        <td class="py-3 text-gray-500 text-xs">07-02 16:22</td>
-                                    </tr>
-                                    <tr class="table-row">
-                                        <td class="py-3 text-gray-500 text-xs truncate">海报设计初稿制作</td>
-                                        <td class="py-3 truncate">陈女士</td>
-                                        <td class="py-3 text-gray-500 truncate">海报设计</td>
-                                        <td class="py-3 font-medium">¥ 580</td>
-                                        <td class="py-3"><span class="status-icon status-cancelled" data-tip="已取消"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg></span></td>
-                                        <td class="py-3 text-gray-500 text-xs">07-02 09:15</td>
-                                    </tr>
+                                <tbody id="recentOrdersBody">
+                                    <!-- 动态渲染 -->
                                 </tbody>
                             </table>
                         </div>
@@ -700,6 +666,163 @@
         window.addEventListener('echarts-ready', initTrendChart);
         // SPA 局部刷新后重新初始化
         window.addEventListener('spa:ready', initTrendChart);
+
+        /* ========== 最新订单：垂直轮播列表 ========== */
+        (function () {
+            var VISIBLE_MAX = 6;          // 最多直接展示 6 条
+            var CAROUSEL_INTERVAL = 3500;  // 轮播间隔(ms)
+            var ANIM_DURATION = 400;       // 单行动画时长(ms)
+
+            // 模拟订单数据（共 9 条，超过 6 条触发轮播）
+            var mockOrders = [
+                { title: '海报设计服务推广', customer: '张先生', service: '海报设计', amount: '¥ 680', status: 'processing', time: '07-04' },
+                { title: '小红书推广套餐', customer: '李女士', service: '小红书推广', amount: '¥ 980', status: 'quoted', time: '07-03' },
+                { title: '抖音视频剪辑制作', customer: '王同学', service: '抖音视频剪辑', amount: '¥ 1250', status: 'completed', time: '07-03' },
+                { title: '闲鱼文案优化服务', customer: '赵先生', service: '闲鱼文案优化', amount: '¥ 380', status: 'processing', time: '07-02' },
+                { title: '海报设计初稿制作', customer: '陈女士', service: '海报设计', amount: '¥ 580', status: 'cancelled', time: '07-02' },
+                { title: '企业官网Banner设计', customer: '刘先生', service: 'Banner设计', amount: '¥ 880', status: 'processing', time: '07-01' },
+                { title: '抖音短视频代运营', customer: '周女士', service: '抖音代运营', amount: '¥ 3200', status: 'quoted', time: '07-01' },
+                { title: '小红书图文排版', customer: '吴先生', service: '图文排版', amount: '¥ 450', status: 'completed', time: '06-30' },
+                { title: '品牌Logo升级设计', customer: '郑女士', service: 'Logo设计', amount: '¥ 1500', status: 'processing', time: '06-30' }
+            ];
+
+            // 状态 → SVG + class 映射
+            var statusMap = {
+                processing: { cls: 'status-processing', tip: '进行中', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>' },
+                quoted: { cls: 'status-quoted', tip: '已报价', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>' },
+                completed: { cls: 'status-completed', tip: '已完成', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>' },
+                cancelled: { cls: 'status-cancelled', tip: '已取消', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg>' }
+            };
+
+            var allOrders = [];       // 当前全部订单数据
+            var nextIndex = 0;        // 下一条要轮播追加的数据索引
+            var carouselTimer = null; // 轮播定时器
+            var isAnimating = false;  // 防止动画叠加
+
+            // 生成单行 HTML
+            function buildRowHTML(order) {
+                var s = statusMap[order.status] || statusMap.processing;
+                return '<tr class="table-row" style="height:42px">'
+                    + '<td class="py-3 text-gray-500 text-xs truncate">' + order.title + '</td>'
+                    + '<td class="py-3 truncate">' + order.customer + '</td>'
+                    + '<td class="py-3 text-gray-500 truncate">' + order.service + '</td>'
+                    + '<td class="py-3 font-medium">' + order.amount + '</td>'
+                    + '<td class="py-3"><span class="status-icon ' + s.cls + '" data-tip="' + s.tip + '">' + s.svg + '</span></td>'
+                    + '<td class="py-3 text-gray-500 text-xs">' + order.time + '</td>'
+                    + '</tr>';
+            }
+
+            // 初始化渲染
+            function initRecentOrders() {
+                var tbody = document.getElementById('recentOrdersBody');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                allOrders = mockOrders.slice(); // 复制一份
+                var showCount = Math.min(VISIBLE_MAX, allOrders.length);
+                for (var i = 0; i < showCount; i++) {
+                    tbody.insertAdjacentHTML('beforeend', buildRowHTML(allOrders[i]));
+                }
+                nextIndex = showCount;
+                updateLiveDot();
+                // 超过 6 条，启动轮播
+                if (allOrders.length > VISIBLE_MAX) {
+                    startCarousel();
+                }
+            }
+
+            // 启动轮播
+            function startCarousel() {
+                stopCarousel();
+                carouselTimer = setInterval(rotateOne, CAROUSEL_INTERVAL);
+                updateLiveDot();
+            }
+
+            // 停止轮播
+            function stopCarousel() {
+                if (carouselTimer) {
+                    clearInterval(carouselTimer);
+                    carouselTimer = null;
+                }
+                updateLiveDot();
+            }
+
+            // 更新「轮播中」指示器
+            function updateLiveDot() {
+                var dot = document.getElementById('orderLiveDot');
+                if (!dot) return;
+                if (carouselTimer && allOrders.length > VISIBLE_MAX) {
+                    dot.classList.remove('hidden');
+                    dot.classList.add('flex');
+                } else {
+                    dot.classList.add('hidden');
+                    dot.classList.remove('flex');
+                }
+            }
+
+            // 轮播一帧：顶部淡出移除 → 底部追加新行淡入
+            function rotateOne() {
+                if (isAnimating) return;
+                var tbody = document.getElementById('recentOrdersBody');
+                if (!tbody) return;
+                var firstRow = tbody.querySelector('tr');
+                if (!firstRow) return;
+
+                isAnimating = true;
+
+                // 顶部行淡出上移
+                firstRow.style.transition = 'opacity ' + ANIM_DURATION + 'ms ease, transform ' + ANIM_DURATION + 'ms ease';
+                firstRow.style.opacity = '0';
+                firstRow.style.transform = 'translateY(-12px)';
+
+                setTimeout(function () {
+                    firstRow.remove();
+
+                    // 从数据队列中取下一条（循环）
+                    var order = allOrders[nextIndex % allOrders.length];
+                    tbody.insertAdjacentHTML('beforeend', buildRowHTML(order));
+                    var newRow = tbody.lastElementChild;
+
+                    // 新行从底部淡入
+                    newRow.style.opacity = '0';
+                    newRow.style.transform = 'translateY(12px)';
+                    // 强制回流后启动过渡
+                    void newRow.offsetHeight;
+                    newRow.style.transition = 'opacity ' + ANIM_DURATION + 'ms ease, transform ' + ANIM_DURATION + 'ms ease';
+                    newRow.style.opacity = '1';
+                    newRow.style.transform = 'translateY(0)';
+
+                    nextIndex++;
+                    isAnimating = false;
+                }, ANIM_DURATION);
+            }
+
+            // 鼠标悬停暂停轮播
+            function bindHoverPause() {
+                var container = document.querySelector('.card .overflow-hidden.flex-1');
+                if (!container) return;
+                container.addEventListener('mouseenter', function () {
+                    if (carouselTimer) stopCarousel();
+                });
+                container.addEventListener('mouseleave', function () {
+                    if (allOrders.length > VISIBLE_MAX && !carouselTimer) startCarousel();
+                });
+            }
+
+            // 初始化入口
+            function init() {
+                initRecentOrders();
+                bindHoverPause();
+            }
+
+            // DOM 就绪后初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+            // SPA 刷新支持
+            window.addEventListener('spa:ready', init);
+        })();
     </script>
 </body>
 </html>
