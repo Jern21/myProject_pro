@@ -75,9 +75,14 @@
     })();
 
     // 已知共享脚本（已在全局加载，SPA 切换时无需重复加载）
+    // 注意：只有 index.html 中确实引入的脚本才能放在这里。
+    // order-form / poster-form / memo-form / count-up 等仅在部分页面引入的脚本
+    // 不能放在此列表中，否则 SPA 导航到含这些脚本的页面时会跳过加载，
+    // 导致表单组件未加载、无法触发。
     var SHARED_SCRIPT_KEYWORDS = [
         'tailwind', 'tailwind-config', 'cdn-fallback',
-        'sidebar.js', 'spa-router', 'avatar.js', 'platform-icons', 'order-form', 'poster-form', 'count-up'
+        'sidebar.js', 'spa-router', 'avatar.js', 'platform-icons',
+        'header.js', 'theme.js'
     ];
 
     // ECharts 本地路径（SPA 切换时如需加载）
@@ -113,11 +118,12 @@
      * @returns {Promise} resolve 后所有必要脚本已就绪
      */
     function ensureScriptsLoaded(doc) {
-        var headScripts = doc.querySelectorAll('head script[src]');
+        // 同时检查 head 和 body 中的外部脚本，确保不遗漏
+        var allScripts = doc.querySelectorAll('script[src]');
         var promises = [];
         var needEcharts = false;
 
-        headScripts.forEach(function (script) {
+        allScripts.forEach(function (script) {
             var src = script.getAttribute('src');
             if (isSharedScript(src)) return;
 
@@ -168,19 +174,55 @@
      * 否则会导致 isOpen 状态卡死、表单再次打不开等问题。
      */
     function cleanupGlobalOverlays() {
-        // 清理残留的抽屉表单遮罩与容器
-        var overlaySelectors = [
+        // ===== 清理所有残留的浮层（表单抽屉 + 页面级模态框 + 动态创建的遮罩）=====
+        // 这些元素通过 insertAdjacentHTML / createElement 挂载到 body 或 body 末尾，
+        // 不会随 #page-view 内容替换而移除，必须在切换页面时手动清除，
+        // 否则残留的遮罩会拦截所有点击，导致按钮“无法触发”。
+
+        // 1. 表单模块抽屉（order-form / poster-form / memo-form）
+        var formOverlays = [
             '#order-form-overlay', '#order-form-drawer',
-            '#poster-form-overlay', '#poster-form-drawer'
+            '#poster-form-overlay', '#poster-form-drawer',
+            '#memo-form-overlay', '#memo-form-drawer'
         ];
-        overlaySelectors.forEach(function (sel) {
+        // 2. 页面级模态框 / 抽屉（静态写在 #page-view 外部的）
+        var pageOverlays = [
+            '#new-job-modal',            // resume.html — 新建岗位模态框
+            '#detail-drawer-overlay',    // memo.html — 详情抽屉遮罩
+            '#detail-drawer',            // memo.html — 详情抽屉
+            '#reminder-modal',           // reminder.html — 提醒模态框
+            '#category-modal',           // reminder.html — 分类模态框
+            '#delete-modal',             // reminder.html — 删除确认模态框
+            '#quote-preview-modal'       // orders.html — 报价预览模态框
+        ];
+        // 3. 动态创建的模态框（通过 JS class 创建，可能有多个实例）
+        var dynamicOverlayClasses = [
+            '.pf-modal-overlay',         // project.html — 项目编辑模态框
+            '.cust-modal-overlay'        // customer.html — 客户编辑模态框
+        ];
+
+        formOverlays.concat(pageOverlays).forEach(function (sel) {
             var el = document.querySelector(sel);
             if (el) el.remove();
         });
-        // 恢复 body 滚动（表单打开时锁定了 overflow）
-        if (document.body.style.overflow === 'hidden') {
-            document.body.style.overflow = '';
-        }
+        dynamicOverlayClasses.forEach(function (sel) {
+            document.querySelectorAll(sel).forEach(function (el) {
+                el.remove();
+            });
+        });
+
+        // 4. 兜底：清理 body 直接子元素中所有 position:fixed 的残留浮层
+        //    （防止遗漏未知的动态创建遮罩）
+        document.body.querySelectorAll(':scope > .fixed').forEach(function (el) {
+            // 保留 sidebar aside 和 main，只移除浮层
+            if (el.tagName !== 'ASIDE' && el.tagName !== 'MAIN') {
+                el.remove();
+            }
+        });
+
+        // 恢复 body 滚动（表单/模态框打开时锁定了 overflow）
+        document.body.style.overflow = '';
+
         // 通知表单模块重置内部 isOpen 状态
         window.dispatchEvent(new CustomEvent('spa:cleanup-forms'));
     }
@@ -250,6 +292,18 @@
             inlineScripts.forEach(function (oldScript) {
                 var text = oldScript.textContent;
                 if (text && text.indexOf('PAGE_BASE') !== -1) return;
+
+                // ★ 关键修复：将顶层 let/const 转为 var
+                // 原因：通过 document.createElement('script') 动态插入的脚本中，
+                //   let/const 声明会进入「全局词法环境」并持久存在。
+                //   当用户第二次 SPA 导航到同一页面时，let/const 重复声明会抛出
+                //   SyntaxError: Identifier 'xxx' has already been declared，
+                //   导致整个脚本完全不执行，所有函数定义（如 createNewJob）全部失败，
+                //   页面上的 onclick 按钮全部报 "X is not defined"。
+                // 解决：将行首的 let/const 转为 var（var 是 window 属性，可重复声明）。
+                //   正则只匹配行首的 let/const，不影响 for(let...) 等块级作用域。
+                text = text.replace(/^(\s*)(let|const) /gm, '$1var ');
+
                 var newScript = document.createElement('script');
                 newScript.textContent = text;
                 pageView.appendChild(newScript);

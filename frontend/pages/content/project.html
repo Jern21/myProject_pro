@@ -1413,6 +1413,37 @@
                         <p class="text-[11px] text-gray-400 mt-1.5">云端平台：<span id="pd-cloud-type">—</span></p>
                     </div>
                 </div>
+
+                <!-- 服务器配置 -->
+                <div>
+                    <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5"><i class="ph ph-hard-drives"></i> 服务器配置</p>
+                    <div id="pd-server-enabled-wrap" class="flex items-center gap-2 mb-2">
+                        <span id="pd-server-enabled" class="text-sm text-gray-500">未购买</span>
+                    </div>
+                    <div id="pd-server-section" class="hidden space-y-3">
+                        <div class="flex items-start gap-2 bg-indigo-50/50 rounded-lg p-3 border border-indigo-100">
+                            <i class="ph ph-globe text-indigo-500 text-base shrink-0 mt-0.5"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[11px] text-gray-400 mb-0.5">服务器地址</p>
+                                <p id="pd-server-addr" class="text-sm text-gray-700 break-all">—</p>
+                            </div>
+                            <button id="pd-copy-server-addr" class="shrink-0 w-7 h-7 rounded text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition flex items-center justify-center" title="复制地址">
+                                <i class="ph ph-copy text-sm"></i>
+                            </button>
+                        </div>
+                        <div class="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100">
+                            <i class="ph ph-cpu text-gray-400 text-base shrink-0 mt-0.5"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[11px] text-gray-400 mb-0.5">服务器配置</p>
+                                <p id="pd-server-spec" class="text-sm text-gray-700 whitespace-pre-wrap break-all">—</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-gray-400 mb-1.5">Nginx 配置</p>
+                            <div id="pd-nginx-list" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1646,9 +1677,18 @@
             return '';
         }
         function getProjectData(name) {
-            if (PROJECT_DATA[name]) return PROJECT_DATA[name];
+            if (PROJECT_DATA[name]) {
+                // 兼容旧数据：nginxConfig 字符串 → nginxConfigs 数组
+                var d = PROJECT_DATA[name];
+                if (d.nginxConfig && !d.nginxConfigs) {
+                    d.nginxConfigs = [{ name: '默认', config: d.nginxConfig }];
+                    delete d.nginxConfig;
+                }
+                if (!d.nginxConfigs) d.nginxConfigs = [];
+                return d;
+            }
             // 返回默认空数据
-            return { code: '', status: '待确认需求', priority: '中', type: '网站开发', scope: 'enterprise', deadline: '', amount: '', progress: 0, desc: '', customer: '', tags: '', notes: '', localPath: '', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' };
+            return { code: '', status: '待确认需求', priority: '中', type: '网站开发', scope: 'enterprise', deadline: '', amount: '', progress: 0, desc: '', customer: '', tags: '', notes: '', localPath: '', cloudEnabled: false, cloudPath: '', cloudType: 'baidu', serverEnabled: false, serverAddr: '', serverSpec: '', nginxConfigs: [] };
         }
 
         // ========== 右键上下文菜单 ==========
@@ -1976,6 +2016,7 @@ break;
             var existing = document.getElementById('pf-modal');
             if (existing) existing.remove();
 
+            var isNew = !projectName; // projectName 为空表示新建
             var data = getProjectData(projectName);
             var rootUrl = computeRootUrl();
             var formUrl = rootUrl + 'pages/content/project-form.html';
@@ -2019,6 +2060,62 @@ break;
                 });
         }
 
+        // ========== Nginx 配置动态增删辅助函数 ==========
+        function addNginxEntryToModal(modal, name, config) {
+            var nginxList = modal.querySelector('#pf-nginx-list');
+            if (!nginxList) return;
+            var wrapper = document.createElement('div');
+            wrapper.className = 'pf-nginx-item rounded-lg border border-gray-200 overflow-hidden';
+            var header = document.createElement('div');
+            header.className = 'flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-100';
+            var nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.className = 'pf-nginx-name pf-form-input text-xs py-1 flex-1';
+            nameInput.placeholder = '配置名称（如：前端服务）';
+            nameInput.value = name || '';
+            var delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'pf-nginx-del w-7 h-7 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition flex items-center justify-center shrink-0';
+            delBtn.title = '删除';
+            delBtn.innerHTML = '<i class="ph ph-trash text-sm"></i>';
+            header.appendChild(nameInput);
+            header.appendChild(delBtn);
+            var configArea = document.createElement('textarea');
+            configArea.className = 'pf-nginx-config pf-form-input rounded-none border-0';
+            configArea.rows = 4;
+            configArea.placeholder = '粘贴 Nginx 配置内容...';
+            configArea.style.cssText = 'resize:vertical;font-family:monospace;font-size:0.8rem;';
+            configArea.value = config || '';
+            wrapper.appendChild(header);
+            wrapper.appendChild(configArea);
+            bindNginxDelete(wrapper);
+            nginxList.appendChild(wrapper);
+        }
+
+        function bindNginxDelete(item) {
+            var delBtn = item.querySelector('.pf-nginx-del');
+            if (delBtn) {
+                delBtn.addEventListener('click', function () {
+                    item.remove();
+                });
+            }
+        }
+
+        function collectNginxConfigs(modal) {
+            var items = modal.querySelectorAll('.pf-nginx-item');
+            var result = [];
+            for (var i = 0; i < items.length; i++) {
+                var nameEl = items[i].querySelector('.pf-nginx-name');
+                var configEl = items[i].querySelector('.pf-nginx-config');
+                var name = nameEl ? nameEl.value.trim() : '';
+                var config = configEl ? configEl.value : '';
+                // 跳过完全空的项
+                if (!name && !config.trim()) continue;
+                result.push({ name: name, config: config });
+            }
+            return result;
+        }
+
         function fillFormData(modal, projectName, data) {
             function setVal(id, val) { var el = modal.querySelector('#' + id); if (el) el.value = val; }
             function setSelect(id, val) {
@@ -2032,10 +2129,11 @@ break;
             // 标题
             var title = modal.querySelector('#pf-title');
             var subtitle = modal.querySelector('#pf-subtitle');
-            if (title) title.textContent = '编辑项目';
-            if (subtitle) subtitle.textContent = projectName;
+            var isNew = !projectName;
+            if (title) title.textContent = isNew ? '新建项目' : '编辑项目';
+            if (subtitle) subtitle.textContent = isNew ? '填写项目信息与存放地址' : projectName;
 
-            setVal('pf-name', projectName);
+            setVal('pf-name', isNew ? '' : projectName);
             setVal('pf-code', data.code);
             setSelect('pf-status', data.status);
             setSelect('pf-priority', data.priority || '中');
@@ -2063,6 +2161,28 @@ break;
             if (cloudSection) {
                 if (data.cloudEnabled) cloudSection.classList.remove('hidden');
                 else cloudSection.classList.add('hidden');
+            }
+
+            // 服务器配置
+            var serverToggle = modal.querySelector('#pf-server-enabled');
+            var serverSection = modal.querySelector('#pf-server-section');
+            if (serverToggle) serverToggle.checked = !!data.serverEnabled;
+            if (serverSection) {
+                if (data.serverEnabled) serverSection.classList.remove('hidden');
+                else serverSection.classList.add('hidden');
+            }
+            setVal('pf-server-addr', data.serverAddr || '');
+            setVal('pf-server-spec', data.serverSpec || '');
+
+            // Nginx 配置列表
+            var nginxList = modal.querySelector('#pf-nginx-list');
+            if (nginxList) {
+                nginxList.innerHTML = '';
+                var configs = data.nginxConfigs || [];
+                if (configs.length === 0) configs = [{ name: '', config: '' }];
+                for (var i = 0; i < configs.length; i++) {
+                    addNginxEntryToModal(modal, configs[i].name || '', configs[i].config || '');
+                }
             }
         }
 
@@ -2113,6 +2233,30 @@ break;
                 });
             }
 
+            // 服务器开关联动
+            var serverToggle = modal.querySelector('#pf-server-enabled');
+            var serverSection = modal.querySelector('#pf-server-section');
+            if (serverToggle && serverSection) {
+                serverToggle.addEventListener('change', function () {
+                    if (this.checked) serverSection.classList.remove('hidden');
+                    else serverSection.classList.add('hidden');
+                });
+            }
+
+            // Nginx 配置动态增删
+            var nginxList = modal.querySelector('#pf-nginx-list');
+            var nginxAddBtn = modal.querySelector('#pf-nginx-add');
+            if (nginxAddBtn) {
+                nginxAddBtn.addEventListener('click', function () {
+                    addNginxEntryToModal(modal, '', '');
+                });
+            }
+            // 绑定已有项的删除按钮
+            var nginxItems = modal.querySelectorAll('.pf-nginx-item');
+            for (var ni = 0; ni < nginxItems.length; ni++) {
+                bindNginxDelete(nginxItems[ni]);
+            }
+
             // 浏览文件夹
             var browseBtn = modal.querySelector('#pf-browse');
             var localPathInput = modal.querySelector('#pf-local-path');
@@ -2121,7 +2265,7 @@ break;
                 browseBtn.addEventListener('click', function () {
                     if (localPathHint) localPathHint.classList.remove('hidden');
                     if (!localPathInput.value) {
-                        localPathInput.value = 'D:\\Projects\\' + projectName;
+                        localPathInput.value = 'D:\\Projects\\' + (projectName || '新项目');
                     }
                     showToast('请输入或粘贴本地文件夹路径', 'ph ph-info', '#60a5fa');
                 });
@@ -2167,7 +2311,11 @@ break;
                         localPath: (modal.querySelector('#pf-local-path') || {}).value || '',
                         cloudEnabled: (modal.querySelector('#pf-cloud-enabled') || {}).checked || false,
                         cloudPath: (modal.querySelector('#pf-cloud-path') || {}).value || '',
-                        cloudType: (modal.querySelector('#pf-cloud-type') || {}).value || 'baidu'
+                        cloudType: (modal.querySelector('#pf-cloud-type') || {}).value || 'baidu',
+                        serverEnabled: (modal.querySelector('#pf-server-enabled') || {}).checked || false,
+                        serverAddr: (modal.querySelector('#pf-server-addr') || {}).value || '',
+                        serverSpec: (modal.querySelector('#pf-server-spec') || {}).value || '',
+                        nginxConfigs: collectNginxConfigs(modal)
                     };
 
                     // 更新数据存储（若名称变更，迁移数据）
@@ -2191,6 +2339,9 @@ break;
 
         // fetch 失败时的内联表单（降级方案）
         function buildFormFallback(projectName, data) {
+            var isNew = !projectName;
+            var titleText = isNew ? '新建项目' : '编辑项目';
+            var subtitleText = isNew ? '填写项目信息与存放地址' : projectName;
             var modal = document.createElement('div');
             modal.id = 'pf-modal';
             modal.className = 'pf-modal-overlay';
@@ -2200,7 +2351,7 @@ break;
                 '  <div class="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white shrink-0">',
                 '    <div class="flex items-center gap-3">',
                 '      <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center"><i class="ph-fill ph-folder-open text-xl"></i></div>',
-                '      <div><h3 class="font-semibold text-gray-800 text-base">编辑项目</h3><p class="text-xs text-gray-400 mt-0.5">' + projectName + '</p></div>',
+                '      <div><h3 class="font-semibold text-gray-800 text-base">' + titleText + '</h3><p class="text-xs text-gray-400 mt-0.5">' + subtitleText + '</p></div>',
                 '    </div>',
                 '    <button id="pf-close" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition flex items-center justify-center"><i class="ph ph-x text-lg"></i></button>',
                 '  </div>',
@@ -2213,6 +2364,15 @@ break;
                 '    <div id="pf-cloud-section"' + (data.cloudEnabled ? '' : ' class="hidden"') + '>',
                 '      <label class="pf-form-label">云端存放地址</label>',
                 '      <input type="text" id="pf-cloud-path" class="pf-form-input" value="' + (data.cloudPath || '') + '" placeholder="云端链接地址">',
+                '    </div>',
+                '    <div class="flex items-center gap-3 p-3 rounded-lg border border-gray-100 bg-gray-50/50">',
+                '      <span class="text-sm font-medium text-gray-700">已购买服务器</span>',
+                '      <label class="pf-toggle-switch"><input type="checkbox" id="pf-server-enabled"' + (data.serverEnabled ? ' checked' : '') + '><span class="pf-toggle-slider"></span></label>',
+                '    </div>',
+                '    <div id="pf-server-section"' + (data.serverEnabled ? '' : ' class="hidden"') + '>',
+                '      <div class="mb-3"><label class="pf-form-label">服务器地址</label><input type="text" id="pf-server-addr" class="pf-form-input" value="' + (data.serverAddr || '') + '" placeholder="如：192.168.1.100"></div>',
+                '      <div class="mb-3"><label class="pf-form-label">服务器配置（账号密码等）</label><textarea id="pf-server-spec" rows="3" class="pf-form-input" placeholder="记录服务器账号、密码等..." style="resize:vertical;">' + (data.serverSpec || '') + '</textarea></div>',
+                '      <div><label class="pf-form-label">Nginx 配置</label><div id="pf-nginx-list" class="space-y-3"></div><button type="button" id="pf-nginx-add" class="mt-2 text-xs text-brand-600 hover:text-brand-700 flex items-center gap-1 transition"><i class="ph ph-plus"></i> 添加配置</button></div>',
                 '    </div>',
                 '  </div>',
                 '  <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/50 shrink-0">',
@@ -2238,16 +2398,44 @@ break;
                     else cloudSection.classList.add('hidden');
                 });
             }
+            var serverToggle = modal.querySelector('#pf-server-enabled');
+            var serverSection = modal.querySelector('#pf-server-section');
+            if (serverToggle && serverSection) {
+                serverToggle.addEventListener('change', function () {
+                    if (this.checked) serverSection.classList.remove('hidden');
+                    else serverSection.classList.add('hidden');
+                });
+            }
+            // Nginx 动态增删（降级表单）
+            var nginxAddBtn = modal.querySelector('#pf-nginx-add');
+            if (nginxAddBtn) {
+                nginxAddBtn.addEventListener('click', function () {
+                    addNginxEntryToModal(modal, '', '');
+                });
+            }
+            var initConfigs = data.nginxConfigs || [];
+            if (initConfigs.length === 0) initConfigs = [{ name: '', config: '' }];
+            for (var ci = 0; ci < initConfigs.length; ci++) {
+                addNginxEntryToModal(modal, initConfigs[ci].name || '', initConfigs[ci].config || '');
+            }
             modal.querySelector('#pf-save').addEventListener('click', function () {
                 var localPath = modal.querySelector('#pf-local-path').value;
                 var cloudEnabled = modal.querySelector('#pf-cloud-enabled').checked;
                 var cloudPath = modal.querySelector('#pf-cloud-path').value;
+                var serverEnabled = modal.querySelector('#pf-server-enabled').checked;
+                var serverAddr = modal.querySelector('#pf-server-addr').value;
+                var serverSpec = modal.querySelector('#pf-server-spec').value;
+                var nginxConfigs = collectNginxConfigs(modal);
                 if (PROJECT_DATA[projectName]) {
                     PROJECT_DATA[projectName].localPath = localPath;
                     PROJECT_DATA[projectName].cloudEnabled = cloudEnabled;
                     PROJECT_DATA[projectName].cloudPath = cloudPath;
+                    PROJECT_DATA[projectName].serverEnabled = serverEnabled;
+                    PROJECT_DATA[projectName].serverAddr = serverAddr;
+                    PROJECT_DATA[projectName].serverSpec = serverSpec;
+                    PROJECT_DATA[projectName].nginxConfigs = nginxConfigs;
                 } else {
-                    PROJECT_DATA[projectName] = { localPath: localPath, cloudEnabled: cloudEnabled, cloudPath: cloudPath, cloudType: 'baidu', code: '', status: '待确认需求', priority: '中', type: '网站开发', scope: 'enterprise', deadline: '', amount: '', progress: 0, desc: '', customer: '', tags: '', notes: '' };
+                    PROJECT_DATA[projectName] = { localPath: localPath, cloudEnabled: cloudEnabled, cloudPath: cloudPath, cloudType: 'baidu', serverEnabled: serverEnabled, serverAddr: serverAddr, serverSpec: serverSpec, nginxConfigs: nginxConfigs, code: '', status: '待确认需求', priority: '中', type: '网站开发', scope: 'enterprise', deadline: '', amount: '', progress: 0, desc: '', customer: '', tags: '', notes: '' };
                 }
                 showToast('项目信息已保存', 'ph-fill ph-check-circle', '#4ade80');
                 closeModal();
@@ -2333,6 +2521,56 @@ break;
                 if (cloudSection) cloudSection.classList.add('hidden');
             }
 
+            // 服务器配置
+            var serverEnabledEl = drawer.querySelector('#pd-server-enabled');
+            var serverSectionEl = drawer.querySelector('#pd-server-section');
+            if (data.serverEnabled) {
+                if (serverEnabledEl) { serverEnabledEl.innerHTML = '<i class="ph-fill ph-check-circle"></i> 已购买'; serverEnabledEl.className = 'text-sm text-green-600 flex items-center gap-1'; }
+                if (serverSectionEl) serverSectionEl.classList.remove('hidden');
+                setText('pd-server-addr', data.serverAddr || '—');
+                var specEl = drawer.querySelector('#pd-server-spec');
+                if (specEl) specEl.textContent = data.serverSpec || '—';
+                // 渲染多个 Nginx 配置
+                var nginxListEl = drawer.querySelector('#pd-nginx-list');
+                if (nginxListEl) {
+                    var configs = data.nginxConfigs || [];
+                    if (configs.length === 0) {
+                        nginxListEl.innerHTML = '<div class="bg-gray-50 rounded-lg p-3 border border-gray-100"><pre class="text-xs text-gray-400 whitespace-pre-wrap" style="font-family:monospace;">—</pre></div>';
+                    } else {
+                        nginxListEl.innerHTML = '';
+                        for (var ni = 0; ni < configs.length; ni++) {
+                            var item = document.createElement('div');
+                            item.className = 'bg-gray-50 rounded-lg p-3 border border-gray-100';
+                            var label = configs[ni].name || ('配置 ' + (ni + 1));
+                            item.innerHTML =
+                                '<div class="flex items-center justify-between mb-1">' +
+                                    '<span class="text-[11px] font-medium text-indigo-500 flex items-center gap-1"><i class="ph ph-file-code"></i> ' + label + '</span>' +
+                                    '<button class="pd-copy-nginx w-6 h-6 rounded text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition flex items-center justify-center" data-config="' + ni + '" title="复制配置"><i class="ph ph-copy text-xs"></i></button>' +
+                                '</div>' +
+                                '<pre class="text-xs text-gray-600 whitespace-pre-wrap break-all max-h-48 overflow-y-auto" style="font-family:monospace;">' + (configs[ni].config || '—') + '</pre>';
+                            nginxListEl.appendChild(item);
+                        }
+                        // 绑定复制按钮
+                        var copyBtns = nginxListEl.querySelectorAll('.pd-copy-nginx');
+                        for (var cb = 0; cb < copyBtns.length; cb++) {
+                            (function (btn) {
+                                btn.addEventListener('click', function () {
+                                    var idx = parseInt(btn.getAttribute('data-config'));
+                                    var cfg = configs[idx];
+                                    if (cfg && cfg.config) {
+                                        copyToClipboard(cfg.config);
+                                        showToast('Nginx 配置已复制', 'ph-fill ph-check-circle', '#4ade80');
+                                    }
+                                });
+                            })(copyBtns[cb]);
+                        }
+                    }
+                }
+            } else {
+                if (serverEnabledEl) { serverEnabledEl.innerHTML = '<i class="ph ph-x-circle text-gray-400"></i> 未购买'; serverEnabledEl.className = 'text-sm text-gray-400 flex items-center gap-1'; }
+                if (serverSectionEl) serverSectionEl.classList.add('hidden');
+            }
+
             // 显示面板
             drawer.classList.add('show');
         }
@@ -2414,6 +2652,18 @@ break;
                     showToast('云端地址已复制', 'ph-fill ph-check-circle', '#4ade80');
                 } else {
                     showToast('未设置云端地址', 'ph ph-warning', '#fbbf24');
+                }
+            });
+
+            // 复制服务器地址
+            var copyServerBtn = drawer.querySelector('#pd-copy-server-addr');
+            if (copyServerBtn) copyServerBtn.addEventListener('click', function () {
+                var data = getProjectData(currentDetailProject || '');
+                if (data.serverAddr) {
+                    copyToClipboard(data.serverAddr);
+                    showToast('服务器地址已复制', 'ph-fill ph-check-circle', '#4ade80');
+                } else {
+                    showToast('未设置服务器地址', 'ph ph-warning', '#fbbf24');
                 }
             });
         }
@@ -2524,6 +2774,11 @@ break;
             if (page && page.indexOf('project') === -1) return;
             init();
         });
+
+        // 暴露到 window，供顶部栏按钮 onclick 调用（null 表示新建）
+        window.openEditForm = function(projectName) {
+            openEditForm(projectName || null);
+        };
     })();
     </script>
 </body>

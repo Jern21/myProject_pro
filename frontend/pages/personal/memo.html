@@ -422,10 +422,8 @@
 
             </div>
         </div>
-    </div>
-</main>
 
-<!-- Detail Drawer -->
+<!-- Detail Drawer (在 #page-view 内部，SPA 导航时随内容一起注入) -->
 <div id="detail-drawer-overlay" class="detail-drawer-overlay" onclick="closeDetailDrawer()"></div>
 <div id="detail-drawer" class="detail-drawer shadow-drawer">
     <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-brand-50 to-white flex-shrink-0">
@@ -453,6 +451,9 @@
         </div>
     </div>
 </div>
+</div>
+
+</main>
 
 <script>
 // Current viewing memo ID

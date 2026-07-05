@@ -67,6 +67,7 @@
     <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
+<script src="../../js/order-form.js"></script>
 </head>
 <body class="flex h-screen overflow-hidden text-sm bg-gray-50 text-gray-700">
 
@@ -1408,6 +1409,9 @@
             if (!document.querySelector('.cust-more-btn')) return;
             init();
         });
+
+        // 暴露到 window，供顶部栏按钮 onclick 调用
+        window.openCustomerForm = openCustomerForm;
     })();
     </script>
 </body>

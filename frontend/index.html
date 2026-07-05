@@ -201,7 +201,7 @@
                         <h3 class="font-semibold text-gray-800 text-base mb-4">平台发布状态</h3>
                         <div>
                             <!-- Xianyu -->
-                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors cursor-pointer" onclick="window.location.href='#/platform/xianyu'">
+                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors cursor-pointer" onclick="navigatePlatformPage('xianyu.html')">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center text-white font-bold text-lg leading-none">
                                         <span class="transform -rotate-12 block mt-0.5 text-black">闲鱼</span>
@@ -213,11 +213,11 @@
                                     <div><p class="text-xs text-gray-400">审核中</p><p class="font-semibold text-gray-700">2</p></div>
                                     <div><p class="text-xs text-gray-400">下架</p><p class="font-semibold text-gray-700">1</p></div>
                                 </div>
-                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition" onclick="event.stopPropagation(); window.location.href='#/platform/xianyu'">查看</button>
+                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition" onclick="event.stopPropagation(); navigatePlatformPage('xianyu.html')">查看</button>
                             </div>
                             
                             <!-- Xiaohongshu -->
-                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors cursor-pointer" onclick="window.location.href='#/platform/xiaohongshu'">
+                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors cursor-pointer" onclick="navigatePlatformPage('xiaohongshu.html')">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold text-xs leading-none">
                                         小红书
@@ -229,11 +229,11 @@
                                     <div><p class="text-xs text-gray-400">审核中</p><p class="font-semibold text-gray-700">1</p></div>
                                     <div><p class="text-xs text-gray-400">下架</p><p class="font-semibold text-gray-700">2</p></div>
                                 </div>
-                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition" onclick="event.stopPropagation(); window.location.href='#/platform/xiaohongshu'">查看</button>
+                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition" onclick="event.stopPropagation(); navigatePlatformPage('xiaohongshu.html')">查看</button>
                             </div>
 
                             <!-- Douyin -->
-                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors cursor-pointer" onclick="window.location.href='#/platform/douyin'">
+                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors cursor-pointer" onclick="navigatePlatformPage('douyin.html')">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-lg leading-none">
                                         <i class="ph-fill ph-tiktok-logo text-xl"></i>
@@ -245,7 +245,7 @@
                                     <div><p class="text-xs text-gray-400">审核中</p><p class="font-semibold text-gray-700">3</p></div>
                                     <div><p class="text-xs text-gray-400">下架</p><p class="font-semibold text-gray-700">1</p></div>
                                 </div>
-                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition" onclick="event.stopPropagation(); window.location.href='#/platform/douyin'">查看</button>
+                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition" onclick="event.stopPropagation(); navigatePlatformPage('douyin.html')">查看</button>
                             </div>
                         </div>
                     </div>
@@ -549,6 +549,20 @@
 </main>
 
     <script>
+        function navigatePlatformPage(pageName) {
+            if (typeof window.spaNavigate === 'function') {
+                window.spaNavigate(pageName);
+                return;
+            }
+
+            var routes = {
+                'xianyu.html': 'pages/platform/xianyu.html',
+                'xiaohongshu.html': 'pages/platform/xiaohongshu.html',
+                'douyin.html': 'pages/platform/douyin.html'
+            };
+            window.location.href = routes[pageName] || 'pages/platform/platform.html';
+        }
+
         // Initialize ECharts for Trend Chart（防御性：等待 echarts 加载完成）
         function initTrendChart() {
             var chartDom = document.getElementById('trendChart');

@@ -60,17 +60,6 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
     <div id="page-view" class="flex-1 flex flex-col overflow-hidden">
-        <!-- Header -->
-        <div class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between flex-shrink-0">
-            <div>
-                <h1 class="text-lg font-bold text-gray-800">简历管理</h1>
-                <p class="text-xs text-gray-400 mt-0.5">为每个岗位定制专属简历</p>
-            </div>
-            <button onclick="createNewJob()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm">
-                <i class="ph ph-plus"></i> 新建岗位简历
-            </button>
-        </div>
-
         <!-- Content Area -->
         <div class="flex-1 overflow-hidden">
             <div class="flex h-full">
@@ -158,7 +147,7 @@
                             <h3 class="text-base font-medium text-gray-700 mb-1">选择一个岗位查看简历</h3>
                             <p class="text-sm text-gray-400 mb-4">或创建新的岗位简历</p>
                             <button onclick="createNewJob()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium">
-                                新建岗位简历
+                                新增简历
                             </button>
                         </div>
                     </div>
@@ -172,14 +161,12 @@
                 </div>
             </div>
         </div>
-    </div>
-</main>
 
-<!-- New Job Modal -->
+<!-- New Job Modal (在 #page-view 内部，SPA 导航时随内容一起注入) -->
 <div id="new-job-modal" class="fixed inset-0 z-[9999] hidden">
     <div class="absolute inset-0 bg-black/50" onclick="closeNewJobModal()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">新建岗位简历</h3>
+        <h3 class="text-lg font-bold text-gray-800 mb-4">新增简历</h3>
         <div class="space-y-4">
             <div>
                 <label class="block text-sm text-gray-600 mb-1.5">岗位名称 <span class="text-red-500">*</span></label>
@@ -208,11 +195,14 @@
         </div>
     </div>
 </div>
+</div>
+
+</main>
 
 <script>
 // ==================== Data ====================
 // Sample data - in real app, this would come from backend/localStorage
-let jobs = [
+var jobs = [
     {
         id: 1,
         title: '高级前端工程师',
@@ -242,16 +232,23 @@ let jobs = [
     }
 ];
 
-let currentJobId = null;
-let currentPdfDoc = null;
-let currentScale = 1.2;
-let renderedPages = [];
+var currentJobId = null;
+var currentPdfDoc = null;
+var currentScale = 1.2;
+var renderedPages = [];
 
 // ==================== Initialization ====================
-document.addEventListener('DOMContentLoaded', function() {
+// SPA 导航时 DOMContentLoaded 已触发，必须同时监听 spa:ready
+function initResumePage() {
     initWorker();
     renderJobList();
     setupEventListeners();
+}
+document.addEventListener('DOMContentLoaded', initResumePage);
+window.addEventListener('spa:ready', function(e) {
+    var page = (e && e.detail && e.detail.page) || '';
+    if (page && page.indexOf('resume') === -1) return;
+    initResumePage();
 });
 
 function initWorker() {
@@ -612,6 +609,19 @@ function updateSelectedFilename(filename) {
 window.addEventListener('spa:cleanup-forms', function() {
     closeNewJobModal();
 });
+
+// 显式暴露到 window，确保 inline onclick 处理器能访问
+window.createNewJob = createNewJob;
+window.closeNewJobModal = closeNewJobModal;
+window.saveNewJob = saveNewJob;
+window.selectJob = selectJob;
+window.uploadPdfForCurrentJob = uploadPdfForCurrentJob;
+window.downloadCurrentPdf = downloadCurrentPdf;
+window.zoomIn = zoomIn;
+window.zoomOut = zoomOut;
+window.fitToWidth = fitToWidth;
+window.prevPage = prevPage;
+window.nextPage = nextPage;
 </script>
 
 </body>

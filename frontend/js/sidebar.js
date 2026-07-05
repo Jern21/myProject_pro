@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <i class="ph ph-kanban text-lg mr-3 icon-base text-gray-500"></i>项目管理
                 </a>
                 <a href="${PB}${ROUTES['resume.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="resume.html">
-                    <i class="ph ph-file-text text-lg mr-3 icon-base text-gray-500"></i>简历迭代
+                    <i class="ph ph-file-text text-lg mr-3 icon-base text-gray-500"></i>简历管理
                 </a>
                 <a href="${PB}${ROUTES['memo.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="memo.html">
                     <i class="ph ph-notepad text-lg mr-3 icon-base text-gray-500"></i>信息备忘录

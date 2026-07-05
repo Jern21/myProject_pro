@@ -28,7 +28,7 @@
             title: '客户管理',
             subtitle: '共 86 位客户',
             search: '搜索客户名称、联系方式、标签...',
-            action: { label: '新增客户', icon: 'ph ph-plus', variant: 'primary' }
+            action: { label: '新增客户', icon: 'ph ph-plus', variant: 'primary', onclick: 'openCustomerForm(null,null)' }
         },
         'platform.html': {
             type: 'breadcrumb',
@@ -85,14 +85,14 @@
             title: '项目管理',
             subtitle: '共 24 个项目 · 12 个进行中',
             search: '搜索项目名称、客户...',
-            action: { label: '新建项目', icon: 'ph ph-plus', variant: 'primary' }
+            action: { label: '新建项目', icon: 'ph ph-plus', variant: 'primary', onclick: 'openEditForm(null)' }
         },
         'resume.html': {
             type: 'standard',
-            title: '简历迭代',
+            title: '简历管理',
             subtitle: '管理简历版本，持续优化求职竞争力',
             search: '搜索版本、内容...',
-            action: { label: '新建版本', icon: 'ph ph-plus', variant: 'primary' }
+            action: { label: '新增简历', icon: 'ph ph-plus', variant: 'primary', onclick: 'createNewJob()' }
         },
         'memo.html': {
             type: 'standard',
@@ -157,7 +157,8 @@
         var buttonClass = variant === 'secondary'
             ? 'px-4 py-2 border border-gray-200 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2'
             : 'bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm shadow-brand-500/30';
-        return '<button class="' + buttonClass + '">' + icon + escapeHtml(action.label) + '</button>';
+        var onclickAttr = action.onclick ? ' onclick="' + escapeHtml(action.onclick) + '"' : '';
+        return '<button class="' + buttonClass + '"' + onclickAttr + '>' + icon + escapeHtml(action.label) + '</button>';
     }
 
     function renderControls(controls) {

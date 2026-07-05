@@ -3,7 +3,7 @@
  *
  * 功能：
  *   - 上传新海报（拖拽 / 点击上传，图片预览）
- *   - 编辑海报信息（标题、平台、状态、标签、备注、关联链接）
+ *   - 编辑海报信息（标题、平台、自定义标签、备注、关联链接）
  *   - 海报尺寸 / 比例选择
  *   - 表单校验
  *
@@ -23,13 +23,6 @@
         { value: 'douyin', label: '抖音', color: 'gray' },
         { value: 'wechat', label: '微信朋友圈', color: 'green' },
         { value: 'other', label: '其他平台', color: 'blue' }
-    ];
-
-    var POSTER_STATUSES = [
-        { value: 'active', label: '使用中', color: 'green' },
-        { value: 'expiring', label: '即将到期', color: 'orange' },
-        { value: 'draft', label: '草稿箱', color: 'gray' },
-        { value: 'archived', label: '已归档', color: 'gray' }
     ];
 
     var POSTER_RATIOS = [
@@ -60,6 +53,33 @@
         var m = String(d.getMonth() + 1).padStart(2, '0');
         var day = String(d.getDate()).padStart(2, '0');
         return y + '-' + m + '-' + day;
+    }
+
+    function normalizeHexColor(value, fallback) {
+        var color = String(value || '').trim();
+        if (/^#[0-9a-fA-F]{6}$/.test(color)) return color;
+        return fallback || '#10b981';
+    }
+
+    function hexToRgba(hex, alpha) {
+        hex = normalizeHexColor(hex);
+        var r = parseInt(hex.slice(1, 3), 16);
+        var g = parseInt(hex.slice(3, 5), 16);
+        var b = parseInt(hex.slice(5, 7), 16);
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    }
+
+    function updateLabelPreview() {
+        var form = document.getElementById('poster-form');
+        var preview = document.getElementById('poster-label-preview');
+        if (!form || !preview) return;
+
+        var text = form.labelText.value.trim() || '自定义标签';
+        var color = normalizeHexColor(form.labelColor.value);
+        preview.textContent = text;
+        preview.style.color = color;
+        preview.style.backgroundColor = hexToRgba(color, 0.1);
+        preview.style.borderColor = hexToRgba(color, 0.28);
     }
 
     // ========== 构建 HTML ==========
@@ -111,12 +131,6 @@
         }).join('');
     }
 
-    function buildStatusOptions() {
-        return POSTER_STATUSES.map(function (s) {
-            return '<option value="' + s.value + '">' + s.label + '</option>';
-        }).join('');
-    }
-
     function buildDrawerHTML() {
         return [
             // Overlay
@@ -127,7 +141,7 @@
             '  <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">',
             '    <div>',
             '      <h3 class="font-bold text-gray-800 text-base" id="poster-form-title">上传海报</h3>',
-            '      <p class="text-xs text-gray-400 mt-0.5">上传海报图片并填写信息，标记星号的字段为必填</p>',
+            '      <p class="text-xs text-gray-400 mt-0.5">填写海报信息，标记星号的字段为必填</p>',
             '    </div>',
             '    <button id="poster-form-close" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition">',
             '      <i class="ph ph-x text-lg"></i>',
@@ -172,7 +186,8 @@
             '        <div class="grid grid-cols-2 gap-x-4 gap-y-3">',
             buildField('海报标题', inputHtml('title', '如：闲鱼引流主图-07'), { required: true }),
             buildField('发布平台', '<select name="platform" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-all bg-white">' + buildPlatformOptions() + '</select>', { required: true, half: true }),
-            buildField('海报状态', '<select name="status" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-all bg-white">' + buildStatusOptions() + '</select>', { half: true }),
+            buildField('自定义标签', inputHtml('labelText', '如：引流主图'), { half: true }),
+            buildField('标签颜色', '<div class="flex items-center gap-3"><input type="color" name="labelColor" value="#10b981" class="w-11 h-10 rounded-lg border border-gray-200 bg-white p-1 cursor-pointer"><span id="poster-label-preview" class="px-2 py-0.5 rounded text-[10px] font-medium border inline-block" style="color:#10b981;background-color:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.28)">自定义标签</span></div>', { half: true }),
             buildField('图片比例', selectHtml('ratio', POSTER_RATIOS), { half: true }),
             buildField('排序权重', inputHtml('sortOrder', '数字越大越靠前', 'number'), { half: true }),
             '        </div>',
@@ -360,10 +375,6 @@
             form.title.focus();
             return false;
         }
-        if (!editMode && !uploadedImage && !previewHtmlContent) {
-            showHint('请上传海报图片', 'error');
-            return false;
-        }
         return true;
     }
 
@@ -391,7 +402,8 @@
         return {
             title: form.title.value.trim(),
             platform: form.platform.value,
-            status: form.status.value,
+            labelText: form.labelText.value.trim() || '自定义标签',
+            labelColor: normalizeHexColor(form.labelColor.value),
             ratio: form.ratio.value,
             sortOrder: parseInt(form.sortOrder.value) || 0,
             tags: selectedTags.slice(),
@@ -415,7 +427,8 @@
 
         form.title.value = data.title || '';
         form.platform.value = data.platform || 'xianyu';
-        form.status.value = data.status || 'active';
+        form.labelText.value = data.labelText || data.statusText || '自定义标签';
+        form.labelColor.value = normalizeHexColor(data.labelColor, '#10b981');
         form.ratio.value = data.ratio || '3/4';
         form.sortOrder.value = data.sortOrder || '';
         form.onlineDate.value = data.onlineDate || '';
@@ -441,6 +454,8 @@
         } else if (data.imageHtml) {
             showPreviewHtml(data.imageHtml);
         }
+
+        updateLabelPreview();
     }
 
     // ========== 事件绑定 ==========
@@ -461,6 +476,13 @@
 
         // 上传
         bindUploadEvents();
+
+        var form = document.getElementById('poster-form');
+        if (form && form.labelText && form.labelColor) {
+            form.labelText.addEventListener('input', updateLabelPreview);
+            form.labelColor.addEventListener('input', updateLabelPreview);
+            updateLabelPreview();
+        }
 
         // 标签点击
         document.querySelectorAll('.poster-tag').forEach(function (btn) {
