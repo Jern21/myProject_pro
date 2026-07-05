@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>window.PAGE_BASE='../../';</script>
+    <title>项目编辑 - 文的项目工作台</title>
+    <script src="../../assets/tailwind.min.js"></script>
+    <link rel="stylesheet" href="../../assets/fonts/phosphor-regular.css">
+    <link rel="stylesheet" href="../../assets/fonts/phosphor-fill.css">
+    <link rel="stylesheet" href="../../assets/fonts/inter.css">
+    <script src="../../js/tailwind-config.js"></script>
+    <script src="../../js/cdn-fallback.js"></script>
+    <link rel="stylesheet" href="../../css/common.css">
+    <style>
+        body { background: #f9fafb; }
+        .pf-form-input { width: 100%; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; outline: none; transition: border-color 0.15s ease, box-shadow 0.15s ease; background: #fff; }
+        .pf-form-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .pf-form-label { display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.375rem; font-weight: 500; }
+        .pf-toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .pf-toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .pf-toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #d1d5db; border-radius: 9999px; transition: 0.3s; }
+        .pf-toggle-slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .pf-toggle-switch input:checked + .pf-toggle-slider { background: #3b82f6; }
+        .pf-toggle-switch input:checked + .pf-toggle-slider:before { transform: translateX(20px); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+<!-- ========== 项目编辑表单面板 ========== -->
+<div id="project-form-panel" class="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+
+    <!-- 头部 -->
+    <div class="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center">
+                <i class="ph-fill ph-folder-open text-xl"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-800 text-base" id="pf-title">编辑项目</h3>
+                <p class="text-xs text-gray-400 mt-0.5" id="pf-subtitle">修改项目信息与存放地址</p>
+            </div>
+        </div>
+        <button id="pf-close" class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition flex items-center justify-center">
+            <i class="ph ph-x text-lg"></i>
+        </button>
+    </div>
+
+    <!-- 表单内容 -->
+    <div class="px-6 py-5 space-y-5 max-h-[70vh] overflow-y-auto">
+
+        <!-- 基本信息 -->
+        <div>
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                <i class="ph ph-info"></i> 基本信息
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="pf-form-label">项目名称 <span class="text-red-500">*</span></label>
+                    <input type="text" id="pf-name" class="pf-form-input" placeholder="如：企业官网定制开发">
+                </div>
+                <div>
+                    <label class="pf-form-label">项目编号</label>
+                    <input type="text" id="pf-code" class="pf-form-input bg-gray-50" placeholder="自动生成" readonly>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="pf-form-label">项目状态</label>
+                    <select id="pf-status" class="pf-form-input">
+                        <option value="待确认需求">待确认需求</option>
+                        <option value="开发/设计中">开发/设计中</option>
+                        <option value="待验收">待验收</option>
+                        <option value="已完成">已完成</option>
+                        <option value="已关闭">已关闭</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="pf-form-label">优先级</label>
+                    <select id="pf-priority" class="pf-form-input">
+                        <option value="高">高</option>
+                        <option value="中">中</option>
+                        <option value="低">低</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="pf-form-label">项目类型</label>
+                    <select id="pf-type" class="pf-form-input">
+                        <option value="网站开发">网站开发</option>
+                        <option value="小程序">小程序</option>
+                        <option value="UI/设计">UI/设计</option>
+                        <option value="平面设计">平面设计</option>
+                        <option value="视频剪辑">视频剪辑</option>
+                        <option value="内容创作">内容创作</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="pf-form-label">项目归属</label>
+                    <select id="pf-scope" class="pf-form-input">
+                        <option value="enterprise">企业项目</option>
+                        <option value="personal">个人项目</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="pf-form-label">截止日期</label>
+                    <input type="date" id="pf-deadline" class="pf-form-input">
+                </div>
+                <div>
+                    <label class="pf-form-label">项目金额（¥）</label>
+                    <input type="text" id="pf-amount" class="pf-form-input" placeholder="如：6800">
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="pf-form-label">项目进度</label>
+                <div class="flex items-center gap-3">
+                    <input type="range" id="pf-progress" min="0" max="100" step="5" value="0" class="flex-1 accent-brand-600 h-1.5 cursor-pointer">
+                    <span id="pf-progress-val" class="text-sm font-medium text-gray-700 w-10 text-right">0%</span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="pf-form-label">项目描述</label>
+                <textarea id="pf-desc" rows="2" class="pf-form-input" placeholder="项目需求简要描述..." style="resize:none;"></textarea>
+            </div>
+        </div>
+
+        <!-- 分隔线 -->
+        <div class="border-t border-gray-100"></div>
+
+        <!-- 存放地址 -->
+        <div>
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                <i class="ph ph-folder-simple"></i> 存放地址
+            </p>
+
+            <!-- 本地存放地址 -->
+            <div class="mb-4">
+                <label class="pf-form-label flex items-center justify-between">
+                    <span>本地存放地址</span>
+                    <span class="text-[10px] text-gray-400 normal-case font-normal">项目文件在本地磁盘的路径</span>
+                </label>
+                <div class="relative">
+                    <input type="text" id="pf-local-path" class="pf-form-input pr-10" placeholder="如：D:\Projects\企业官网定制开发">
+                    <button id="pf-browse" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition flex items-center justify-center" title="选择文件夹">
+                        <i class="ph ph-folder-open text-base"></i>
+                    </button>
+                </div>
+                <div id="pf-local-path-hint" class="hidden mt-1.5 text-[11px] text-gray-400 flex items-center gap-1">
+                    <i class="ph ph-info"></i>
+                    <span>点击右侧文件夹图标可快速选择本地目录</span>
+                </div>
+            </div>
+
+            <!-- 是否云端存放 -->
+            <div class="mb-4 p-3.5 rounded-lg border border-gray-100 bg-gray-50/50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-500 flex items-center justify-center">
+                            <i class="ph-fill ph-cloud-arrow-up text-base"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">云端备份存放</p>
+                            <p class="text-[11px] text-gray-400">将项目文件同步到云端存储</p>
+                        </div>
+                    </div>
+                    <label class="pf-toggle-switch">
+                        <input type="checkbox" id="pf-cloud-enabled">
+                        <span class="pf-toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 云端存放地址 -->
+            <div id="pf-cloud-section" class="hidden">
+                <label class="pf-form-label flex items-center justify-between">
+                    <span>云端存放地址</span>
+                    <span class="text-[10px] text-gray-400 normal-case font-normal">支持网盘链接、Git 仓库地址等</span>
+                </label>
+                <div class="relative">
+                    <input type="text" id="pf-cloud-path" class="pf-form-input pr-10" placeholder="如：https://pan.baidu.com/s/xxxxx 或 git@github.com:user/repo.git">
+                    <button id="pf-cloud-copy" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition flex items-center justify-center" title="复制地址">
+                        <i class="ph ph-copy text-base"></i>
+                    </button>
+                </div>
+                <div class="mt-2 flex items-center gap-2">
+                    <select id="pf-cloud-type" class="pf-form-input text-xs py-1.5" style="width:auto;">
+                        <option value="baidu">百度网盘</option>
+                        <option value="aliyun">阿里云盘</option>
+                        <option value="github">GitHub</option>
+                        <option value="gitee">Gitee</option>
+                        <option value="onedrive">OneDrive</option>
+                        <option value="other">其他</option>
+                    </select>
+                    <span class="text-[11px] text-gray-400">选择云端存储平台</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分隔线 -->
+        <div class="border-t border-gray-100"></div>
+
+        <!-- 其他信息 -->
+        <div>
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                <i class="ph ph-tag"></i> 其他信息
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="pf-form-label">客户/归属人</label>
+                    <input type="text" id="pf-customer" class="pf-form-input" placeholder="如：张先生">
+                </div>
+                <div>
+                    <label class="pf-form-label">项目标签（逗号分隔）</label>
+                    <input type="text" id="pf-tags" class="pf-form-input" placeholder="如：紧急, 长期合作">
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="pf-form-label">项目备注</label>
+                <textarea id="pf-notes" rows="3" class="pf-form-input" placeholder="项目注意事项、特殊要求等..." style="resize:none;"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+        <div class="flex items-center gap-2 text-xs text-gray-400">
+            <i class="ph ph-clock"></i>
+            <span id="pf-update-time">最后更新：刚刚</span>
+        </div>
+        <div class="flex gap-3">
+            <button id="pf-cancel" class="px-5 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition">取消</button>
+            <button id="pf-save" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-1.5">
+                <i class="ph ph-check"></i>
+                保存
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// 独立预览模式下的交互逻辑（模态框模式下由 project.html 接管）
+(function () {
+    'use strict';
+
+    // 进度滑块联动
+    var progressInput = document.getElementById('pf-progress');
+    var progressVal = document.getElementById('pf-progress-val');
+    if (progressInput && progressVal) {
+        progressInput.addEventListener('input', function () {
+            progressVal.textContent = this.value + '%';
+        });
+    }
+
+    // 云端开关联动
+    var cloudToggle = document.getElementById('pf-cloud-enabled');
+    var cloudSection = document.getElementById('pf-cloud-section');
+    if (cloudToggle && cloudSection) {
+        cloudToggle.addEventListener('change', function () {
+            if (this.checked) {
+                cloudSection.classList.remove('hidden');
+            } else {
+                cloudSection.classList.add('hidden');
+            }
+        });
+    }
+
+    // 浏览文件夹（模拟）
+    var browseBtn = document.getElementById('pf-browse');
+    var localPathInput = document.getElementById('pf-local-path');
+    var localPathHint = document.getElementById('pf-local-path-hint');
+    if (browseBtn && localPathInput) {
+        browseBtn.addEventListener('click', function () {
+            if (localPathHint) localPathHint.classList.remove('hidden');
+            // 模拟选择文件夹
+            if (!localPathInput.value) {
+                localPathInput.value = 'D:\\Projects\\新建项目';
+            }
+        });
+    }
+
+    // 复制云端地址
+    var cloudCopyBtn = document.getElementById('pf-cloud-copy');
+    var cloudPathInput = document.getElementById('pf-cloud-path');
+    if (cloudCopyBtn && cloudPathInput) {
+        cloudCopyBtn.addEventListener('click', function () {
+            cloudPathInput.select();
+            try {
+                document.execCommand('copy');
+            } catch (e) {}
+        });
+    }
+
+    // 取消/关闭
+    var closeBtn = document.getElementById('pf-close');
+    var cancelBtn = document.getElementById('pf-cancel');
+    function closeForm() {
+        // 在独立页面模式下仅清空表单；模态框模式下由 project.html 移除
+        if (window.opener || window.parent !== window) {
+            window.close();
+        }
+    }
+    if (closeBtn) closeBtn.addEventListener('click', closeForm);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeForm);
+
+    // 保存
+    var saveBtn = document.getElementById('pf-save');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function () {
+            var name = (document.getElementById('pf-name').value || '').trim();
+            if (!name) {
+                alert('请输入项目名称');
+                return;
+            }
+            alert('项目信息已保存（预览模式）');
+        });
+    }
+})();
+</script>
+</body>
+</html>
