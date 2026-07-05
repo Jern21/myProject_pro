@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>window.PAGE_BASE='../../';</script>
-    <title>简历迭代 - 文的项目工作台</title>
+    <title>简历管理 - 文的项目工作台</title>
     <script src="../../assets/tailwind.min.js"></script>
     <!-- Phosphor Icons（本地引入） -->
     <link rel="stylesheet" href="../../assets/fonts/phosphor-regular.css">
@@ -19,6 +19,39 @@
     <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
+<!-- PDF.js：Mozilla 开源 PDF 读取与渲染引擎 -->
+<script src="../../assets/pdf.min.js"></script>
+<style>
+    /* PDF 渲染容器样式 */
+    .pdf-page-container {
+        margin-bottom: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background: white;
+    }
+    .pdf-page-canvas {
+        display: block;
+        width: 100%;
+    }
+    /* 岗位卡片选中状态 */
+    .job-card.active {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+    }
+    /* 滚动条美化 */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+</style>
 </head>
 <body class="flex h-screen overflow-hidden text-sm font-sans">
 
@@ -26,331 +59,560 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
-    <div id="page-view" class="flex-1 flex flex-col overflow-hidden"><!-- Scrollable Content Area -->
-        <div class="flex-1 overflow-y-auto p-6 lg:p-8">
-            <div class="max-w-[1400px] mx-auto">
+    <div id="page-view" class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between flex-shrink-0">
+            <div>
+                <h1 class="text-lg font-bold text-gray-800">简历管理</h1>
+                <p class="text-xs text-gray-400 mt-0.5">为每个岗位定制专属简历</p>
+            </div>
+            <button onclick="createNewJob()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm">
+                <i class="ph ph-plus"></i> 新建岗位简历
+            </button>
+        </div>
 
-                <!-- Summary Cards -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">版本总数</p>
-                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
-                                <i class="ph-fill ph-git-branch text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-0.5">8</h3>
-                        <p class="text-[10px] text-gray-400">从 v1.0 至 v2.3</p>
-                    </div>
-                    <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">当前使用</p>
-                            <div class="w-8 h-8 rounded-lg bg-green-50 text-green-500 flex items-center justify-center">
-                                <i class="ph-fill ph-check-circle text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-0.5">v2.3</h3>
-                        <p class="text-[10px] text-green-500">2025-07-01 更新</p>
-                    </div>
-                    <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">投递次数</p>
-                            <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
-                                <i class="ph-fill ph-paper-plane-tilt text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-0.5">156</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 本月 +28</p>
-                    </div>
-                    <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">面试邀约率</p>
-                            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center">
-                                <i class="ph-fill ph-chart-line-up text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-0.5">18%</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 较上版本 +4%</p>
-                    </div>
-                </div>
+        <!-- Content Area -->
+        <div class="flex-1 overflow-hidden">
+            <div class="flex h-full">
 
-                <!-- Two Column Layout -->
-                <div class="flex flex-col lg:flex-row gap-6">
-
-                    <!-- Left Column: Version Timeline -->
-                    <div class="w-full lg:w-[380px] flex-shrink-0">
-                        <div class="bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
-                            <div class="p-5 border-b border-gray-100 flex items-center justify-between">
-                                <h3 class="font-bold text-gray-800 text-base flex items-center gap-2">
-                                    <i class="ph-fill ph-clock-countdown text-brand-500"></i> 版本历史
-                                </h3>
-                                <button class="text-xs text-brand-600 hover:underline">对比版本</button>
-                            </div>
-
-                            <!-- Version Timeline -->
-                            <div class="p-5">
-                                <div class="relative">
-                                    <!-- Timeline Line -->
-                                    <div class="absolute left-[15px] top-2 bottom-2 w-0.5 bg-gray-100"></div>
-
-                                    <!-- Version Items -->
-                                    <div class="space-y-5">
-                                        <!-- v2.3 (Current) -->
-                                        <div class="relative pl-10 cursor-pointer group">
-                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-200 z-10">
-                                                <i class="ph-fill ph-check text-sm"></i>
-                                            </div>
-                                            <div class="bg-brand-50/50 border border-brand-100 rounded-lg p-4 group-hover:bg-brand-50 transition-colors">
-                                                <div class="flex items-center justify-between mb-1">
-                                                    <div class="flex items-center gap-2">
-                                                        <span class="font-bold text-gray-800 text-sm">v2.3</span>
-                                                        <span class="text-[10px] text-brand-600 bg-brand-100 px-1.5 py-0.5 rounded font-medium">当前版本</span>
-                                                    </div>
-                                                    <span class="text-xs text-gray-400">2025-07-01</span>
-                                                </div>
-                                                <p class="text-xs text-gray-600 mb-2">更新项目案例，优化技术栈描述，新增2个实战项目经验</p>
-                                                <div class="flex items-center gap-3 text-[10px] text-gray-400">
-                                                    <span class="flex items-center gap-1"><i class="ph ph-file-text"></i> 3页</span>
-                                                    <span class="flex items-center gap-1"><i class="ph ph-paper-plane-tilt"></i> 投递 28次</span>
-                                                    <span class="flex items-center gap-1 text-green-500"><i class="ph ph-arrow-up"></i> 邀约率 18%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- v2.2 -->
-                                        <div class="relative pl-10 cursor-pointer group">
-                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
-                                                <span class="text-[10px] font-bold">2.2</span>
-                                            </div>
-                                            <div class="bg-gray-50/50 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all">
-                                                <div class="flex items-center justify-between mb-1">
-                                                    <span class="font-medium text-gray-700 text-sm">v2.2</span>
-                                                    <span class="text-xs text-gray-400">2025-06-15</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mb-2">优化自我介绍部分，调整排版结构，突出核心竞争力</p>
-                                                <div class="flex items-center gap-3 text-[10px] text-gray-400">
-                                                    <span class="flex items-center gap-1"><i class="ph ph-file-text"></i> 3页</span>
-                                                    <span class="flex items-center gap-1"><i class="ph ph-paper-plane-tilt"></i> 投递 42次</span>
-                                                    <span class="flex items-center gap-1"><i class="ph ph-arrow-up"></i> 邀约率 14%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- v2.1 -->
-                                        <div class="relative pl-10 cursor-pointer group">
-                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
-                                                <span class="text-[10px] font-bold">2.1</span>
-                                            </div>
-                                            <div class="bg-gray-50/50 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all">
-                                                <div class="flex items-center justify-between mb-1">
-                                                    <span class="font-medium text-gray-700 text-sm">v2.1</span>
-                                                    <span class="text-xs text-gray-400">2025-05-20</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mb-2">新增技能栈：Vue3、TypeScript、Node.js，更新联系方式</p>
-                                                <div class="flex items-center gap-3 text-[10px] text-gray-400">
-                                                    <span class="flex items-center gap-1"><i class="ph ph-file-text"></i> 2页</span>
-                                                    <span class="flex items-center gap-1"><i class="ph ph-paper-plane-tilt"></i> 投递 36次</span>
-                                                    <span class="flex items-center gap-1"><i class="ph ph-arrow-up"></i> 邀约率 12%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- v2.0 -->
-                                        <div class="relative pl-10 cursor-pointer group">
-                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
-                                                <span class="text-[10px] font-bold">2.0</span>
-                                            </div>
-                                            <div class="bg-gray-50/50 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all">
-                                                <div class="flex items-center justify-between mb-1">
-                                                    <span class="font-medium text-gray-700 text-sm">v2.0</span>
-                                                    <span class="text-xs text-gray-400">2025-04-10</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mb-2">全面改版，重新设计排版风格，采用极简设计语言</p>
-                                                <div class="flex items-center gap-3 text-[10px] text-gray-400">
-                                                    <span class="flex items-center gap-1"><i class="ph ph-file-text"></i> 2页</span>
-                                                    <span class="flex items-center gap-1"><i class="ph ph-paper-plane-tilt"></i> 投递 30次</span>
-                                                    <span class="flex items-center gap-1"><i class="ph ph-arrow-up"></i> 邀约率 10%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- v1.3 -->
-                                        <div class="relative pl-10 cursor-pointer group">
-                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
-                                                <span class="text-[10px] font-bold">1.3</span>
-                                            </div>
-                                            <div class="bg-gray-50/30 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all opacity-80">
-                                                <div class="flex items-center justify-between mb-1">
-                                                    <span class="font-medium text-gray-500 text-sm">v1.3</span>
-                                                    <span class="text-xs text-gray-400">2025-03-05</span>
-                                                </div>
-                                                <p class="text-xs text-gray-400 mb-2">修正排版错位，补充教育背景信息</p>
-                                            </div>
-                                        </div>
-
-                                        <!-- v1.2 -->
-                                        <div class="relative pl-10 cursor-pointer group">
-                                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 group-hover:border-brand-400 group-hover:text-brand-500 transition-colors">
-                                                <span class="text-[10px] font-bold">1.2</span>
-                                            </div>
-                                            <div class="bg-gray-50/30 border border-gray-100 rounded-lg p-4 group-hover:bg-white group-hover:shadow-sm transition-all opacity-80">
-                                                <div class="flex items-center justify-between mb-1">
-                                                    <span class="font-medium text-gray-500 text-sm">v1.2</span>
-                                                    <span class="text-xs text-gray-400">2025-02-18</span>
-                                                </div>
-                                                <p class="text-xs text-gray-400 mb-2">补充项目经历，增加工作年限说明</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Load More -->
-                                <div class="text-center mt-5">
-                                    <button class="text-xs text-gray-400 hover:text-brand-600 transition-colors flex items-center gap-1 mx-auto">
-                                        <i class="ph ph-caret-down"></i> 查看更早版本
-                                    </button>
-                                </div>
-                            </div>
+                <!-- Left: Job List -->
+                <div class="w-[360px] flex-shrink-0 border-r border-gray-100 bg-white flex flex-col">
+                    <!-- Search -->
+                    <div class="p-4 border-b border-gray-100">
+                        <div class="relative">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="job-search" placeholder="搜索岗位或公司..." 
+                                class="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500 focus:bg-white transition-colors">
                         </div>
                     </div>
 
-                    <!-- Right Column: Resume Preview -->
-                    <div class="flex-1">
-                        <!-- Action Bar -->
-                        <div class="flex items-center gap-3 bg-white p-3 rounded-xl shadow-soft border border-gray-100 mb-4">
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm font-bold text-gray-800">v2.3</span>
-                                <span class="text-[10px] text-brand-600 bg-brand-100 px-1.5 py-0.5 rounded font-medium">当前版本</span>
-                                <span class="text-xs text-gray-400 ml-2">最后更新: 2025-07-01</span>
-                            </div>
-                            <div class="flex items-center gap-2 ml-auto">
-                                <button class="px-3 py-1.5 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-xs font-medium flex items-center gap-1.5">
-                                    <i class="ph ph-eye"></i> 预览
-                                </button>
-                                <button class="px-3 py-1.5 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-xs font-medium flex items-center gap-1.5">
-                                    <i class="ph ph-download-simple"></i> 下载PDF
-                                </button>
-                                <button class="px-3 py-1.5 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-xs font-medium flex items-center gap-1.5">
-                                    <i class="ph ph-copy"></i> 复制为新版本
-                                </button>
-                                <button class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors shadow-sm">
-                                    <i class="ph ph-pencil-simple"></i> 编辑
-                                </button>
-                            </div>
-                        </div>
+                    <!-- Job List -->
+                    <div id="job-list" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
+                        <!-- Job cards will be rendered here -->
+                    </div>
 
-                        <!-- Resume Preview (A4 style) -->
-                        <div class="bg-white rounded-xl shadow-soft border border-gray-100 p-8 lg:p-10 mx-auto" style="max-width: 620px;">
-                            <!-- Resume Header -->
-                            <div class="flex items-center gap-4 pb-6 border-b-2 border-gray-800 mb-6">
-                                <div class="w-16 h-16 rounded-full bg-brand-600 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
-                                    JERN
-                                </div>
-                                <div>
-                                    <h1 class="text-2xl font-bold text-gray-900">JERN · 全栈开发工程师</h1>
-                                    <div class="flex items-center gap-3 text-xs text-gray-500 mt-1">
-                                        <span class="flex items-center gap-1"><i class="ph ph-phone"></i> 138****5678</span>
-                                        <span class="flex items-center gap-1"><i class="ph ph-envelope-simple"></i> jern@email.com</span>
-                                        <span class="flex items-center gap-1"><i class="ph ph-map-pin"></i> 深圳</span>
-                                        <span class="flex items-center gap-1"><i class="ph ph-github-logo"></i> github.com/jern</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Summary -->
-                            <div class="mb-6">
-                                <h2 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <i class="ph-fill ph-user-circle text-base"></i> 个人简介
-                                </h2>
-                                <p class="text-xs text-gray-600 leading-relaxed">
-                                    5年全栈开发经验，精通Vue3/React前端技术栈及Spring Boot/Node.js后端开发。独立完成20+商业项目，涵盖企业官网、小程序、后台管理系统等。擅长从需求分析到上线部署的全流程开发，注重代码质量与用户体验。
-                                </p>
-                            </div>
-
-                            <!-- Skills -->
-                            <div class="mb-6">
-                                <h2 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <i class="ph-fill ph-code text-base"></i> 技能栈
-                                </h2>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded font-medium">Vue3</span>
-                                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded font-medium">React</span>
-                                    <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded font-medium">TypeScript</span>
-                                    <span class="px-2 py-1 bg-green-50 text-green-600 text-xs rounded font-medium">Node.js</span>
-                                    <span class="px-2 py-1 bg-orange-50 text-orange-600 text-xs rounded font-medium">Spring Boot</span>
-                                    <span class="px-2 py-1 bg-orange-50 text-orange-600 text-xs rounded font-medium">Java</span>
-                                    <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded font-medium">MySQL</span>
-                                    <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded font-medium">Redis</span>
-                                    <span class="px-2 py-1 bg-cyan-50 text-cyan-600 text-xs rounded font-medium">Docker</span>
-                                    <span class="px-2 py-1 bg-cyan-50 text-cyan-600 text-xs rounded font-medium">Linux</span>
-                                </div>
-                            </div>
-
-                            <!-- Experience -->
-                            <div class="mb-6">
-                                <h2 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-3 flex items-center gap-2">
-                                    <i class="ph-fill ph-briefcase text-base"></i> 项目经验
-                                </h2>
-                                <div class="space-y-4">
-                                    <!-- Project 1 -->
-                                    <div class="border-l-2 border-brand-200 pl-4 relative">
-                                        <div class="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-brand-500"></div>
-                                        <div class="flex items-center justify-between mb-1">
-                                            <h3 class="text-sm font-bold text-gray-800">企业官网定制开发</h3>
-                                            <span class="text-[10px] text-gray-400">2025.06 - 2025.07</span>
-                                        </div>
-                                        <p class="text-xs text-gray-500 mb-1">技术栈: Vue3 + Spring Boot + MySQL</p>
-                                        <p class="text-xs text-gray-600 leading-relaxed">基于Vue3+Spring Boot的企业官网全栈开发，包含CMS后台管理、产品展示、SEO优化。支持响应式布局和双端自适应，部署于Linux服务器。</p>
-                                    </div>
-                                    <!-- Project 2 -->
-                                    <div class="border-l-2 border-brand-200 pl-4 relative">
-                                        <div class="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-brand-500"></div>
-                                        <div class="flex items-center justify-between mb-1">
-                                            <h3 class="text-sm font-bold text-gray-800">小程序电商平台</h3>
-                                            <span class="text-[10px] text-gray-400">2025.04 - 2025.05</span>
-                                        </div>
-                                        <p class="text-xs text-gray-500 mb-1">技术栈: Uni-app + Node.js + MongoDB</p>
-                                        <p class="text-xs text-gray-600 leading-relaxed">独立开发微信小程序电商平台，包含商品管理、购物车、支付对接、订单管理全流程，日活用户500+。</p>
-                                    </div>
-                                    <!-- Project 3 -->
-                                    <div class="border-l-2 border-brand-200 pl-4 relative">
-                                        <div class="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-brand-500"></div>
-                                        <div class="flex items-center justify-between mb-1">
-                                            <h3 class="text-sm font-bold text-gray-800">后台管理系统</h3>
-                                            <span class="text-[10px] text-gray-400">2025.02 - 2025.03</span>
-                                        </div>
-                                        <p class="text-xs text-gray-500 mb-1">技术栈: React + Ant Design + Express</p>
-                                        <p class="text-xs text-gray-600 leading-relaxed">开发企业级后台管理系统，包含权限管理、数据可视化、工作流审批等模块，支撑30人团队日常使用。</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Education -->
-                            <div>
-                                <h2 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <i class="ph-fill ph-graduation-cap text-base"></i> 教育背景
-                                </h2>
-                                <div class="flex items-center justify-between text-xs">
-                                    <div>
-                                        <span class="font-medium text-gray-800">XX大学</span>
-                                        <span class="text-gray-500 ml-2">计算机科学与技术 · 本科</span>
-                                    </div>
-                                    <span class="text-gray-400">2018 - 2022</span>
-                                </div>
-                            </div>
-
-                            <!-- Footer -->
-                            <div class="text-center mt-8 pt-4 border-t border-gray-100 text-[10px] text-gray-300">
-                                v2.3 · 生成自 文的项目工作台
-                            </div>
+                    <!-- Stats -->
+                    <div class="p-4 border-t border-gray-100 bg-gray-50">
+                        <div class="flex items-center justify-between text-xs text-gray-500">
+                            <span>共 <strong id="job-count" class="text-gray-800">0</strong> 份简历</span>
+                            <span class="text-green-600 flex items-center gap-1">
+                                <i class="ph-fill ph-check-circle"></i> 已投递 12 份
+                            </span>
                         </div>
                     </div>
                 </div>
 
+                <!-- Right: PDF Viewer -->
+                <div class="flex-1 bg-gray-100 flex flex-col">
+                    <!-- Toolbar -->
+                    <div id="pdf-toolbar" class="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between flex-shrink-0 hidden">
+                        <div class="flex items-center gap-4">
+                            <span id="current-job-name" class="font-medium text-gray-800">岗位名称</span>
+                            <span id="current-job-company" class="text-xs text-gray-500">公司名称</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <!-- Page Navigation -->
+                            <div class="flex items-center gap-1 mr-4">
+                                <button onclick="prevPage()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600">
+                                    <i class="ph ph-caret-left"></i>
+                                </button>
+                                <span class="text-sm text-gray-600">
+                                    <input type="number" id="page-input" min="1" value="1" 
+                                        class="w-10 text-center border border-gray-200 rounded px-1 py-0.5 text-sm focus:outline-none focus:border-brand-500">
+                                    / <span id="total-pages">1</span>
+                                </span>
+                                <button onclick="nextPage()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600">
+                                    <i class="ph ph-caret-right"></i>
+                                </button>
+                            </div>
+                            <!-- Zoom -->
+                            <div class="flex items-center gap-1 border-l border-gray-200 pl-4">
+                                <button onclick="zoomOut()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600" title="缩小">
+                                    <i class="ph ph-minus"></i>
+                                </button>
+                                <span id="zoom-level" class="text-sm text-gray-600 w-14 text-center">100%</span>
+                                <button onclick="zoomIn()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600" title="放大">
+                                    <i class="ph ph-plus"></i>
+                                </button>
+                                <button onclick="fitToWidth()" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600" title="适应宽度">
+                                    <i class="ph ph-frame-corners"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="uploadPdfForCurrentJob()" class="px-3 py-1.5 border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 rounded-lg text-xs font-medium flex items-center gap-1.5">
+                                <i class="ph ph-upload-simple"></i> 重新上传
+                            </button>
+                            <button onclick="downloadCurrentPdf()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5">
+                                <i class="ph ph-download-simple"></i> 下载
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state" class="flex-1 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-200 flex items-center justify-center">
+                                <i class="ph ph-file-text text-4xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-base font-medium text-gray-700 mb-1">选择一个岗位查看简历</h3>
+                            <p class="text-sm text-gray-400 mb-4">或创建新的岗位简历</p>
+                            <button onclick="createNewJob()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium">
+                                新建岗位简历
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PDF Container -->
+                    <div id="pdf-container-wrapper" class="flex-1 overflow-auto custom-scrollbar hidden">
+                        <div id="pdf-container" class="p-8 min-h-full flex flex-col items-center">
+                            <!-- PDF pages will be rendered here -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </main>
+
+<!-- New Job Modal -->
+<div id="new-job-modal" class="fixed inset-0 z-[9999] hidden">
+    <div class="absolute inset-0 bg-black/50" onclick="closeNewJobModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">新建岗位简历</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-600 mb-1.5">岗位名称 <span class="text-red-500">*</span></label>
+                <input type="text" id="new-job-title" placeholder="如：高级前端工程师" 
+                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1.5">公司名称</label>
+                <input type="text" id="new-job-company" placeholder="如：字节跳动" 
+                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1.5">上传简历 PDF</label>
+                <div id="pdf-upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-brand-400 hover:bg-brand-50/30 transition-all cursor-pointer">
+                    <i class="ph ph-upload-simple text-2xl text-gray-400 mb-2"></i>
+                    <p class="text-sm text-gray-500">点击或拖拽上传 PDF</p>
+                    <p class="text-xs text-gray-400 mt-1">支持 PDF 格式，最大 10MB</p>
+                </div>
+                <input type="file" id="new-job-pdf" accept="application/pdf" class="hidden">
+                <p id="selected-filename" class="text-xs text-brand-600 mt-2 hidden"></p>
+            </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+            <button onclick="closeNewJobModal()" class="flex-1 px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50">取消</button>
+            <button onclick="saveNewJob()" class="flex-1 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700">创建</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ==================== Data ====================
+// Sample data - in real app, this would come from backend/localStorage
+let jobs = [
+    {
+        id: 1,
+        title: '高级前端工程师',
+        company: '字节跳动',
+        createdAt: '2025-07-05',
+        pdfData: null, // Will store PDF bytes
+        pdfName: '简历_字节跳动_前端.pdf',
+        pageCount: 2
+    },
+    {
+        id: 2,
+        title: '全栈开发工程师',
+        company: '阿里巴巴',
+        createdAt: '2025-07-03',
+        pdfData: null,
+        pdfName: '简历_阿里_全栈.pdf',
+        pageCount: 3
+    },
+    {
+        id: 3,
+        title: '前端架构师',
+        company: '腾讯',
+        createdAt: '2025-06-28',
+        pdfData: null,
+        pdfName: '简历_腾讯_架构.pdf',
+        pageCount: 2
+    }
+];
+
+let currentJobId = null;
+let currentPdfDoc = null;
+let currentScale = 1.2;
+let renderedPages = [];
+
+// ==================== Initialization ====================
+document.addEventListener('DOMContentLoaded', function() {
+    initWorker();
+    renderJobList();
+    setupEventListeners();
+});
+
+function initWorker() {
+    if (typeof pdfjsLib === 'undefined') return;
+    var base = window.ROOT_URL || (window.PAGE_BASE || '');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = base + 'assets/pdf.worker.min.js';
+}
+
+// ==================== Job List ====================
+function renderJobList() {
+    const listEl = document.getElementById('job-list');
+    const searchTerm = document.getElementById('job-search').value.toLowerCase();
+    
+    const filteredJobs = jobs.filter(job => 
+        job.title.toLowerCase().includes(searchTerm) || 
+        job.company.toLowerCase().includes(searchTerm)
+    );
+    
+    document.getElementById('job-count').textContent = jobs.length;
+    
+    if (filteredJobs.length === 0) {
+        listEl.innerHTML = `
+            <div class="text-center py-8 text-gray-400">
+                <i class="ph ph-magnifying-glass text-3xl mb-2"></i>
+                <p class="text-sm">未找到匹配的岗位</p>
+            </div>
+        `;
+        return;
+    }
+    
+    listEl.innerHTML = filteredJobs.map(job => `
+        <div class="job-card p-3 rounded-lg border border-gray-100 bg-white hover:border-gray-300 cursor-pointer transition-all ${job.id === currentJobId ? 'active' : ''}" 
+             onclick="selectJob(${job.id})">
+            <div class="flex items-start justify-between mb-2">
+                <div>
+                    <h4 class="font-medium text-gray-800 text-sm">${job.title}</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">${job.company || '未填写公司'}</p>
+                </div>
+                ${job.pdfData ? '<i class="ph-fill ph-file-pdf text-red-500 text-lg"></i>' : '<i class="ph ph-file text-gray-300 text-lg"></i>'}
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-gray-400">
+                <span>${job.createdAt}</span>
+                ${job.pdfData ? `<span>${job.pageCount} 页</span>` : '<span class="text-orange-500">待上传</span>'}
+            </div>
+        </div>
+    `).join('');
+}
+
+function selectJob(jobId) {
+    currentJobId = jobId;
+    renderJobList();
+    
+    const job = jobs.find(j => j.id === jobId);
+    if (!job) return;
+    
+    // Update toolbar
+    document.getElementById('current-job-name').textContent = job.title;
+    document.getElementById('current-job-company').textContent = job.company || '';
+    
+    // Show toolbar, hide empty state
+    document.getElementById('pdf-toolbar').classList.remove('hidden');
+    document.getElementById('empty-state').classList.add('hidden');
+    document.getElementById('pdf-container-wrapper').classList.remove('hidden');
+    
+    // Load PDF
+    if (job.pdfData) {
+        loadPdf(job.pdfData);
+    } else {
+        showNoPdfState();
+    }
+}
+
+function showNoPdfState() {
+    document.getElementById('pdf-container').innerHTML = `
+        <div class="bg-white rounded-lg shadow-sm p-12 text-center max-w-md">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-orange-50 flex items-center justify-center">
+                <i class="ph ph-upload-simple text-2xl text-orange-500"></i>
+            </div>
+            <h4 class="font-medium text-gray-700 mb-2">尚未上传简历</h4>
+            <p class="text-sm text-gray-400 mb-4">请上传为该岗位定制的 PDF 简历</p>
+            <button onclick="uploadPdfForCurrentJob()" class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm hover:bg-brand-700">
+                上传简历 PDF
+            </button>
+        </div>
+    `;
+}
+
+// ==================== PDF Rendering ====================
+function loadPdf(pdfData) {
+    if (!pdfData) return;
+    
+    // 复制 ArrayBuffer，避免被 Worker 分离后无法再次使用
+    const pdfDataCopy = pdfData.slice ? pdfData.slice() : new Uint8Array(pdfData);
+    
+    const loadingTask = pdfjsLib.getDocument({ data: pdfDataCopy });
+    loadingTask.promise.then(function(pdf) {
+        currentPdfDoc = pdf;
+        document.getElementById('total-pages').textContent = pdf.numPages;
+        renderAllPages();
+    }).catch(function(error) {
+        console.error('Error loading PDF:', error);
+        document.getElementById('pdf-container').innerHTML = `
+            <div class="bg-white rounded-lg shadow-sm p-8 text-center">
+                <i class="ph ph-warning text-3xl text-red-500 mb-2"></i>
+                <p class="text-gray-600">PDF 加载失败</p>
+            </div>
+        `;
+    });
+}
+
+function renderAllPages() {
+    if (!currentPdfDoc) return;
+    
+    const container = document.getElementById('pdf-container');
+    container.innerHTML = '';
+    renderedPages = [];
+    
+    for (let i = 1; i <= currentPdfDoc.numPages; i++) {
+        renderPage(i);
+    }
+}
+
+function renderPage(pageNum) {
+    currentPdfDoc.getPage(pageNum).then(function(page) {
+        const viewport = page.getViewport({ scale: currentScale });
+        
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'pdf-page-container';
+        pageDiv.style.width = viewport.width + 'px';
+        
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-page-canvas';
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        
+        pageDiv.appendChild(canvas);
+        document.getElementById('pdf-container').appendChild(pageDiv);
+        
+        const renderContext = {
+            canvasContext: canvas.getContext('2d'),
+            viewport: viewport
+        };
+        
+        page.render(renderContext);
+        renderedPages.push({ pageNum, canvas });
+    });
+}
+
+// ==================== Zoom & Navigation ====================
+function zoomIn() {
+    currentScale = Math.min(currentScale + 0.2, 3);
+    updateZoomDisplay();
+    if (currentPdfDoc) renderAllPages();
+}
+
+function zoomOut() {
+    currentScale = Math.max(currentScale - 0.2, 0.5);
+    updateZoomDisplay();
+    if (currentPdfDoc) renderAllPages();
+}
+
+function fitToWidth() {
+    if (!currentPdfDoc) return;
+    const container = document.getElementById('pdf-container-wrapper');
+    const availableWidth = container.clientWidth - 64; // padding
+    
+    currentPdfDoc.getPage(1).then(function(page) {
+        const viewport = page.getViewport({ scale: 1 });
+        currentScale = availableWidth / viewport.width;
+        updateZoomDisplay();
+        renderAllPages();
+    });
+}
+
+function updateZoomDisplay() {
+    document.getElementById('zoom-level').textContent = Math.round(currentScale * 100) + '%';
+}
+
+function prevPage() {
+    const container = document.getElementById('pdf-container-wrapper');
+    const pageHeight = container.clientHeight;
+    container.scrollBy({ top: -pageHeight * 0.8, behavior: 'smooth' });
+}
+
+function nextPage() {
+    const container = document.getElementById('pdf-container-wrapper');
+    const pageHeight = container.clientHeight;
+    container.scrollBy({ top: pageHeight * 0.8, behavior: 'smooth' });
+}
+
+// ==================== New Job Modal ====================
+function createNewJob() {
+    document.getElementById('new-job-modal').classList.remove('hidden');
+    document.getElementById('new-job-title').focus();
+}
+
+function closeNewJobModal() {
+    document.getElementById('new-job-modal').classList.add('hidden');
+    // Reset form
+    document.getElementById('new-job-title').value = '';
+    document.getElementById('new-job-company').value = '';
+    document.getElementById('new-job-pdf').value = '';
+    document.getElementById('selected-filename').classList.add('hidden');
+}
+
+function saveNewJob() {
+    const title = document.getElementById('new-job-title').value.trim();
+    const company = document.getElementById('new-job-company').value.trim();
+    const fileInput = document.getElementById('new-job-pdf');
+    
+    if (!title) {
+        alert('请填写岗位名称');
+        return;
+    }
+    
+    const newJob = {
+        id: Date.now(),
+        title: title,
+        company: company,
+        createdAt: new Date().toISOString().split('T')[0],
+        pdfData: null,
+        pdfName: '',
+        pageCount: 0
+    };
+    
+    // Handle PDF upload if present
+    if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const pdfBytes = new Uint8Array(e.target.result);
+            newJob.pdfData = pdfBytes;
+            newJob.pdfName = file.name;
+            
+            // Get page count - 使用复制的数据避免 ArrayBuffer 被分离
+            const pdfDataCopy = pdfBytes.slice();
+            pdfjsLib.getDocument({ data: pdfDataCopy }).promise.then(function(pdf) {
+                newJob.pageCount = pdf.numPages;
+                jobs.unshift(newJob);
+                renderJobList();
+                selectJob(newJob.id);
+                closeNewJobModal();
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    } else {
+        jobs.unshift(newJob);
+        renderJobList();
+        selectJob(newJob.id);
+        closeNewJobModal();
+    }
+}
+
+function uploadPdfForCurrentJob() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/pdf';
+    input.onchange = function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const job = jobs.find(j => j.id === currentJobId);
+                if (job) {
+                    const pdfBytes = new Uint8Array(evt.target.result);
+                    job.pdfData = pdfBytes;
+                    job.pdfName = file.name;
+                    
+                    // 使用复制的数据获取页数，避免 ArrayBuffer 被分离
+                    const pdfDataCopy = pdfBytes.slice();
+                    pdfjsLib.getDocument({ data: pdfDataCopy }).promise.then(function(pdf) {
+                        job.pageCount = pdf.numPages;
+                        renderJobList();
+                        loadPdf(job.pdfData);
+                    });
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    };
+    input.click();
+}
+
+function downloadCurrentPdf() {
+    const job = jobs.find(j => j.id === currentJobId);
+    if (!job || !job.pdfData) {
+        alert('没有可下载的 PDF');
+        return;
+    }
+    
+    const blob = new Blob([job.pdfData], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = job.pdfName || 'resume.pdf';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+}
+
+// ==================== Event Listeners ====================
+function setupEventListeners() {
+    // Search
+    document.getElementById('job-search').addEventListener('input', renderJobList);
+    
+    // Page input
+    document.getElementById('page-input').addEventListener('change', function(e) {
+        const pageNum = parseInt(e.target.value);
+        if (pageNum >= 1 && pageNum <= (currentPdfDoc?.numPages || 1)) {
+            const container = document.getElementById('pdf-container-wrapper');
+            const targetPage = renderedPages[pageNum - 1];
+            if (targetPage) {
+                targetPage.canvas.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+    
+    // PDF upload in modal
+    document.getElementById('pdf-upload-area').addEventListener('click', function() {
+        document.getElementById('new-job-pdf').click();
+    });
+    
+    document.getElementById('pdf-upload-area').addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('border-brand-400', 'bg-brand-50/30');
+    });
+    
+    document.getElementById('pdf-upload-area').addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('border-brand-400', 'bg-brand-50/30');
+    });
+    
+    document.getElementById('pdf-upload-area').addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('border-brand-400', 'bg-brand-50/30');
+        const files = e.dataTransfer.files;
+        if (files && files[0]) {
+            document.getElementById('new-job-pdf').files = files;
+            updateSelectedFilename(files[0].name);
+        }
+    });
+    
+    document.getElementById('new-job-pdf').addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            updateSelectedFilename(e.target.files[0].name);
+        }
+    });
+}
+
+function updateSelectedFilename(filename) {
+    const el = document.getElementById('selected-filename');
+    el.textContent = '已选择: ' + filename;
+    el.classList.remove('hidden');
+}
+
+// Handle SPA navigation cleanup
+window.addEventListener('spa:cleanup-forms', function() {
+    closeNewJobModal();
+});
+</script>
 
 </body>
 </html>
