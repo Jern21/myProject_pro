@@ -1408,6 +1408,8 @@
             if (!document.querySelector('.cust-more-btn')) return;
             init();
         });
+
+        window.openCustomerForm = function (data, row) { return openCustomerForm(data, row); };
     })();
     </script>
 </body>

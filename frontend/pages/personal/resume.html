@@ -60,6 +60,40 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
     <div id="page-view" class="flex-1 flex flex-col overflow-hidden">
+<!-- New Job Modal -->
+<div id="new-job-modal" class="fixed inset-0 z-[9999] hidden">
+    <div class="absolute inset-0 bg-black/50" onclick="closeNewJobModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">新建岗位简历</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-600 mb-1.5">岗位名称 <span class="text-red-500">*</span></label>
+                <input type="text" id="new-job-title" placeholder="如：高级前端工程师" 
+                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1.5">公司名称</label>
+                <input type="text" id="new-job-company" placeholder="如：字节跳动" 
+                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1.5">上传简历 PDF</label>
+                <div id="pdf-upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-brand-400 hover:bg-brand-50/30 transition-all cursor-pointer">
+                    <i class="ph ph-upload-simple text-2xl text-gray-400 mb-2"></i>
+                    <p class="text-sm text-gray-500">点击或拖拽上传 PDF</p>
+                    <p class="text-xs text-gray-400 mt-1">支持 PDF 格式，最大 10MB</p>
+                </div>
+                <input type="file" id="new-job-pdf" accept="application/pdf" class="hidden">
+                <p id="selected-filename" class="text-xs text-brand-600 mt-2 hidden"></p>
+            </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+            <button onclick="closeNewJobModal()" class="flex-1 px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50">取消</button>
+            <button onclick="saveNewJob()" class="flex-1 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700">创建</button>
+        </div>
+    </div>
+</div>
+
         <!-- Header -->
         <div class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between flex-shrink-0">
             <div>
@@ -175,39 +209,6 @@
     </div>
 </main>
 
-<!-- New Job Modal -->
-<div id="new-job-modal" class="fixed inset-0 z-[9999] hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="closeNewJobModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">新建岗位简历</h3>
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm text-gray-600 mb-1.5">岗位名称 <span class="text-red-500">*</span></label>
-                <input type="text" id="new-job-title" placeholder="如：高级前端工程师" 
-                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500">
-            </div>
-            <div>
-                <label class="block text-sm text-gray-600 mb-1.5">公司名称</label>
-                <input type="text" id="new-job-company" placeholder="如：字节跳动" 
-                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500">
-            </div>
-            <div>
-                <label class="block text-sm text-gray-600 mb-1.5">上传简历 PDF</label>
-                <div id="pdf-upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-brand-400 hover:bg-brand-50/30 transition-all cursor-pointer">
-                    <i class="ph ph-upload-simple text-2xl text-gray-400 mb-2"></i>
-                    <p class="text-sm text-gray-500">点击或拖拽上传 PDF</p>
-                    <p class="text-xs text-gray-400 mt-1">支持 PDF 格式，最大 10MB</p>
-                </div>
-                <input type="file" id="new-job-pdf" accept="application/pdf" class="hidden">
-                <p id="selected-filename" class="text-xs text-brand-600 mt-2 hidden"></p>
-            </div>
-        </div>
-        <div class="flex gap-3 mt-6">
-            <button onclick="closeNewJobModal()" class="flex-1 px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50">取消</button>
-            <button onclick="saveNewJob()" class="flex-1 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700">创建</button>
-        </div>
-    </div>
-</div>
 
 <script>
 // ==================== Data ====================
@@ -248,10 +249,24 @@ let currentScale = 1.2;
 let renderedPages = [];
 
 // ==================== Initialization ====================
-document.addEventListener('DOMContentLoaded', function() {
+function initResume() {
     initWorker();
     renderJobList();
     setupEventListeners();
+}
+
+// 首次整页加载
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initResume);
+} else {
+    initResume();
+}
+
+// SPA 局部刷新后重新初始化（仅当前页面为简历页时执行）
+window.addEventListener('spa:ready', function (e) {
+    var page = (e.detail && e.detail.page) || '';
+    if (page && page.indexOf('resume') === -1) return;
+    initResume();
 });
 
 function initWorker() {
