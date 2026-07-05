@@ -275,5 +275,23 @@
         renderHeader(pageName);
     });
 
+    // 顶部栏动作按钮 → 调用对应的全局表单打开函数
+    // （新建订单/新建接单/上传海报 由 order-form.js / poster-form.js 自行委托处理，此处不重复）
+    var HEADER_ACTION_OPENERS = {
+        '新增客户': 'openCustomerForm',
+        '新建备忘': 'openMemoForm',
+        '新建版本': 'createNewJob'
+    };
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('#app-header')) return;
+        var btn = e.target.closest('button');
+        if (!btn) return;
+        var fnName = HEADER_ACTION_OPENERS[btn.textContent.trim()];
+        if (fnName && typeof window[fnName] === 'function') {
+            e.preventDefault();
+            window[fnName]();
+        }
+    });
+
     window.renderHeader = renderHeader;
 })();

@@ -75,7 +75,34 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
-    <div id="page-view" class="flex-1 flex flex-col overflow-hidden"><!-- Content Area -->
+    <div id="page-view" class="flex-1 flex flex-col overflow-hidden">
+<div id="detail-drawer-overlay" class="detail-drawer-overlay" onclick="closeDetailDrawer()"></div>
+<div id="detail-drawer" class="detail-drawer shadow-drawer">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-brand-50 to-white flex-shrink-0">
+        <div class="flex items-center gap-3">
+            <button onclick="closeDetailDrawer()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-gray-500 hover:text-brand-600 transition-colors">
+                <i class="ph ph-x text-lg"></i>
+            </button>
+            <div class="flex items-center gap-2">
+                <i class="ph-fill ph-notebook text-brand-500"></i>
+                <span class="font-bold text-gray-800">备忘详情</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="drawer-pin-btn" onclick="togglePinFromDrawer()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-gray-400 hover:text-brand-500 transition-colors" title="置顶">
+                <i class="ph ph-push-pin text-lg"></i>
+            </button>
+            <button onclick="editCurrentMemo()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors shadow-sm">
+                <i class="ph ph-pencil-simple"></i> 编辑
+            </button>
+        </div>
+    </div>
+    <div class="detail-drawer-content p-5 bg-gradient-to-b from-white to-gray-50/50">
+        <div id="drawer-content">
+            <!-- Content will be loaded dynamically -->
+        </div>
+    </div>
+</div><!-- Content Area -->
         <div class="flex-1 overflow-y-auto p-6 lg:p-8">
             <div class="max-w-[1400px] mx-auto">
 
@@ -424,35 +451,6 @@
         </div>
     </div>
 </main>
-
-<!-- Detail Drawer -->
-<div id="detail-drawer-overlay" class="detail-drawer-overlay" onclick="closeDetailDrawer()"></div>
-<div id="detail-drawer" class="detail-drawer shadow-drawer">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-brand-50 to-white flex-shrink-0">
-        <div class="flex items-center gap-3">
-            <button onclick="closeDetailDrawer()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-gray-500 hover:text-brand-600 transition-colors">
-                <i class="ph ph-x text-lg"></i>
-            </button>
-            <div class="flex items-center gap-2">
-                <i class="ph-fill ph-notebook text-brand-500"></i>
-                <span class="font-bold text-gray-800">备忘详情</span>
-            </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <button id="drawer-pin-btn" onclick="togglePinFromDrawer()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-gray-400 hover:text-brand-500 transition-colors" title="置顶">
-                <i class="ph ph-push-pin text-lg"></i>
-            </button>
-            <button onclick="editCurrentMemo()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors shadow-sm">
-                <i class="ph ph-pencil-simple"></i> 编辑
-            </button>
-        </div>
-    </div>
-    <div class="detail-drawer-content p-5 bg-gradient-to-b from-white to-gray-50/50">
-        <div id="drawer-content">
-            <!-- Content will be loaded dynamically -->
-        </div>
-    </div>
-</div>
 
 <script>
 // Current viewing memo ID

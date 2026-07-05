@@ -51,6 +51,11 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
     <div id="page-view" class="flex-1 flex flex-col overflow-hidden"><!-- Editor & Preview Area -->
+    <!-- Toast Notification (Hidden by default) -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-50">
+        <i class="ph-fill ph-check-circle text-green-400"></i>
+        <span>报价文本已复制到剪贴板！</span>
+    </div>
         <div class="flex-1 overflow-y-auto p-6 lg:p-8">
             <div class="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-6 items-start">
                 
@@ -248,11 +253,7 @@
     </div>
 </main>
 
-    <!-- Toast Notification (Hidden by default) -->
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-50">
-        <i class="ph-fill ph-check-circle text-green-400"></i>
-        <span>报价文本已复制到剪贴板！</span>
-    </div>
+
 
     <script>
         // ========== 报价数据模型 ==========

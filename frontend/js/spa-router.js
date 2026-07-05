@@ -13,6 +13,28 @@
 
     var isNavigating = false;
 
+    // SPA 只替换 #page-view，外部表单脚本需在任意入口页都可用
+    var FORM_SCRIPT_BASE = (function () {
+        var scriptEl = document.currentScript || document.querySelector('script[src*="spa-router.js"]');
+        var src = scriptEl && scriptEl.src ? scriptEl.src : '';
+        return src.replace(/spa-router\.js(?:\?.*)?$/, '');
+    })();
+    var FORM_SCRIPTS_LOADED = false;
+
+    function ensureFormScriptsLoaded() {
+        if (FORM_SCRIPTS_LOADED) return;
+        FORM_SCRIPTS_LOADED = true;
+
+        ['order-form.js', 'poster-form.js', 'memo-form.js'].forEach(function (name) {
+            if (document.querySelector('script[src$="' + name + '"]')) return;
+            var script = document.createElement('script');
+            script.src = FORM_SCRIPT_BASE + name;
+            document.head.appendChild(script);
+        });
+    }
+
+    ensureFormScriptsLoaded();
+
     /**
      * 页面路由表：短文件名 → 相对于 frontend 根目录的完整路径
      * sidebar.js 的 data-page 属性使用短文件名，路由器通过此表查找实际路径
@@ -168,19 +190,20 @@
      * 否则会导致 isOpen 状态卡死、表单再次打不开等问题。
      */
     function cleanupGlobalOverlays() {
-        // 清理残留的抽屉表单遮罩与容器
+        // 清理残留的抽屉表单遮罩、模态框与容器
         var overlaySelectors = [
             '#order-form-overlay', '#order-form-drawer',
-            '#poster-form-overlay', '#poster-form-drawer'
+            '#poster-form-overlay', '#poster-form-drawer',
+            '#memo-form-overlay', '#memo-form-drawer',
+            '.cust-modal-overlay',
+            '.pf-modal-overlay',
+            '#quote-preview-modal', '#quote-modal-toast', '#order-delete-modal'
         ];
         overlaySelectors.forEach(function (sel) {
-            var el = document.querySelector(sel);
-            if (el) el.remove();
+            document.querySelectorAll(sel).forEach(function (el) { if (el) el.remove(); });
         });
         // 恢复 body 滚动（表单打开时锁定了 overflow）
-        if (document.body.style.overflow === 'hidden') {
-            document.body.style.overflow = '';
-        }
+        document.body.style.overflow = '';
         // 通知表单模块重置内部 isOpen 状态
         window.dispatchEvent(new CustomEvent('spa:cleanup-forms'));
     }
@@ -219,13 +242,31 @@
                 s.remove();
             });
 
-            // 4. 注入新页面的专属样式（<style type="text/tailwindcss">）
-            doc.querySelectorAll('style[type="text/tailwindcss"]').forEach(function (style) {
+            // 4. 注入新页面的专属样式（普通 <style> 与 <style type="text/tailwindcss">）
+            //    SPA 只替换 #page-view，页面 <head> 中的 <style> 不会随之迁移，
+            //    因此这里把目标页的所有 <style> 克隆进来（标记 data-spa-page 便于下次清理）。
+            //    否则依赖内联样式定位的弹窗/抽屉（如 memo 详情抽屉）会失去样式。
+            //
+            //    级联顺序很关键：整页加载时，页面内联 <style> 位于 Tailwind Play CDN
+            //    运行时生成的工具类样式表之前，因此 `.hidden` 等工具类能覆盖页面里
+            //    诸如 `.modal-overlay { display:flex }` 的规则（弹窗默认隐藏）。若直接
+            //    append 到 <head> 末尾，页面样式会排到工具类之后并反向覆盖，导致弹窗
+            //    误显示。故这里把页面样式插入到 Tailwind 工具类样式表之前，复刻整页顺序。
+            var twUtilSheet = null;
+            document.head.querySelectorAll('style').forEach(function (s) {
+                if (!twUtilSheet && /\.hidden\s*\{/.test(s.textContent || '')) twUtilSheet = s;
+            });
+            doc.querySelectorAll('style').forEach(function (style) {
                 var newStyle = document.createElement('style');
-                newStyle.setAttribute('type', 'text/tailwindcss');
+                var styleType = style.getAttribute('type');
+                if (styleType) newStyle.setAttribute('type', styleType);
                 newStyle.setAttribute('data-spa-page', 'true');
                 newStyle.textContent = style.textContent;
-                document.head.appendChild(newStyle);
+                if (twUtilSheet) {
+                    document.head.insertBefore(newStyle, twUtilSheet);
+                } else {
+                    document.head.appendChild(newStyle);
+                }
             });
 
             // 4.5 清理旧 <main> 中的 ECharts 实例，防止内存泄漏和重复初始化警告
@@ -249,7 +290,7 @@
             var inlineScripts = doc.querySelectorAll('script:not([src])');
             inlineScripts.forEach(function (oldScript) {
                 var text = oldScript.textContent;
-                if (text && text.indexOf('PAGE_BASE') !== -1) return;
+                if (text && /window\.PAGE_BASE\s*=(?!=)/.test(text)) return;
                 var newScript = document.createElement('script');
                 newScript.textContent = text;
                 pageView.appendChild(newScript);
