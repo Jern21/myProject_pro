@@ -94,6 +94,7 @@
     <script src="js/avatar.js"></script>
     <script src="js/platform-icons.js"></script>
 <script src="js/order-form.js"></script>
+<script src="js/count-up.js"></script>
 </head>
 <body class="flex h-screen overflow-hidden text-sm">
 
@@ -116,7 +117,7 @@
                         <div>
                             <p class="text-sm text-gray-500 mb-0.5">今日新增订单</p>
                             <div class="flex items-baseline gap-2">
-                                <h3 class="text-2xl font-bold text-gray-800">8</h3>
+                                <h3 class="text-2xl font-bold text-gray-800" data-count-up="8" data-duration="1200">8</h3>
                                 <span class="text-xs text-red-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较昨日 33%</span>
                             </div>
                         </div>
@@ -131,7 +132,7 @@
                         <div>
                             <p class="text-sm text-gray-500 mb-0.5">进行中订单</p>
                             <div class="flex items-baseline gap-2">
-                                <h3 class="text-2xl font-bold text-gray-800">15</h3>
+                                <h3 class="text-2xl font-bold text-gray-800" data-count-up="15" data-duration="1200" data-delay="100">15</h3>
                                 <span class="text-xs text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较昨日 15%</span>
                             </div>
                         </div>
@@ -145,7 +146,7 @@
                         <div>
                             <p class="text-sm text-gray-500 mb-0.5">今日成交金额</p>
                             <div class="flex items-baseline gap-2">
-                                <h3 class="text-2xl font-bold text-gray-800">¥ 3,680</h3>
+                                <h3 class="text-2xl font-bold text-gray-800" data-count-up="3680" data-prefix="¥ " data-duration="1400" data-delay="200">¥ 3,680</h3>
                                 <span class="text-xs text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较昨日 28%</span>
                             </div>
                         </div>
@@ -160,7 +161,7 @@
                         <div>
                             <p class="text-sm text-gray-500 mb-0.5">本月总收入</p>
                             <div class="flex items-baseline gap-2">
-                                <h3 class="text-2xl font-bold text-gray-800">¥ 28,560</h3>
+                                <h3 class="text-2xl font-bold text-gray-800" data-count-up="28560" data-prefix="¥ " data-duration="1600" data-delay="300">¥ 28,560</h3>
                                 <span class="text-xs text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 18%</span>
                             </div>
                         </div>
@@ -498,27 +499,27 @@
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-6 divide-x divide-gray-100">
                         <div class="px-2">
                             <p class="text-xs text-gray-400 mb-1">订单总数</p>
-                            <h4 class="text-xl font-bold text-gray-800 mb-1">128</h4>
+                            <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="128" data-duration="1400">128</h4>
                             <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 20%</p>
                         </div>
                         <div class="px-4">
                             <p class="text-xs text-gray-400 mb-1">成交金额</p>
-                            <h4 class="text-xl font-bold text-gray-800 mb-1">¥ 28,560</h4>
+                            <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="28560" data-prefix="¥ " data-duration="1600">¥ 28,560</h4>
                             <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 18%</p>
                         </div>
                         <div class="px-4">
                             <p class="text-xs text-gray-400 mb-1">客户数量</p>
-                            <h4 class="text-xl font-bold text-gray-800 mb-1">86</h4>
+                            <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="86" data-duration="1400" data-delay="100">86</h4>
                             <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 12%</p>
                         </div>
                         <div class="px-4">
                             <p class="text-xs text-gray-400 mb-1">好评率</p>
-                            <h4 class="text-xl font-bold text-gray-800 mb-1">98%</h4>
+                            <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="98" data-suffix="%" data-duration="1400" data-delay="200">98%</h4>
                             <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 5%</p>
                         </div>
                         <div class="px-4">
                             <p class="text-xs text-gray-400 mb-1">复购率</p>
-                            <h4 class="text-xl font-bold text-gray-800 mb-1">32%</h4>
+                            <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="32" data-suffix="%" data-duration="1400" data-delay="300">32%</h4>
                             <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 8%</p>
                         </div>
                         <!-- 客单价 was in the design but didn't fit 5 cols perfectly, adding it by adjusting grid -->
@@ -653,10 +654,12 @@
                 lastCol.className = 'px-4';
                 lastCol.innerHTML = `
                     <p class="text-xs text-gray-400 mb-1">客单价</p>
-                    <h4 class="text-xl font-bold text-gray-800 mb-1">¥ 223</h4>
+                    <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="223" data-prefix="¥ " data-duration="1400" data-delay="400">¥ 223</h4>
                     <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 6%</p>
                 `;
                 summaryGrid.appendChild(lastCol);
+                // 触发动态新增列的数字滚动动画
+                if (window.CountUp) window.CountUp.scan();
             }
         }
 

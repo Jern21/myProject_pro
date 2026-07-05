@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <i class="ph ph-house text-lg mr-3 icon-base text-gray-500"></i>首页
                 </a>
                 <a href="${PB}${ROUTES['orders.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="orders.html">
-                    <i class="ph ph-receipt text-lg mr-3 icon-base text-gray-500"></i>接单记录
+                    <i class="ph ph-receipt text-lg mr-3 icon-base text-gray-500"></i>我的订单
                 </a>
                 <a href="${PB}${ROUTES['quote.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="quote.html">
                     <i class="ph ph-currency-cny text-lg mr-3 icon-base text-gray-500"></i>报价管理

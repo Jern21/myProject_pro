@@ -12,7 +12,7 @@
         },
         'orders.html': {
             type: 'standard',
-            title: '接单记录',
+            title: '我的订单',
             subtitle: '共 128 条记录',
             search: '搜索订单号、客户、项目名称...',
             action: { label: '新建接单', icon: 'ph ph-plus', variant: 'primary' }

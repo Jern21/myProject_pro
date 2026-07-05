@@ -1,8 +1,8 @@
 /**
- * 接单记录表单组件 —— 独立可复用的右侧抽屉表单
+ * 我的订单表单组件 —— 独立可复用的右侧抽屉表单
  *
  * 功能：
- *   - 新建 / 编辑接单记录
+ *   - 新建 / 编辑我的订单
  *   - 客户信息、项目信息、商务信息、时间节点、状态管理、附件链接
  *   - 净利率 / 时薪 / 交付周期自动计算
  *   - 客户标签多选
@@ -138,7 +138,7 @@
             // Header
             '  <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">',
             '    <div>',
-            '      <h3 class="font-bold text-gray-800 text-base" id="order-form-title">新建接单记录</h3>',
+            '      <h3 class="font-bold text-gray-800 text-base" id="order-form-title">新建我的订单</h3>',
             '      <p class="text-xs text-gray-400 mt-0.5">填写订单信息，标记星号的字段为必填</p>',
             '    </div>',
             '    <button id="order-form-close" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition">',
@@ -584,7 +584,7 @@
         editMode = !!data;
 
         // 标题
-        document.getElementById('order-form-title').textContent = editMode ? '编辑接单记录' : '新建接单记录';
+        document.getElementById('order-form-title').textContent = editMode ? '编辑我的订单' : '新建我的订单';
 
         // 默认接单日期 = 今天
         var form = document.getElementById('order-form');
