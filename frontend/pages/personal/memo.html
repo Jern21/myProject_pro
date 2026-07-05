@@ -19,6 +19,55 @@
     <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
+<!-- 备忘录抽屉表单 -->
+<script src="../../js/memo-form.js"></script>
+<style>
+    /* 详情抽屉样式 */
+    .detail-drawer-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    .detail-drawer-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    .detail-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100%;
+        max-width: 480px;
+        height: 100%;
+        background: white;
+        z-index: 9999;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    .detail-drawer.active {
+        transform: translateX(0);
+    }
+    .detail-drawer-content {
+        flex: 1;
+        overflow-y: auto;
+    }
+    /* 卡片编辑按钮阻止冒泡 */
+    .card-actions {
+        pointer-events: auto;
+    }
+    .memo-card {
+        cursor: pointer;
+    }
+    .memo-card .card-actions button {
+        pointer-events: auto;
+    }
+</style>
 </head>
 <body class="flex h-screen overflow-hidden text-sm font-sans">
 
@@ -46,8 +95,8 @@
                             <option>灵感记录</option>
                             <option>其他</option>
                         </select>
-                        <button class="px-4 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors">
-                            <i class="ph ph-check"></i> 保存
+                        <button onclick="window.openMemoForm()" class="px-4 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors">
+                            <i class="ph ph-plus"></i> 新建备忘
                         </button>
                     </div>
                 </div>
@@ -103,7 +152,7 @@
                                 <span class="px-2 py-0.5 text-[10px] text-blue-600 bg-blue-50 border border-blue-100 rounded cursor-pointer hover:bg-blue-100 transition-colors">重要</span>
                                 <span class="px-2 py-0.5 text-[10px] text-red-600 bg-red-50 border border-red-100 rounded cursor-pointer hover:bg-red-100 transition-colors">紧急</span>
                                 <span class="px-2 py-0.5 text-[10px] text-green-600 bg-green-50 border border-green-100 rounded cursor-pointer hover:bg-green-100 transition-colors">已处理</span>
-                                <span class="px-2 py-0.5 text-[px] text-orange-600 bg-orange-50 border border-orange-100 rounded cursor-pointer hover:bg-orange-100 transition-colors">待跟进</span>
+                                <span class="px-2 py-0.5 text-[10px] text-orange-600 bg-orange-50 border border-orange-100 rounded cursor-pointer hover:bg-orange-100 transition-colors">待跟进</span>
                                 <span class="px-2 py-0.5 text-[10px] text-purple-600 bg-purple-50 border border-purple-100 rounded cursor-pointer hover:bg-purple-100 transition-colors">参考</span>
                                 <span class="px-2 py-0.5 text-[10px] text-gray-500 bg-gray-50 border border-gray-200 rounded cursor-pointer hover:bg-gray-100 transition-colors">备忘</span>
                             </div>
@@ -139,8 +188,10 @@
                             </h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <!-- Pinned Note 1 -->
-                                <div class="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group relative">
-                                    <button class="absolute top-3 right-3 text-brand-500 hover:text-brand-700"><i class="ph-fill ph-push-pin text-sm"></i></button>
+                                <div class="memo-card bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-xl p-5 shadow-soft hover:shadow-md transition-shadow group relative" onclick="openDetailDrawer(1)">
+                                    <button class="absolute top-3 right-3 text-brand-500 hover:text-brand-700" onclick="event.stopPropagation(); togglePin(1)">
+                                        <i class="ph-fill ph-push-pin text-sm"></i>
+                                    </button>
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-[10px] text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded font-medium">客户信息</span>
                                         <span class="text-[10px] text-red-600 bg-red-50 border border-red-100 px-1.5 py-0.5 rounded">重要</span>
@@ -151,15 +202,24 @@
                                     </p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] text-gray-400">2025-07-03 14:32</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        <div class="card-actions flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="event.stopPropagation(); togglePin(1)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="置顶">
+                                                <i class="ph ph-push-pin text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); editMemo(1)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="编辑">
+                                                <i class="ph ph-pencil-simple text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); deleteMemo(1)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="删除">
+                                                <i class="ph ph-trash text-xs"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- Pinned Note 2 -->
-                                <div class="bg-gradient-to-br from-orange-50 to-white border border-orange-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group relative">
-                                    <button class="absolute top-3 right-3 text-brand-500 hover:text-brand-700"><i class="ph-fill ph-push-pin text-sm"></i></button>
+                                <div class="memo-card bg-gradient-to-br from-orange-50 to-white border border-orange-100 rounded-xl p-5 shadow-soft hover:shadow-md transition-shadow group relative" onclick="openDetailDrawer(2)">
+                                    <button class="absolute top-3 right-3 text-brand-500 hover:text-brand-700" onclick="event.stopPropagation(); togglePin(2)">
+                                        <i class="ph-fill ph-push-pin text-sm"></i>
+                                    </button>
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-[10px] text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded font-medium">报价参考</span>
                                         <span class="text-[10px] text-purple-600 bg-purple-50 border border-purple-100 px-1.5 py-0.5 rounded">参考</span>
@@ -170,9 +230,16 @@
                                     </p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] text-gray-400">2025-06-28 10:15</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        <div class="card-actions flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="event.stopPropagation(); togglePin(2)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="置顶">
+                                                <i class="ph ph-push-pin text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); editMemo(2)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="编辑">
+                                                <i class="ph ph-pencil-simple text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); deleteMemo(2)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="删除">
+                                                <i class="ph ph-trash text-xs"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -187,7 +254,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
                                 <!-- Note 1 -->
-                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="memo-card bg-white border border-gray-100 rounded-xl p-5 shadow-soft hover:shadow-md transition-shadow group" onclick="openDetailDrawer(3)">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded font-medium">项目笔记</span>
                                         <span class="text-[10px] text-orange-600 bg-orange-50 border border-orange-100 px-1.5 py-0.5 rounded">待跟进</span>
@@ -198,15 +265,22 @@
                                     </p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] text-gray-400">今天 14:32</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        <div class="card-actions flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="event.stopPropagation(); togglePin(3)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="置顶">
+                                                <i class="ph ph-push-pin text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); editMemo(3)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="编辑">
+                                                <i class="ph ph-pencil-simple text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); deleteMemo(3)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="删除">
+                                                <i class="ph ph-trash text-xs"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Note 2 -->
-                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="memo-card bg-white border border-gray-100 rounded-xl p-5 shadow-soft hover:shadow-md transition-shadow group" onclick="openDetailDrawer(4)">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded font-medium">技术方案</span>
                                     </div>
@@ -216,15 +290,22 @@
                                     </p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] text-gray-400">昨天 16:20</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        <div class="card-actions flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="event.stopPropagation(); togglePin(4)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="置顶">
+                                                <i class="ph ph-push-pin text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); editMemo(4)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="编辑">
+                                                <i class="ph ph-pencil-simple text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); deleteMemo(4)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="删除">
+                                                <i class="ph ph-trash text-xs"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Note 3 -->
-                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="memo-card bg-white border border-gray-100 rounded-xl p-5 shadow-soft hover:shadow-md transition-shadow group" onclick="openDetailDrawer(5)">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-[10px] text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded font-medium">客户信息</span>
                                         <span class="text-[10px] text-green-600 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded">已处理</span>
@@ -235,15 +316,22 @@
                                     </p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] text-gray-400">07-03 11:20</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        <div class="card-actions flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="event.stopPropagation(); togglePin(5)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="置顶">
+                                                <i class="ph ph-push-pin text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); editMemo(5)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="编辑">
+                                                <i class="ph ph-pencil-simple text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); deleteMemo(5)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="删除">
+                                                <i class="ph ph-trash text-xs"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Note 4 -->
-                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="memo-card bg-white border border-gray-100 rounded-xl p-5 shadow-soft hover:shadow-md transition-shadow group" onclick="openDetailDrawer(6)">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-[10px] text-yellow-600 bg-yellow-50 px-1.5 py-0.5 rounded font-medium">灵感记录</span>
                                     </div>
@@ -253,15 +341,22 @@
                                     </p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] text-gray-400">07-02 20:30</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        <div class="card-actions flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="event.stopPropagation(); togglePin(6)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="置顶">
+                                                <i class="ph ph-push-pin text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); editMemo(6)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="编辑">
+                                                <i class="ph ph-pencil-simple text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); deleteMemo(6)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="删除">
+                                                <i class="ph ph-trash text-xs"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Note 5 -->
-                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="memo-card bg-white border border-gray-100 rounded-xl p-5 shadow-soft hover:shadow-md transition-shadow group" onclick="openDetailDrawer(7)">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded font-medium">项目笔记</span>
                                         <span class="text-[10px] text-red-600 bg-red-50 border border-red-100 px-1.5 py-0.5 rounded">紧急</span>
@@ -272,15 +367,22 @@
                                     </p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] text-gray-400">07-02 09:15</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        <div class="card-actions flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="event.stopPropagation(); togglePin(7)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="置顶">
+                                                <i class="ph ph-push-pin text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); editMemo(7)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="编辑">
+                                                <i class="ph ph-pencil-simple text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); deleteMemo(7)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="删除">
+                                                <i class="ph ph-trash text-xs"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Note 6 -->
-                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
+                                <div class="memo-card bg-white border border-gray-100 rounded-xl p-5 shadow-soft hover:shadow-md transition-shadow group" onclick="openDetailDrawer(8)">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded font-medium">技术方案</span>
                                         <span class="text-[10px] text-gray-500 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded">备忘</span>
@@ -291,64 +393,16 @@
                                     </p>
                                     <div class="flex items-center justify-between">
                                         <span class="text-[10px] text-gray-400">07-01 15:45</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Note 7 -->
-                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-[10px] text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded font-medium">报价参考</span>
-                                    </div>
-                                    <h4 class="font-bold text-gray-800 text-sm mb-2">毕设代做报价参考</h4>
-                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
-                                        Java管理系统：¥1500-3000；Python数据分析：¥1200-2500；Vue前端项目：¥800-2000；全栈项目：¥2500-5000。含论文指导加收¥500。注意：需评估工作量，复杂需求另算。
-                                    </p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] text-gray-400">06-30 22:10</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Note 8 -->
-                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded font-medium">其他</span>
-                                    </div>
-                                    <h4 class="font-bold text-gray-800 text-sm mb-2">常用工具网站收藏</h4>
-                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
-                                        图标：Phosphor Icons、Iconify；配色：Coolors、ColorHunt；占位图：placehold.co；UI灵感：Dribbble、Mobbin；代码片段：CodePen、GitHub Gist；部署：Vercel、Railway
-                                    </p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] text-gray-400">06-29 18:00</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Note 9 -->
-                                <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-soft cursor-pointer hover:shadow-md transition-shadow group">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-[10px] text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded font-medium">客户信息</span>
-                                        <span class="text-[10px] text-orange-600 bg-orange-50 border border-orange-100 px-1.5 py-0.5 rounded">待跟进</span>
-                                    </div>
-                                    <h4 class="font-bold text-gray-800 text-sm mb-2">赵先生 · 小程序开发跟进</h4>
-                                    <p class="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
-                                        潜在客户，预算有限，还在比价。需求：小程序功能开发（商品展示+在线下单）。报价¥8,500，客户觉得偏高。可适当让步至¥7,500，需强调包含售后维护。计划7.05再次跟进。
-                                    </p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] text-gray-400">06-28 14:00</span>
-                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"><i class="ph ph-pencil-simple text-xs"></i></button>
-                                            <button class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="ph ph-trash text-xs"></i></button>
+                                        <div class="card-actions flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="event.stopPropagation(); togglePin(8)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="置顶">
+                                                <i class="ph ph-push-pin text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); editMemo(8)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-brand-500 hover:bg-brand-50 transition-colors" title="编辑">
+                                                <i class="ph ph-pencil-simple text-xs"></i>
+                                            </button>
+                                            <button onclick="event.stopPropagation(); deleteMemo(8)" class="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="删除">
+                                                <i class="ph ph-trash text-xs"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -370,6 +424,258 @@
         </div>
     </div>
 </main>
+
+<!-- Detail Drawer -->
+<div id="detail-drawer-overlay" class="detail-drawer-overlay" onclick="closeDetailDrawer()"></div>
+<div id="detail-drawer" class="detail-drawer shadow-drawer">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-brand-50 to-white flex-shrink-0">
+        <div class="flex items-center gap-3">
+            <button onclick="closeDetailDrawer()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-gray-500 hover:text-brand-600 transition-colors">
+                <i class="ph ph-x text-lg"></i>
+            </button>
+            <div class="flex items-center gap-2">
+                <i class="ph-fill ph-notebook text-brand-500"></i>
+                <span class="font-bold text-gray-800">备忘详情</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="drawer-pin-btn" onclick="togglePinFromDrawer()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-gray-400 hover:text-brand-500 transition-colors" title="置顶">
+                <i class="ph ph-push-pin text-lg"></i>
+            </button>
+            <button onclick="editCurrentMemo()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors shadow-sm">
+                <i class="ph ph-pencil-simple"></i> 编辑
+            </button>
+        </div>
+    </div>
+    <div class="detail-drawer-content p-5 bg-gradient-to-b from-white to-gray-50/50">
+        <div id="drawer-content">
+            <!-- Content will be loaded dynamically -->
+        </div>
+    </div>
+</div>
+
+<script>
+// Current viewing memo ID
+let currentMemoId = null;
+
+// Mock data for detail view
+const memoData = {
+    1: {
+        title: '刘总 · 后台管理系统开发',
+        category: '客户信息',
+        tags: ['重要'],
+        content: '高价值客户，累计消费¥28,600。需求明确，付款爽快。当前项目：后台管理系统开发，已逾期2天，需尽快推进。联系方式：139****9921，微信同号。偏好晚间沟通，通常22:00后在线。',
+        pinned: true,
+        createdAt: '2025-07-03 14:32'
+    },
+    2: {
+        title: '2025标准报价表',
+        category: '报价参考',
+        tags: ['参考'],
+        content: '网站开发：¥3000-8000（含后台）；小程序：¥5000-15000；UI设计：¥500-2000/套；视频剪辑：¥300-1500/条。付款方式默认5-4-1。急单加收30%，复购客户9折。',
+        pinned: true,
+        createdAt: '2025-06-28 10:15'
+    },
+    3: {
+        title: '企业官网开发进度',
+        category: '项目笔记',
+        tags: ['待跟进'],
+        content: '首页已完成，关于我们页面进行中。后端API已完成60%，CMS后台框架搭建完毕。待办：1.产品展示页对接 2.SEO优化 3.移动端适配测试。预计7.18交付。',
+        pinned: false,
+        createdAt: '今天 14:32'
+    },
+    4: {
+        title: '小程序微信支付对接流程',
+        category: '技术方案',
+        tags: [],
+        content: '1.申请微信支付商户号 2.配置支付回调域名 3.后端统一下单接口获取prepay_id 4.前端调起支付 5.支付结果回调处理。注意：回调需做签名验证，防止伪造。',
+        pinned: false,
+        createdAt: '昨天 16:20'
+    },
+    5: {
+        title: '张先生需求确认',
+        category: '客户信息',
+        tags: ['已处理'],
+        content: '企业官网定制开发，需要5个核心页面（首页、关于我们、产品展示、新闻动态、联系方式）。要求双端自适应，含CMS后台管理。预算¥6,800，周期15天。已签合同，50%预付已到账。',
+        pinned: false,
+        createdAt: '07-03 11:20'
+    },
+    6: {
+        title: '小红书引流文案思路',
+        category: '灵感记录',
+        tags: [],
+        content: '爆款标题公式：数字+痛点+解决方案。例："3个技巧让你的网站转化率翻倍"。封面用对比图（Before/After），文案结尾加CTA引导私信。最佳发布时间：12:00、18:00、21:00。',
+        pinned: false,
+        createdAt: '07-02 20:30'
+    },
+    7: {
+        title: '后台管理系统逾期处理',
+        category: '项目笔记',
+        tags: ['紧急'],
+        content: '刘总项目已逾期2天，进度80%。剩余：权限模块收尾+测试+部署。今日需完成权限模块，明天测试，后天上线。已与客户沟通延期至7.05，需加班赶工。',
+        pinned: false,
+        createdAt: '07-02 09:15'
+    },
+    8: {
+        title: '服务器部署Checklist',
+        category: '技术方案',
+        tags: ['备忘'],
+        content: '1.Nginx配置HTTPS 2.配置反向代理 3.防火墙开放端口 4.MySQL安全初始化 5.设置定时备份 6.配置PM2进程守护 7.日志轮转配置 8.监控告警接入',
+        pinned: false,
+        createdAt: '07-01 15:45'
+    }
+};
+
+// Open detail drawer
+function openDetailDrawer(id) {
+    currentMemoId = id;
+    const data = memoData[id];
+    if (!data) return;
+
+    // Update pin button state
+    const pinBtn = document.getElementById('drawer-pin-btn');
+    if (data.pinned) {
+        pinBtn.innerHTML = '<i class="ph-fill ph-push-pin text-lg text-brand-500"></i>';
+        pinBtn.classList.add('text-brand-500');
+    } else {
+        pinBtn.innerHTML = '<i class="ph ph-push-pin text-lg"></i>';
+        pinBtn.classList.remove('text-brand-500');
+    }
+
+    // Render content
+    const categoryColors = {
+        '客户信息': 'brand',
+        '项目笔记': 'green',
+        '技术方案': 'purple',
+        '报价参考': 'orange',
+        '灵感记录': 'yellow',
+        '其他': 'gray'
+    };
+    const color = categoryColors[data.category] || 'gray';
+
+    const tagColors = {
+        '重要': 'brand',
+        '紧急': 'red',
+        '已处理': 'green',
+        '待跟进': 'orange',
+        '参考': 'purple',
+        '备忘': 'gray'
+    };
+
+    document.getElementById('drawer-content').innerHTML = `
+        <div class="mb-6 border-l-4 border-brand-500 pl-4">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-[10px] text-${color}-600 bg-${color}-100 px-2 py-1 rounded font-medium">${data.category}</span>
+                ${data.tags.map(tag => `<span class="text-[10px] text-${tagColors[tag] || 'gray'}-600 bg-${tagColors[tag] || 'gray'}-50 border border-${tagColors[tag] || 'gray'}-100 px-2 py-1 rounded">${tag}</span>`).join('')}
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">${data.title}</h2>
+            <div class="flex items-center gap-1.5 text-xs text-gray-400">
+                <i class="ph ph-clock text-brand-500"></i>
+                <span>${data.createdAt}</span>
+            </div>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-5">
+            <div class="flex items-center gap-2 mb-3">
+                <i class="ph-fill ph-text-t text-brand-500"></i>
+                <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">备忘内容</span>
+            </div>
+            <div class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">${data.content}</div>
+        </div>
+    `;
+
+    // Show drawer
+    document.getElementById('detail-drawer-overlay').classList.add('active');
+    document.getElementById('detail-drawer').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close detail drawer
+function closeDetailDrawer() {
+    document.getElementById('detail-drawer-overlay').classList.remove('active');
+    document.getElementById('detail-drawer').classList.remove('active');
+    document.body.style.overflow = '';
+    currentMemoId = null;
+}
+
+// Edit current memo from drawer
+function editCurrentMemo() {
+    if (currentMemoId && memoData[currentMemoId]) {
+        window.openMemoForm(memoData[currentMemoId]);
+    }
+}
+
+// Edit memo (from card)
+function editMemo(id) {
+    if (memoData[id]) {
+        window.openMemoForm(memoData[id]);
+    }
+}
+
+// Listen for form submit
+window.addEventListener('memo-form:submit', function(e) {
+    console.log('Memo saved:', e.detail);
+    // Here you would save the data and refresh the list
+    showToast(e.detail.id ? '备忘已更新' : '备忘已创建', 'success');
+});
+
+// Show toast notification
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-5 left-1/2 -translate-x-1/2 px-6 py-3 rounded-lg text-white text-sm z-[99999] animate-fade-in ${
+        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    }`;
+    toast.innerHTML = `<i class="ph ${type === 'success' ? 'ph-check-circle' : 'ph-warning-circle'} mr-2"></i>${message}`;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
+}
+
+// Toggle pin
+function togglePin(id) {
+    if (!memoData[id]) return;
+    
+    const data = memoData[id];
+    data.pinned = !data.pinned;
+    
+    showToast(data.pinned ? '已置顶' : '已取消置顶', 'success');
+    
+    // Refresh drawer if open
+    if (currentMemoId === id) {
+        openDetailDrawer(id);
+    }
+}
+
+// Toggle pin from drawer
+function togglePinFromDrawer() {
+    if (currentMemoId) {
+        togglePin(currentMemoId);
+    }
+}
+
+// Delete memo (placeholder)
+function deleteMemo(id) {
+    if (confirm('确定要删除这条备忘吗？')) {
+        console.log('Delete memo:', id);
+        // Implementation would remove the memo
+    }
+}
+
+// Handle ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeDetailDrawer();
+    }
+});
+
+// Handle SPA cleanup
+window.addEventListener('spa:cleanup-forms', function() {
+    closeDetailDrawer();
+});
+</script>
 
 </body>
 </html>

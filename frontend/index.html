@@ -109,61 +109,73 @@
             <div class="max-w-[1400px] mx-auto space-y-6">
                 
                 <!-- Top Metrics Row -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <!-- Card 1 -->
-                    <div class="card flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-blue-200">
-                            <i class="ph ph-calendar-plus text-2xl"></i>
+                    <div class="card flex items-center gap-3 p-4">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-blue-200">
+                            <i class="ph ph-calendar-plus text-xl"></i>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-500 mb-0.5">今日新增订单</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-2xl font-bold text-gray-800" data-count-up="8" data-duration="1200">8</h3>
-                                <span class="text-xs text-red-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较昨日 33%</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs text-gray-500 mb-0.5 truncate">今日新增订单</p>
+                            <div class="flex items-baseline gap-1.5 flex-wrap">
+                                <h3 class="text-xl font-bold text-gray-800" data-count-up="8" data-duration="1200">8</h3>
+                                <span class="text-[10px] text-red-500 flex items-center whitespace-nowrap"><i class="ph ph-arrow-up-right mr-0.5"></i>较昨日 33%</span>
                             </div>
                         </div>
                     </div>
                     <!-- Card 2 -->
-                    <div class="card flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-emerald-400 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-emerald-200 relative overflow-hidden">
-                             <!-- adding a small graphic inside like the original -->
-                             <div class="absolute -right-2 -bottom-2 w-8 h-8 bg-white/20 rounded-full"></div>
-                             <i class="ph ph-arrows-clockwise text-2xl relative z-10"></i>
+                    <div class="card flex items-center gap-3 p-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-400 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-emerald-200 relative overflow-hidden">
+                             <div class="absolute -right-2 -bottom-2 w-6 h-6 bg-white/20 rounded-full"></div>
+                             <i class="ph ph-arrows-clockwise text-xl relative z-10"></i>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-500 mb-0.5">进行中订单</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-2xl font-bold text-gray-800" data-count-up="15" data-duration="1200" data-delay="100">15</h3>
-                                <span class="text-xs text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较昨日 15%</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs text-gray-500 mb-0.5 truncate">进行中订单</p>
+                            <div class="flex items-baseline gap-1.5 flex-wrap">
+                                <h3 class="text-xl font-bold text-gray-800" data-count-up="15" data-duration="1200" data-delay="100">15</h3>
+                                <span class="text-[10px] text-emerald-500 flex items-center whitespace-nowrap"><i class="ph ph-arrow-up-right mr-0.5"></i>较昨日 15%</span>
                             </div>
                         </div>
                     </div>
                     <!-- Card 3 -->
-                    <div class="card flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-orange-400 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-orange-200 relative overflow-hidden">
+                    <div class="card flex items-center gap-3 p-4">
+                        <div class="w-10 h-10 rounded-xl bg-orange-400 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-orange-200 relative overflow-hidden">
                              <div class="absolute inset-0 border-[3px] border-white/30 rounded-xl m-1"></div>
-                             <i class="ph ph-check-circle text-2xl relative z-10"></i>
+                             <i class="ph ph-check-circle text-xl relative z-10"></i>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-500 mb-0.5">今日成交金额</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-2xl font-bold text-gray-800" data-count-up="3680" data-prefix="¥ " data-duration="1400" data-delay="200">¥ 3,680</h3>
-                                <span class="text-xs text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较昨日 28%</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs text-gray-500 mb-0.5 truncate">今日成交金额</p>
+                            <div class="flex items-baseline gap-1.5 flex-wrap">
+                                <h3 class="text-lg font-bold text-gray-800" data-count-up="3680" data-prefix="¥" data-duration="1400" data-delay="200">¥3,680</h3>
+                                <span class="text-[10px] text-emerald-500 flex items-center whitespace-nowrap"><i class="ph ph-arrow-up-right mr-0.5"></i>较昨日 28%</span>
                             </div>
                         </div>
                     </div>
                     <!-- Card 4 -->
-                    <div class="card flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-indigo-500 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-indigo-200 relative overflow-hidden">
-                             <!-- Adding abstract shape like original -->
+                    <div class="card flex items-center gap-3 p-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-indigo-200 relative overflow-hidden">
                              <svg class="absolute inset-0 w-full h-full text-white/20" viewBox="0 0 100 100"><path d="M50 10 L90 50 L50 90 L10 50 Z" fill="currentColor"/></svg>
-                             <i class="ph-fill ph-star text-2xl relative z-10"></i>
+                             <i class="ph-fill ph-star text-xl relative z-10"></i>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-500 mb-0.5">本月总收入</p>
-                            <div class="flex items-baseline gap-2">
-                                <h3 class="text-2xl font-bold text-gray-800" data-count-up="28560" data-prefix="¥ " data-duration="1600" data-delay="300">¥ 28,560</h3>
-                                <span class="text-xs text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 18%</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs text-gray-500 mb-0.5 truncate">本月总收入</p>
+                            <div class="flex items-baseline gap-1.5 flex-wrap">
+                                <h3 class="text-lg font-bold text-gray-800" data-count-up="28560" data-prefix="¥" data-duration="1600" data-delay="300">¥28,560</h3>
+                                <span class="text-[10px] text-emerald-500 flex items-center whitespace-nowrap"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 18%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 5: 今年总收入 -->
+                    <div class="card flex items-center gap-3 p-4">
+                        <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-brand-200 relative overflow-hidden">
+                             <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+                             <i class="ph-fill ph-currency-cny text-xl relative z-10"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs text-gray-500 mb-0.5 truncate">今年总收入</p>
+                            <div class="flex items-baseline gap-1.5 flex-wrap">
+                                <h3 class="text-lg font-bold text-brand-600" data-count-up="186500" data-prefix="¥" data-duration="1800" data-delay="400">¥186,500</h3>
+                                <span class="text-[10px] text-emerald-500 flex items-center whitespace-nowrap"><i class="ph ph-arrow-up-right mr-0.5"></i>较去年 35%</span>
                             </div>
                         </div>
                     </div>
@@ -187,9 +199,9 @@
                     <!-- Platform Status -->
                     <div class="card xl:col-span-1 h-[280px]">
                         <h3 class="font-semibold text-gray-800 text-base mb-4">平台发布状态</h3>
-                        <div class="space-y-4">
+                        <div>
                             <!-- Xianyu -->
-                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors">
+                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors cursor-pointer" onclick="window.location.href='#/platform/xianyu'">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center text-white font-bold text-lg leading-none">
                                         <span class="transform -rotate-12 block mt-0.5 text-black">闲鱼</span>
@@ -201,11 +213,11 @@
                                     <div><p class="text-xs text-gray-400">审核中</p><p class="font-semibold text-gray-700">2</p></div>
                                     <div><p class="text-xs text-gray-400">下架</p><p class="font-semibold text-gray-700">1</p></div>
                                 </div>
-                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition">查看</button>
+                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition" onclick="event.stopPropagation(); window.location.href='#/platform/xianyu'">查看</button>
                             </div>
                             
                             <!-- Xiaohongshu -->
-                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors">
+                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors cursor-pointer" onclick="window.location.href='#/platform/xiaohongshu'">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold text-xs leading-none">
                                         小红书
@@ -217,11 +229,11 @@
                                     <div><p class="text-xs text-gray-400">审核中</p><p class="font-semibold text-gray-700">1</p></div>
                                     <div><p class="text-xs text-gray-400">下架</p><p class="font-semibold text-gray-700">2</p></div>
                                 </div>
-                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition">查看</button>
+                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition" onclick="event.stopPropagation(); window.location.href='#/platform/xiaohongshu'">查看</button>
                             </div>
 
                             <!-- Douyin -->
-                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors">
+                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors cursor-pointer" onclick="window.location.href='#/platform/douyin'">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-lg leading-none">
                                         <i class="ph-fill ph-tiktok-logo text-xl"></i>
@@ -233,7 +245,7 @@
                                     <div><p class="text-xs text-gray-400">审核中</p><p class="font-semibold text-gray-700">3</p></div>
                                     <div><p class="text-xs text-gray-400">下架</p><p class="font-semibold text-gray-700">1</p></div>
                                 </div>
-                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition">查看</button>
+                                <button class="px-3 py-1 text-sm border border-gray-200 rounded text-gray-600 hover:bg-gray-100 transition" onclick="event.stopPropagation(); window.location.href='#/platform/douyin'">查看</button>
                             </div>
                         </div>
                     </div>
@@ -497,7 +509,7 @@
                 <!-- Bottom Data Overview -->
                 <div class="card mb-6">
                     <h3 class="font-semibold text-gray-800 text-base mb-4">数据概览 (本月)</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-6 divide-x divide-gray-100">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 divide-x divide-gray-100">
                         <div class="px-2">
                             <p class="text-xs text-gray-400 mb-1">订单总数</p>
                             <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="128" data-duration="1400">128</h4>
@@ -507,6 +519,11 @@
                             <p class="text-xs text-gray-400 mb-1">成交金额</p>
                             <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="28560" data-prefix="¥ " data-duration="1600">¥ 28,560</h4>
                             <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 18%</p>
+                        </div>
+                        <div class="px-4">
+                            <p class="text-xs text-gray-400 mb-1">今年总收入</p>
+                            <h4 class="text-xl font-bold text-brand-600 mb-1" data-count-up="186500" data-prefix="¥ " data-duration="1800" data-delay="150">¥ 186,500</h4>
+                            <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较去年 35%</p>
                         </div>
                         <div class="px-4">
                             <p class="text-xs text-gray-400 mb-1">客户数量</p>
@@ -523,8 +540,6 @@
                             <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="32" data-suffix="%" data-duration="1400" data-delay="300">32%</h4>
                             <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 8%</p>
                         </div>
-                        <!-- 客单价 was in the design but didn't fit 5 cols perfectly, adding it by adjusting grid -->
-                        <!-- Actually it is 6 columns in design, let's adjust grid class -->
                     </div>
                 </div>
 
@@ -645,23 +660,6 @@
                 myChart.resize();
             });
 
-            // Adjust grid for bottom summary data to have 6 columns like original design
-            const summaryGrid = document.querySelector('.card.mb-6 .grid');
-            if(summaryGrid) {
-                summaryGrid.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 divide-x divide-gray-100';
-                
-                // Add the missing 6th column (客单价)
-                const lastCol = document.createElement('div');
-                lastCol.className = 'px-4';
-                lastCol.innerHTML = `
-                    <p class="text-xs text-gray-400 mb-1">客单价</p>
-                    <h4 class="text-xl font-bold text-gray-800 mb-1" data-count-up="223" data-prefix="¥ " data-duration="1400" data-delay="400">¥ 223</h4>
-                    <p class="text-[10px] text-emerald-500 flex items-center"><i class="ph ph-arrow-up-right mr-0.5"></i>较上月 6%</p>
-                `;
-                summaryGrid.appendChild(lastCol);
-                // 触发动态新增列的数字滚动动画
-                if (window.CountUp) window.CountUp.scan();
-            }
         }
 
         // 尝试初始化：DOM 加载完成时

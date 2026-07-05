@@ -230,9 +230,9 @@
                     </div>
 
                     <!-- 右侧：提醒列表 -->
-                    <div class="xl:col-span-2 space-y-4">
+                    <div class="xl:col-span-2 flex flex-col">
                         <!-- 筛选 + 添加 -->
-                        <div class="card flex items-center justify-between gap-3 flex-wrap">
+                        <div class="card flex items-center justify-between gap-3 flex-wrap mb-4">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <button class="filter-btn active px-3 py-1.5 rounded-lg text-xs font-medium transition-colors" data-filter="all">全部</button>
                                 <button class="filter-btn px-3 py-1.5 rounded-lg text-xs font-medium transition-colors" data-filter="today">今日</button>
@@ -245,14 +245,16 @@
                             </button>
                         </div>
 
-                        <!-- 提醒列表 -->
-                        <div id="reminder-list" class="space-y-3"></div>
+                        <!-- 提醒列表 - 双列布局，最大高度与日历齐平，支持滚动 -->
+                        <div class="card flex-1 overflow-hidden">
+                            <div id="reminder-list" class="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto max-h-[420px] p-1"></div>
 
-                        <!-- 空状态 -->
-                        <div id="empty-state" class="hidden card text-center py-12">
-                            <i class="ph ph-bell-slash text-5xl text-gray-200 mb-3 block"></i>
-                            <p class="text-gray-400 text-sm">暂无提醒事项</p>
-                            <p class="text-gray-300 text-xs mt-1">点击「新建提醒」添加你的第一个待办</p>
+                            <!-- 空状态 -->
+                            <div id="empty-state" class="hidden text-center py-12">
+                                <i class="ph ph-bell-slash text-5xl text-gray-200 mb-3 block"></i>
+                                <p class="text-gray-400 text-sm">暂无提醒事项</p>
+                                <p class="text-gray-300 text-xs mt-1">点击「新建提醒」添加你的第一个待办</p>
+                            </div>
                         </div>
                     </div>
                 </div>

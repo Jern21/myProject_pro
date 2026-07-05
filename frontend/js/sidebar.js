@@ -298,6 +298,24 @@ var SHIBA_SLEEP_SPEECHES = [
     '梦里在跑酷汪！'
 ];
 
+var SHIBA_BUTTERFLY_SPEECHES = [
+    '好多蝴蝶呀！🦋',
+    '别飞走嘛~',
+    '蝴蝶好漂亮！',
+    '抓蝴蝶咯！汪！'
+];
+
+var SHIBA_RAIN_SPEECHES = [
+    '下雨了汪... ☔',
+    '淋湿了要感冒的！',
+    '快躲雨呀~',
+    '雨滴滴答答的...'
+];
+
+// ========== 场景：蝴蝶 & 雨天 ==========
+
+var BUTTERFLY_COLORS = ['#f472b6', '#a78bfa', '#fbbf24', '#60a5fa', '#fb923c', '#4ade80'];
+
 var SHIBA_PIXEL_SCALE = 2;
 var SHIBA_SPRITE_W = 16 * 2;   // 32px
 var SHIBA_SPRITE_H = 16 * 2;   // 32px
@@ -331,7 +349,13 @@ function initShibaPet() {
         walkSpeed: 0,
         walkTimer: Math.floor(Math.random() * 200) + 100,
         idleTimer: 0,
-        walkAnimPhase: 0
+        walkAnimPhase: 0,
+        // 场景系统
+        sceneType: 'butterflies',
+        sceneSwitchTimer: 0,
+        butterflies: [],
+        raindrops: [],
+        splashes: []
     };
 
     // ---- Hover：回头看你 ----
@@ -361,6 +385,11 @@ function initShibaPet() {
         var msg = SHIBA_SPEECHES[Math.floor(Math.random() * SHIBA_SPEECHES.length)];
         triggerShibaSpeech(msg);
     });
+
+    // 初始化场景（固定从蝴蝶开始）
+    shibaState.sceneType = 'butterflies';
+    shibaState.sceneSwitchTimer = Math.floor(Math.random() * 600) + 900;
+    initButterflies();
 
     // 启动渲染循环
     renderShibaLoop();
@@ -431,6 +460,142 @@ function drawPixelHeart(ctx, cx, cy) {
     }
 }
 
+// ========== 场景系统函数 ==========
+
+function initButterflies() {
+    shibaState.butterflies = [];
+    var count = 4 + Math.floor(Math.random() * 2);
+    for (var i = 0; i < count; i++) {
+        shibaState.butterflies.push({
+            x: Math.random() * (SHIBA_CANVAS_W - 20) + 10,
+            y: Math.random() * 28 + 4,
+            vx: (Math.random() < 0.5 ? -1 : 1) * (0.15 + Math.random() * 0.2),
+            vy: (Math.random() < 0.5 ? -1 : 1) * (0.05 + Math.random() * 0.1),
+            t: Math.floor(Math.random() * 100),
+            color: BUTTERFLY_COLORS[Math.floor(Math.random() * BUTTERFLY_COLORS.length)],
+            fade: 0
+        });
+    }
+}
+
+function initRaindrops() {
+    shibaState.raindrops = [];
+    var count = 35 + Math.floor(Math.random() * 15);
+    for (var i = 0; i < count; i++) {
+        shibaState.raindrops.push({
+            x: Math.random() * SHIBA_CANVAS_W,
+            y: Math.random() * SHIBA_CANVAS_H - SHIBA_CANVAS_H,
+            speed: 2 + Math.random() * 2,
+            length: 3 + Math.floor(Math.random() * 3),
+            opacity: 0.25 + Math.random() * 0.35
+        });
+    }
+    shibaState.splashes = [];
+}
+
+function switchShibaScene() {
+    // 固定交替：蝴蝶 → 下雨 → 蝴蝶 → 下雨
+    shibaState.sceneType = shibaState.sceneType === 'butterflies' ? 'rain' : 'butterflies';
+    shibaState.sceneSwitchTimer = Math.floor(Math.random() * 600) + 900;
+    // 彻底清空上一个场景的数据，确保互不干扰
+    shibaState.butterflies = [];
+    shibaState.raindrops = [];
+    shibaState.splashes = [];
+    if (shibaState.sceneType === 'butterflies') {
+        initButterflies();
+    } else {
+        initRaindrops();
+    }
+    // 不触发台词，不干扰柴犬当前状态（睡眠/行走/对话等）
+}
+
+function updateAndDrawButterflies(ctx) {
+    var butterflies = shibaState.butterflies;
+    for (var i = 0; i < butterflies.length; i++) {
+        var b = butterflies[i];
+
+        // 运动：基础速度 + 正弦扰动，模拟蝴蝶飘忽不定
+        b.t++;
+        b.x += b.vx + Math.sin(b.t * 0.05) * 0.1;
+        b.y += b.vy + Math.cos(b.t * 0.05) * 0.1;
+
+        // 边界反弹
+        if (b.x < 3) b.vx = Math.abs(b.vx);
+        else if (b.x > SHIBA_CANVAS_W - 8) b.vx = -Math.abs(b.vx);
+        if (b.y < 3) b.vy = Math.abs(b.vy);
+        else if (b.y > 34) b.vy = -Math.abs(b.vy);
+
+        if (b.fade < 1) b.fade += 0.03;
+
+        // 翅膀扇动：高度交替变化模拟扇翅
+        var wingH = (b.t % 10 < 5) ? 4 : 2;
+        var bx = Math.round(b.x);
+        var by = Math.round(b.y);
+
+        ctx.globalAlpha = Math.min(1, b.fade);
+        // 左翅
+        ctx.fillStyle = b.color;
+        ctx.fillRect(bx, by, 2, wingH);
+        // 右翅
+        ctx.fillRect(bx + 3, by, 2, wingH);
+        // 身体（中间 1px 深色）
+        ctx.fillStyle = '#1c1917';
+        ctx.fillRect(bx + 2, by, 1, wingH);
+    }
+    ctx.globalAlpha = 1;
+}
+
+function updateAndDrawRain(ctx) {
+    var drops = shibaState.raindrops;
+
+    for (var i = 0; i < drops.length; i++) {
+        var d = drops[i];
+
+        // 更新位置（下落 + 微风偏移）
+        d.y += d.speed;
+        d.x += 0.4;
+
+        // 落地产生水花后重置
+        if (d.y >= SHIBA_CANVAS_H - 3) {
+            if (Math.random() < 0.35) {
+                shibaState.splashes.push({
+                    x: d.x,
+                    y: SHIBA_CANVAS_H - 3,
+                    life: 6
+                });
+            }
+            d.y = -d.length - Math.random() * 15;
+            d.x = Math.random() * SHIBA_CANVAS_W;
+        }
+        if (d.x > SHIBA_CANVAS_W) {
+            d.x -= SHIBA_CANVAS_W;
+        }
+
+        // 绘制雨滴
+        ctx.globalAlpha = d.opacity;
+        ctx.fillStyle = '#93c5fd';
+        ctx.fillRect(Math.round(d.x), Math.round(d.y), 1, d.length);
+    }
+
+    // 更新和绘制水花
+    var splashes = shibaState.splashes;
+    for (var j = splashes.length - 1; j >= 0; j--) {
+        var s = splashes[j];
+        s.life--;
+        if (s.life <= 0) {
+            splashes.splice(j, 1);
+            continue;
+        }
+        var radius = (6 - s.life) * 0.8;
+        ctx.globalAlpha = (s.life / 6) * 0.5;
+        ctx.fillStyle = '#bfdbfe';
+        ctx.fillRect(Math.round(s.x - radius), Math.round(s.y), 1, 1);
+        ctx.fillRect(Math.round(s.x + radius), Math.round(s.y), 1, 1);
+    }
+
+    ctx.globalAlpha = 1;
+}
+
 function renderShibaLoop() {
     if (!shibaState || !shibaState.canvas) return;
 
@@ -439,6 +604,14 @@ function renderShibaLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     shibaState.ticks++;
+
+    // ---- 场景切换计时 ----
+    if (shibaState.sceneSwitchTimer > 0) {
+        shibaState.sceneSwitchTimer--;
+        if (shibaState.sceneSwitchTimer <= 0) {
+            switchShibaScene();
+        }
+    }
 
     // ---- 对话气泡倒计时 ----
     if (shibaState.speechTimer > 0) {
@@ -518,6 +691,11 @@ function renderShibaLoop() {
         bubble.style.left = bubbleLeftPct + '%';
     }
 
+    // ---- 绘制雨天场景（背景层）----
+    if (shibaState.sceneType === 'rain') {
+        updateAndDrawRain(ctx);
+    }
+
     // ---- 绘制阴影 ----
     var shadowScale = 1;
     if (shibaState.isJumping) {
@@ -594,6 +772,11 @@ function renderShibaLoop() {
     }
 
     ctx.restore();
+
+    // ---- 绘制蝴蝶场景（前景层）----
+    if (shibaState.sceneType === 'butterflies') {
+        updateAndDrawButterflies(ctx);
+    }
 
     requestAnimationFrame(renderShibaLoop);
 }
