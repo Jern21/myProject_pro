@@ -158,7 +158,7 @@
                                 <h3 class="font-bold text-gray-800 text-base">外观设置</h3>
                             </div>
                             <p class="text-sm text-gray-500 mb-4">选择你喜欢的主题配色方案，切换后即时生效并自动保存。</p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <!-- 纯白 -->
                                 <div class="theme-card relative rounded-xl border-2 p-5 cursor-pointer transition-all" data-theme-value="pure-white">
                                     <!-- 预览 -->
@@ -216,11 +216,72 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- 微光数字 -->
+                                <div class="theme-card relative rounded-xl border-2 p-5 cursor-pointer transition-all" data-theme-value="glow-digital">
+                                    <!-- 预览 -->
+                                    <div class="rounded-lg overflow-hidden border border-gray-100 mb-3 relative" style="height:100px;background:#f8fafc;">
+                                        <!-- 蓝色光晕 -->
+                                        <div class="absolute" style="top:-30%;left:-20%;width:80%;height:80%;border-radius:50%;background:rgba(56,189,248,0.30);filter:blur(20px);"></div>
+                                        <!-- 紫色光晕 -->
+                                        <div class="absolute" style="bottom:-30%;right:-20%;width:80%;height:80%;border-radius:50%;background:rgba(192,132,252,0.30);filter:blur(20px);"></div>
+                                        <div class="flex h-full relative">
+                                            <div class="w-1/3 flex flex-col items-center justify-center gap-1" style="background:rgba(255,255,255,0.65);backdrop-filter:blur(4px);border-right:1px solid rgba(148,163,184,0.25);">
+                                                <div class="w-6 h-1.5 rounded-full" style="background:#6366f1;"></div>
+                                                <div class="w-4 h-1 rounded-full" style="background:#94a3b8;"></div>
+                                                <div class="w-5 h-1 rounded-full" style="background:#cbd5e1;"></div>
+                                            </div>
+                                            <div class="flex-1 p-3">
+                                                <div class="w-full h-2 rounded mb-1.5" style="background:#6366f1;"></div>
+                                                <div class="w-3/4 h-1.5 rounded mb-1" style="background:#475569;"></div>
+                                                <div class="w-2/3 h-1.5 rounded" style="background:#94a3b8;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-semibold text-gray-800 text-sm flex items-center gap-1.5"><i class="ph ph-sparkle text-indigo-500"></i> 微光数字</p>
+                                            <p class="text-xs text-gray-400 mt-0.5">亮底流光蓝紫，玻璃拟态质感</p>
+                                        </div>
+                                        <div class="theme-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center transition-all">
+                                            <i class="ph ph-check text-[10px] text-transparent"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 微光数字暗 -->
+                                <div class="theme-card relative rounded-xl border-2 p-5 cursor-pointer transition-all" data-theme-value="glow-digital-dark">
+                                    <!-- 预览 -->
+                                    <div class="rounded-lg overflow-hidden border border-gray-100 mb-3 relative" style="height:100px;background:#0b0f19;">
+                                        <!-- 蓝色光晕 -->
+                                        <div class="absolute" style="top:-30%;left:-20%;width:80%;height:80%;border-radius:50%;background:rgba(56,189,248,0.35);filter:blur(20px);"></div>
+                                        <!-- 紫色光晕 -->
+                                        <div class="absolute" style="bottom:-30%;right:-20%;width:80%;height:80%;border-radius:50%;background:rgba(192,132,252,0.35);filter:blur(20px);"></div>
+                                        <div class="flex h-full relative">
+                                            <div class="w-1/3 flex flex-col items-center justify-center gap-1" style="background:rgba(15,23,42,0.65);backdrop-filter:blur(4px);border-right:1px solid rgba(99,102,241,0.18);">
+                                                <div class="w-6 h-1.5 rounded-full" style="background:#818cf8;"></div>
+                                                <div class="w-4 h-1 rounded-full" style="background:#64748b;"></div>
+                                                <div class="w-5 h-1 rounded-full" style="background:#475569;"></div>
+                                            </div>
+                                            <div class="flex-1 p-3">
+                                                <div class="w-full h-2 rounded mb-1.5" style="background:#818cf8;"></div>
+                                                <div class="w-3/4 h-1.5 rounded mb-1" style="background:#94a3b8;"></div>
+                                                <div class="w-2/3 h-1.5 rounded" style="background:#64748b;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-semibold text-gray-800 text-sm flex items-center gap-1.5"><i class="ph ph-moon text-indigo-400"></i> 微光数字暗</p>
+                                            <p class="text-xs text-gray-400 mt-0.5">暗夜流光蓝紫，深邃玻璃拟态</p>
+                                        </div>
+                                        <div class="theme-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center transition-all">
+                                            <i class="ph ph-check text-[10px] text-transparent"></i>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <!-- 提示 -->
                             <div class="mt-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100 flex items-start gap-2">
                                 <i class="ph ph-info text-blue-500 text-base mt-0.5"></i>
-                                <p class="text-xs text-gray-500">主题设置保存在本地浏览器中，更换设备后需重新设置。梦幻极光主题适合夜间使用，可有效减少屏幕蓝光对眼睛的刺激。</p>
+                                <p class="text-xs text-gray-500">主题设置保存在本地浏览器中，更换设备后需重新设置。梦幻极光 / 微光数字暗适合夜间使用，微光数字在亮色基础上叠加流光动效，适合追求层次感的场景。</p>
                             </div>
                         </div>
 
@@ -726,7 +787,10 @@
         // 设置导航点击高亮 + 滚动高亮
         function initSettingsNav() {
             var navItems = document.querySelectorAll('.settings-nav-item');
+            // 防重复绑定
+            if (!navItems.length || navItems[0].dataset.navBound) return;
             navItems.forEach(function(item) {
+                item.dataset.navBound = '1';
                 item.addEventListener('click', function() {
                     navItems.forEach(function(n) { n.classList.remove('active'); });
                     item.classList.add('active');
@@ -757,7 +821,8 @@
         // 主题切换逻辑
         function initThemeSwitcher() {
             var themeCards = document.querySelectorAll('.theme-card');
-            if (!themeCards.length) return;
+            if (!themeCards.length || themeCards[0].dataset.themeBound) return;
+            themeCards[0].dataset.themeBound = '1';
 
             function updateUI(theme) {
                 themeCards.forEach(function(card) {
@@ -811,8 +876,10 @@
             initSettingsNav();
             initThemeSwitcher();
         });
-        // SPA 局部刷新后重新初始化
-        window.addEventListener('spa:ready', function() {
+        // SPA 局部刷新后重新初始化（仅当前页面为设置页时执行）
+        window.addEventListener('spa:ready', function(e) {
+            var page = (e.detail && e.detail.page) || '';
+            if (page && page.indexOf('settings') === -1) return;
             initSettingsNav();
             initThemeSwitcher();
         });

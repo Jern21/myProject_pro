@@ -440,7 +440,12 @@
     } else {
         init();
     }
-    window.addEventListener('spa:ready', init);
+    // SPA 切换时重新绑定（仅当前页面为海报页时执行）
+    window.addEventListener('spa:ready', function (e) {
+        var page = (e.detail && e.detail.page) || '';
+        if (page && page.indexOf('posters') === -1) return;
+        init();
+    });
 })();
 </script>
 

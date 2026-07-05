@@ -569,8 +569,12 @@
         document.addEventListener('DOMContentLoaded', initCharts);
         // 备用：cdn-fallback.js 加载 echarts 成功后
         window.addEventListener('echarts-ready', initCharts);
-        // SPA 局部刷新后重新初始化
-        window.addEventListener('spa:ready', initCharts);
+        // SPA 局部刷新后重新初始化（仅当前页面为统计页时执行）
+        window.addEventListener('spa:ready', function (e) {
+            var page = (e.detail && e.detail.page) || '';
+            if (page && page.indexOf('stats') === -1) return;
+            initCharts();
+        });
     </script>
 </body>
 </html>

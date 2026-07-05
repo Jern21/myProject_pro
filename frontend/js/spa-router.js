@@ -161,6 +161,30 @@
      * @param {string} pushUrl - 用于 pushState 的根相对路径
      * @param {boolean} pushState - 是否更新浏览器历史
      */
+    /**
+     * 导航前清理残留的全局浮层（抽屉表单、遮罩等）。
+     * 这些元素通过 insertAdjacentHTML 挂载到 body 末尾，
+     * 不会随 #page-view 内容替换而移除，必须在切换页面时手动清除，
+     * 否则会导致 isOpen 状态卡死、表单再次打不开等问题。
+     */
+    function cleanupGlobalOverlays() {
+        // 清理残留的抽屉表单遮罩与容器
+        var overlaySelectors = [
+            '#order-form-overlay', '#order-form-drawer',
+            '#poster-form-overlay', '#poster-form-drawer'
+        ];
+        overlaySelectors.forEach(function (sel) {
+            var el = document.querySelector(sel);
+            if (el) el.remove();
+        });
+        // 恢复 body 滚动（表单打开时锁定了 overflow）
+        if (document.body.style.overflow === 'hidden') {
+            document.body.style.overflow = '';
+        }
+        // 通知表单模块重置内部 isOpen 状态
+        window.dispatchEvent(new CustomEvent('spa:cleanup-forms'));
+    }
+
     async function navigateTo(fetchUrl, pageName, pushUrl, pushState) {
         if (isNavigating) return;
         isNavigating = true;
@@ -170,6 +194,9 @@
             window.location.href = fetchUrl;
             return;
         }
+
+        // 切换页面前清理上一页残留的全局浮层
+        cleanupGlobalOverlays();
 
         // 淡出过渡
         pageView.style.opacity = '0.4';

@@ -1002,6 +1002,13 @@
         }
 
         // ========== 事件绑定 ==========
+        // 安全绑定：元素不存在时跳过，避免 SPA 切换时报错中断脚本
+        function on(id, evt, handler) {
+            var el = document.getElementById(id);
+            if (el) el.addEventListener(evt, handler);
+            return el;
+        }
+
         function bindEvents() {
             // 筛选按钮
             document.querySelectorAll('.filter-btn').forEach(function (btn) {
@@ -1018,10 +1025,10 @@
             if (addBtn) addBtn.addEventListener('click', function () { openModal(null); });
 
             // 模态框
-            document.getElementById('modal-close').addEventListener('click', closeModal);
-            document.getElementById('modal-cancel').addEventListener('click', closeModal);
-            document.getElementById('modal-save').addEventListener('click', saveReminder);
-            document.getElementById('reminder-modal').addEventListener('click', function (e) {
+            on('modal-close', 'click', closeModal);
+            on('modal-cancel', 'click', closeModal);
+            on('modal-save', 'click', saveReminder);
+            on('reminder-modal', 'click', function (e) {
                 if (e.target === this) closeModal();
             });
 
@@ -1040,7 +1047,7 @@
 
             // 列表事件委托
             var list = document.getElementById('reminder-list');
-            list.addEventListener('click', function (e) {
+            if (list) list.addEventListener('click', function (e) {
                 var card = e.target.closest('.reminder-card');
                 if (!card) return;
                 var id = parseInt(card.dataset.id);
@@ -1055,29 +1062,30 @@
             });
 
             // 删除确认
-            document.getElementById('delete-cancel').addEventListener('click', function () {
-                document.getElementById('delete-modal').classList.add('hidden');
+            on('delete-cancel', 'click', function () {
+                var dm = document.getElementById('delete-modal');
+                if (dm) dm.classList.add('hidden');
                 deletingId = null;
             });
-            document.getElementById('delete-confirm').addEventListener('click', confirmDelete);
-            document.getElementById('delete-modal').addEventListener('click', function (e) {
+            on('delete-confirm', 'click', confirmDelete);
+            on('delete-modal', 'click', function (e) {
                 if (e.target === this) { this.classList.add('hidden'); deletingId = null; }
             });
 
             // 日历导航
-            document.getElementById('cal-prev').addEventListener('click', function () {
+            on('cal-prev', 'click', function () {
                 calMonth--;
                 if (calMonth < 0) { calMonth = 11; calYear--; }
                 renderCalendar();
             });
-            document.getElementById('cal-next').addEventListener('click', function () {
+            on('cal-next', 'click', function () {
                 calMonth++;
                 if (calMonth > 11) { calMonth = 0; calYear++; }
                 renderCalendar();
             });
 
             // 日历点击：点击某天筛选当天
-            document.getElementById('cal-grid').addEventListener('click', function (e) {
+            on('cal-grid', 'click', function (e) {
                 var cell = e.target.closest('.cal-day');
                 if (!cell || cell.classList.contains('other-month')) return;
                 var date = cell.dataset.date;
@@ -1085,7 +1093,8 @@
                     // 切换到 today 筛选，临时改为按日期筛选
                     currentFilter = 'all';
                     document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
-                    document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+                    var allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+                    if (allBtn) allBtn.classList.add('active');
                     renderList();
                     // 滚动到对应提醒
                     var cards = document.querySelectorAll('.reminder-card');
@@ -1103,15 +1112,17 @@
             });
 
             // 分类管理
-            document.getElementById('add-category-btn').addEventListener('click', openCategoryModal);
-            document.getElementById('cat-modal-close').addEventListener('click', function () {
-                document.getElementById('category-modal').classList.add('hidden');
+            on('add-category-btn', 'click', openCategoryModal);
+            on('cat-modal-close', 'click', function () {
+                var cm = document.getElementById('category-modal');
+                if (cm) cm.classList.add('hidden');
             });
-            document.getElementById('cat-modal-cancel').addEventListener('click', function () {
-                document.getElementById('category-modal').classList.add('hidden');
+            on('cat-modal-cancel', 'click', function () {
+                var cm = document.getElementById('category-modal');
+                if (cm) cm.classList.add('hidden');
             });
-            document.getElementById('cat-modal-save').addEventListener('click', saveCategory);
-            document.getElementById('category-modal').addEventListener('click', function (e) {
+            on('cat-modal-save', 'click', saveCategory);
+            on('category-modal', 'click', function (e) {
                 if (e.target === this) this.classList.add('hidden');
             });
 
@@ -1124,7 +1135,8 @@
             });
 
             // 分类删除（事件委托）
-            document.getElementById('category-list').addEventListener('click', function (e) {
+            var catList = document.getElementById('category-list');
+            if (catList) catList.addEventListener('click', function (e) {
                 var delBtn = e.target.closest('.del-cat-btn');
                 if (delBtn) {
                     deleteCategory(delBtn.dataset.name);
@@ -1162,12 +1174,21 @@
             bindEvents();
         }
 
+        // SPA 切换时重新初始化（仅当前页面为提醒页时执行，防止监听器累积）
+        window.addEventListener('spa:ready', function (e) {
+            var page = (e.detail && e.detail.page) || '';
+            if (page && page.indexOf('reminder') === -1) return;
+            // 仅渲染数据，不重复绑定事件（bindEvents 内部有 __reminderBound 防重）
+            renderList();
+            renderCalendar();
+            renderCategories();
+        });
+
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
             init();
         }
-        window.addEventListener('spa:ready', init);
     })();
     </script>
 </body>

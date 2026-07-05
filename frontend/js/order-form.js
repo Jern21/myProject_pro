@@ -633,9 +633,14 @@
         }
     });
 
-    // SPA 切换后重新绑定（防止 DOM 丢失）
-    window.addEventListener('spa:ready', function () {
-        // 表单是独立 DOM，SPA 切换不影响
+    // SPA 切换页面时清理：重置内部状态，防止 isOpen 卡死导致表单打不开
+    window.addEventListener('spa:cleanup-forms', function () {
+        if (isOpen) {
+            if (overlay) { overlay.remove(); overlay = null; }
+            if (drawer) { drawer.remove(); drawer = null; }
+            document.body.style.overflow = '';
+            isOpen = false;
+        }
     });
 
     // 暴露全局 API

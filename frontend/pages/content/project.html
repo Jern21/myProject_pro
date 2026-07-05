@@ -1488,7 +1488,27 @@
                 '[data-theme="aurora"] .proj-ctx-submenu { background: #1a1825 !important; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4), 0 0 0 1px #2d2a40 !important; }',
                 '[data-theme="aurora"] #proj-detail-drawer { background: #1a1825 !important; border-color: #2d2a40 !important; color: #e2e0f0 !important; }',
                 '[data-theme="aurora"] .pf-modal-panel { background: #1a1825 !important; }',
-                '[data-theme="aurora"] .pf-form-input { background: #232032 !important; border-color: #2d2a40 !important; color: #e2e0f0 !important; }'
+                '[data-theme="aurora"] .pf-form-input { background: #232032 !important; border-color: #2d2a40 !important; color: #e2e0f0 !important; }',
+                // 微光数字主题适配
+                '[data-theme="glow-digital"] .proj-ctx-menu { background: rgba(255,255,255,0.85) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 10px 25px -5px rgba(99,102,241,0.12), 0 0 0 1px rgba(148,163,184,0.25) !important; }',
+                '[data-theme="glow-digital"] .proj-ctx-item { color: #475569 !important; }',
+                '[data-theme="glow-digital"] .proj-ctx-item:hover { background: rgba(99,102,241,0.08) !important; }',
+                '[data-theme="glow-digital"] .proj-ctx-header { color: #94a3b8 !important; border-color: rgba(148,163,184,0.25) !important; }',
+                '[data-theme="glow-digital"] .proj-ctx-sep { background: rgba(148,163,184,0.2) !important; }',
+                '[data-theme="glow-digital"] .proj-ctx-submenu { background: rgba(255,255,255,0.9) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 10px 25px -5px rgba(99,102,241,0.12), 0 0 0 1px rgba(148,163,184,0.25) !important; }',
+                '[data-theme="glow-digital"] #proj-detail-drawer { background: rgba(255,255,255,0.88) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: rgba(148,163,184,0.25) !important; color: #1e293b !important; }',
+                '[data-theme="glow-digital"] .pf-modal-panel { background: rgba(255,255,255,0.92) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }',
+                '[data-theme="glow-digital"] .pf-form-input { background: #ffffff !important; border-color: rgba(148,163,184,0.4) !important; color: #1e293b !important; }',
+                // 微光数字暗主题适配
+                '[data-theme="glow-digital-dark"] .proj-ctx-menu { background: rgba(15,23,42,0.92) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.2) !important; }',
+                '[data-theme="glow-digital-dark"] .proj-ctx-item { color: #94a3b8 !important; }',
+                '[data-theme="glow-digital-dark"] .proj-ctx-item:hover { background: rgba(129,140,248,0.12) !important; }',
+                '[data-theme="glow-digital-dark"] .proj-ctx-header { color: #64748b !important; border-color: rgba(99,102,241,0.18) !important; }',
+                '[data-theme="glow-digital-dark"] .proj-ctx-sep { background: rgba(99,102,241,0.15) !important; }',
+                '[data-theme="glow-digital-dark"] .proj-ctx-submenu { background: rgba(15,23,42,0.95) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.2) !important; }',
+                '[data-theme="glow-digital-dark"] #proj-detail-drawer { background: rgba(15,23,42,0.9) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: rgba(99,102,241,0.18) !important; color: #e2e8f0 !important; }',
+                '[data-theme="glow-digital-dark"] .pf-modal-panel { background: rgba(15,23,42,0.92) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }',
+                '[data-theme="glow-digital-dark"] .pf-form-input { background: #0f172a !important; border-color: rgba(99,102,241,0.3) !important; color: #e2e8f0 !important; }'
             ].join('\n');
             document.head.appendChild(styleEl);
         }
