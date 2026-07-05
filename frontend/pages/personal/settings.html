@@ -13,6 +13,7 @@
     <script src="../../js/tailwind-config.js"></script>
     <script src="../../js/cdn-fallback.js"></script>
     <link rel="stylesheet" href="../../css/common.css">
+<script src="../../js/theme.js"></script>
     <script src="../../js/sidebar.js"></script>
 <script src="../../js/header.js"></script>
     <script src="../../js/spa-router.js"></script>
@@ -58,6 +59,9 @@
                             <nav class="space-y-1" id="settings-nav">
                                 <a href="#account" class="settings-nav-item active" data-section="account">
                                     <i class="ph ph-user-circle sn-icon"></i> 账号信息
+                                </a>
+                                <a href="#appearance" class="settings-nav-item" data-section="appearance">
+                                    <i class="ph ph-palette sn-icon"></i> 外观设置
                                 </a>
                                 <a href="#security" class="settings-nav-item" data-section="security">
                                     <i class="ph ph-lock-key sn-icon"></i> 安全设置
@@ -147,6 +151,79 @@
                             </div>
                         </div>
 
+                        <!-- ====== 外观设置 ====== -->
+                        <div id="appearance" class="bg-white rounded-xl border border-gray-100 shadow-soft p-6">
+                            <div class="flex items-center gap-2 mb-5 pb-4 border-b border-gray-50">
+                                <i class="ph-fill ph-palette text-brand-500 text-xl"></i>
+                                <h3 class="font-bold text-gray-800 text-base">外观设置</h3>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-4">选择你喜欢的主题配色方案，切换后即时生效并自动保存。</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- 纯白 -->
+                                <div class="theme-card relative rounded-xl border-2 p-5 cursor-pointer transition-all" data-theme-value="pure-white">
+                                    <!-- 预览 -->
+                                    <div class="rounded-lg overflow-hidden border border-gray-100 mb-3" style="height:100px;">
+                                        <div class="flex h-full">
+                                            <div class="w-1/3 bg-white border-r border-gray-100 flex flex-col items-center justify-center gap-1">
+                                                <div class="w-6 h-1.5 bg-blue-500 rounded-full"></div>
+                                                <div class="w-4 h-1 bg-gray-200 rounded-full"></div>
+                                                <div class="w-5 h-1 bg-gray-100 rounded-full"></div>
+                                            </div>
+                                            <div class="flex-1 bg-gray-50 p-3">
+                                                <div class="w-full h-2 bg-blue-500 rounded mb-1.5"></div>
+                                                <div class="w-3/4 h-1.5 bg-gray-200 rounded mb-1"></div>
+                                                <div class="w-2/3 h-1.5 bg-gray-100 rounded"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-semibold text-gray-800 text-sm flex items-center gap-1.5"><i class="ph ph-sun text-amber-500"></i> 纯白</p>
+                                            <p class="text-xs text-gray-400 mt-0.5">经典明亮配色，清晰舒适</p>
+                                        </div>
+                                        <div class="theme-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center transition-all">
+                                            <i class="ph ph-check text-[10px] text-transparent"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 梦幻极光 -->
+                                <div class="theme-card relative rounded-xl border-2 p-5 cursor-pointer transition-all" data-theme-value="aurora">
+                                    <!-- 预览 -->
+                                    <div class="rounded-lg overflow-hidden border border-gray-100 mb-3" style="height:100px;">
+                                        <div class="flex h-full" style="background:#0f0e17;">
+                                            <div class="w-1/3 flex flex-col items-center justify-center gap-1" style="background:#1a1825;border-right:1px solid #2d2a40;">
+                                                <div class="w-6 h-1.5 rounded-full" style="background:#a78bfa;"></div>
+                                                <div class="w-4 h-1 rounded-full" style="background:#475569;"></div>
+                                                <div class="w-5 h-1 rounded-full" style="background:#334155;"></div>
+                                            </div>
+                                            <div class="flex-1 p-3 relative" style="background:#0f0e17;">
+                                                <div class="absolute inset-0" style="background:radial-gradient(ellipse at 80% 100%,rgba(240,171,252,0.08),transparent 50%);"></div>
+                                                <div class="relative">
+                                                    <div class="w-full h-2 rounded mb-1.5" style="background:#a78bfa;"></div>
+                                                    <div class="w-3/4 h-1.5 rounded mb-1" style="background:#a09bb8;"></div>
+                                                    <div class="w-2/3 h-1.5 rounded" style="background:#6b6786;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-semibold text-gray-800 text-sm flex items-center gap-1.5"><i class="ph ph-moon-stars text-purple-500"></i> 梦幻极光</p>
+                                            <p class="text-xs text-gray-400 mt-0.5">深邃暗夜配极光紫，沉浸优雅</p>
+                                        </div>
+                                        <div class="theme-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center transition-all">
+                                            <i class="ph ph-check text-[10px] text-transparent"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 提示 -->
+                            <div class="mt-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100 flex items-start gap-2">
+                                <i class="ph ph-info text-blue-500 text-base mt-0.5"></i>
+                                <p class="text-xs text-gray-500">主题设置保存在本地浏览器中，更换设备后需重新设置。梦幻极光主题适合夜间使用，可有效减少屏幕蓝光对眼睛的刺激。</p>
+                            </div>
+                        </div>
+
                         <!-- ====== 安全设置 ====== -->
                         <div id="security" class="bg-white rounded-xl border border-gray-100 shadow-soft p-6">
                             <div class="flex items-center gap-2 mb-5 pb-4 border-b border-gray-50">
@@ -157,6 +234,7 @@
                                 <!-- 修改密码 -->
                                 <div>
                                     <h4 class="text-sm font-semibold text-gray-700 mb-3">修改密码</h4>
+                                    <form onsubmit="return false" autocomplete="off">
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div>
                                             <label class="form-label">当前密码</label>
@@ -171,6 +249,7 @@
                                             <input type="password" placeholder="再次输入新密码" class="form-input">
                                         </div>
                                     </div>
+                                    </form>
                                     <div class="flex items-center gap-2 mt-3">
                                         <button class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium transition-colors">更新密码</button>
                                         <span class="text-xs text-gray-400">密码需8位以上，含大小写字母和数字</span>
@@ -670,15 +749,73 @@
                 });
             }, { rootMargin: '-20% 0px -70% 0px' });
 
-            document.querySelectorAll('#account, #security, #notification, #export, #backup, #cleanup, #recycle, #about').forEach(function(sec) {
+            document.querySelectorAll('#account, #appearance, #security, #notification, #export, #backup, #cleanup, #recycle, #about').forEach(function(sec) {
                 observer.observe(sec);
             });
         }
 
+        // 主题切换逻辑
+        function initThemeSwitcher() {
+            var themeCards = document.querySelectorAll('.theme-card');
+            if (!themeCards.length) return;
+
+            function updateUI(theme) {
+                themeCards.forEach(function(card) {
+                    var val = card.dataset.themeValue;
+                    var check = card.querySelector('.theme-check');
+                    if (val === theme) {
+                        card.style.borderColor = '#3b82f6';
+                        card.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)';
+                        if (check) {
+                            check.style.borderColor = '#3b82f6';
+                            check.style.backgroundColor = '#3b82f6';
+                            var icon = check.querySelector('i');
+                            if (icon) { icon.style.color = '#fff'; }
+                        }
+                    } else {
+                        card.style.borderColor = '#e5e7eb';
+                        card.style.boxShadow = 'none';
+                        if (check) {
+                            check.style.borderColor = '#d1d5db';
+                            check.style.backgroundColor = 'transparent';
+                            var icon = check.querySelector('i');
+                            if (icon) { icon.style.color = 'transparent'; }
+                        }
+                    }
+                });
+            }
+
+            // 初始化当前选中状态
+            var currentTheme = (window.AppTheme && window.AppTheme.get()) || 'pure-white';
+            updateUI(currentTheme);
+
+            // 绑定点击切换
+            themeCards.forEach(function(card) {
+                card.addEventListener('click', function() {
+                    var theme = card.dataset.themeValue;
+                    if (window.AppTheme) {
+                        window.AppTheme.set(theme);
+                        updateUI(theme);
+                    }
+                });
+            });
+
+            // 监听主题变化（其他页面也可能触发）
+            window.addEventListener('themechange', function(e) {
+                updateUI(e.detail.theme);
+            });
+        }
+
         // 初始化：DOM 加载完成时
-        document.addEventListener('DOMContentLoaded', initSettingsNav);
+        document.addEventListener('DOMContentLoaded', function() {
+            initSettingsNav();
+            initThemeSwitcher();
+        });
         // SPA 局部刷新后重新初始化
-        window.addEventListener('spa:ready', initSettingsNav);
+        window.addEventListener('spa:ready', function() {
+            initSettingsNav();
+            initThemeSwitcher();
+        });
     </script>
 </body>
 </html>
