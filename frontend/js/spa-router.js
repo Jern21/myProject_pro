@@ -113,6 +113,36 @@
         });
     }
 
+    // 找到 Tailwind 工具类样式表，便于把页面样式插在它前面
+    function findTailwindUtilityStyle() {
+        var styles = document.head.querySelectorAll('style');
+        for (var i = 0; i < styles.length; i++) {
+            var style = styles[i];
+            if (/\.hidden\s*\{/.test(style.textContent || '')) {
+                return style;
+            }
+        }
+        return null;
+    }
+
+    // 克隆目标页的全部样式，并保持整页加载时的级联顺序
+    function injectPageStyles(doc) {
+        var tailwindStyle = findTailwindUtilityStyle();
+        doc.querySelectorAll('style').forEach(function (style) {
+            var newStyle = document.createElement('style');
+            Array.prototype.slice.call(style.attributes).forEach(function (attr) {
+                newStyle.setAttribute(attr.name, attr.value);
+            });
+            newStyle.setAttribute('data-spa-page', 'true');
+            newStyle.textContent = style.textContent;
+            if (tailwindStyle && tailwindStyle.parentNode === document.head) {
+                document.head.insertBefore(newStyle, tailwindStyle);
+            } else {
+                document.head.appendChild(newStyle);
+            }
+        });
+    }
+
     /**
      * 确保目标页面所需的额外外部脚本已加载
      * 例如：从 orders.html（无 ECharts）跳到 stats.html（需要 ECharts）
@@ -262,14 +292,8 @@
                 s.remove();
             });
 
-            // 4. 注入新页面的专属样式（<style type="text/tailwindcss">）
-            doc.querySelectorAll('style[type="text/tailwindcss"]').forEach(function (style) {
-                var newStyle = document.createElement('style');
-                newStyle.setAttribute('type', 'text/tailwindcss');
-                newStyle.setAttribute('data-spa-page', 'true');
-                newStyle.textContent = style.textContent;
-                document.head.appendChild(newStyle);
-            });
+            // 4. 注入新页面的专属样式（普通 <style> 与 <style type="text/tailwindcss">）
+            injectPageStyles(doc);
 
             // 4.5 清理旧 <main> 中的 ECharts 实例，防止内存泄漏和重复初始化警告
             if (typeof echarts !== 'undefined') {
@@ -292,7 +316,7 @@
             var inlineScripts = doc.querySelectorAll('script:not([src])');
             inlineScripts.forEach(function (oldScript) {
                 var text = oldScript.textContent;
-                if (text && text.indexOf('PAGE_BASE') !== -1) return;
+                if (text && /window\.PAGE_BASE\s*=(?!=)/.test(text)) return;
 
                 // ★ 关键修复：将顶层 let/const 转为 var
                 // 原因：通过 document.createElement('script') 动态插入的脚本中，
