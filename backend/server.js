@@ -27,9 +27,9 @@ var PORT = process.env.PORT || 3456;
 // CORS 跨域
 app.use(cors());
 
-// JSON body 解析（增大限制以支持海报 base64 图片上传）
-app.use(express.json({ limit: '15mb' }));
-app.use(express.urlencoded({ extended: true, limit: '15mb' }));
+// JSON body 解析（文件上传走 multipart/form-data，JSON 仅存 URL 引用）
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 // 请求日志
 app.use(function (req, res, next) {
@@ -49,6 +49,7 @@ app.use('/api/platform-posts', require('./src/routes/platform-posts'));
 app.use('/api/memos', require('./src/routes/memos'));
 app.use('/api/reminders', require('./src/routes/reminders'));
 app.use('/api/resume', require('./src/routes/resume'));
+app.use('/api/upload', require('./src/routes/upload'));
 app.use('/api/settings', require('./src/routes/settings'));
 app.use('/api/stats', require('./src/routes/stats'));
 
@@ -72,6 +73,13 @@ var frontendDir = path.join(__dirname, '..', 'frontend');
 
 // 托管 frontend 下的静态资源
 app.use(express.static(frontendDir));
+
+// 托管上传的文件（图片、PDF 等）
+var uploadsDir = path.join(__dirname, 'data', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsDir));
 
 // SPA 路由回退：所有非 /api 的 GET 请求都返回对应 HTML 文件
 // 支持 pages/business/、pages/platform/ 等子目录路径

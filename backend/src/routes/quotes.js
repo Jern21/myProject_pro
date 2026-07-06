@@ -1,12 +1,12 @@
 /**
  * 报价单路由
  *
- * 字段来源：quote.html 报价编辑器
+ * 字段来源：quote.html 报价编辑器 collectQuoteData()
  *
  * API：
- *   GET    /api/quotes              - 查询列表
+ *   GET    /api/quotes              - 查询列表（支持 keyword 搜索）
  *   GET    /api/quotes/:id          - 查询单条
- *   POST   /api/quotes              - 新建
+ *   POST   /api/quotes              - 新建（保存报价单）
  *   PUT    /api/quotes/:id          - 更新
  *   DELETE /api/quotes/:id          - 删除
  */
@@ -18,6 +18,17 @@ var Storage = require('../utils/storage');
 var resp = require('../utils/response');
 
 var quotes = new Storage('quotes');
+
+/**
+ * 计算报价单总金额
+ */
+function calcTotal(data) {
+    var subtotal = (data.items || []).reduce(function (sum, item) {
+        return sum + (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
+    }, 0);
+    var discount = parseFloat(data.discount) || 0;
+    return subtotal - discount;
+}
 
 // ========== 查询列表 ==========
 router.get('/', resp.asyncHandler(function (req, res) {
@@ -47,23 +58,24 @@ router.post('/', resp.asyncHandler(function (req, res) {
     var body = req.body || {};
 
     if (!body.projectName) return resp.error(res, '项目名称为必填项');
+    if (!body.items || !Array.isArray(body.items) || body.items.length === 0) {
+        return resp.error(res, '报价明细不能为空');
+    }
 
     var record = quotes.create({
         projectName: body.projectName,
         customerName: body.customerName || '',
-        projectType: body.projectType || '网站开发',
-        techStack: body.techStack || [],
-        // 报价明细项数组：{ name, desc, hours, unitPrice, amount }
-        items: body.items || [],
-        // 付款条款
-        paymentTerms: body.paymentTerms || {
-            depositRatio: 30,
-            milestones: [],
-            finalRatio: 70
-        },
-        additionalTerms: body.additionalTerms || '',
-        validDate: body.validDate || '',
-        totalAmount: body.totalAmount || 0,
+        quoteDate: body.quoteDate || '',
+        cycle: body.cycle || '',
+        // 报价明细项数组：{ name, desc, qty, price }
+        items: body.items,
+        // 附加条款
+        discount: parseFloat(body.discount) || 0,
+        paymentMethod: body.paymentMethod || '',
+        notes: body.notes || '',
+        // 计算字段
+        totalAmount: calcTotal(body),
+        // 状态：draft / sent / accepted / rejected
         status: body.status || 'draft'
     });
 
@@ -72,7 +84,32 @@ router.post('/', resp.asyncHandler(function (req, res) {
 
 // ========== 更新 ==========
 router.put('/:id', resp.asyncHandler(function (req, res) {
-    var updated = quotes.update(req.params.id, req.body || {});
+    var body = req.body || {};
+
+    if (!body.projectName) return resp.error(res, '项目名称为必填项');
+    if (body.items !== undefined && (!Array.isArray(body.items) || body.items.length === 0)) {
+        return resp.error(res, '报价明细不能为空');
+    }
+
+    var patch = {
+        projectName: body.projectName,
+        customerName: body.customerName || '',
+        quoteDate: body.quoteDate || '',
+        cycle: body.cycle || '',
+        items: body.items || undefined,
+        discount: parseFloat(body.discount) || 0,
+        paymentMethod: body.paymentMethod || '',
+        notes: body.notes || '',
+        totalAmount: calcTotal(body),
+        status: body.status || 'draft'
+    };
+
+    // 移除 undefined 字段
+    Object.keys(patch).forEach(function (key) {
+        if (patch[key] === undefined) delete patch[key];
+    });
+
+    var updated = quotes.update(req.params.id, patch);
     if (!updated) return resp.notFound(res, '报价单不存在');
     return resp.success(res, updated);
 }));

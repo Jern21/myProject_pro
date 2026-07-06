@@ -40,9 +40,12 @@
     var overlay = null;
     var isOpen = false;
     var editMode = false;
+    var editId = null; // 编辑模式下的海报 ID
     var selectedTags = [];
-    var uploadedImage = null; // dataURL 或远程 URL
+    var uploadedImage = null; // 文件上传后的 URL
     var previewHtmlContent = null; // CSS 渲染的海报视觉快照 HTML
+    var originalPlaceholderHtml = null; // 上传区原始 HTML（用于上传中状态恢复）
+    var isUploading = false; // 是否正在上传文件
 
     // ========== 工具函数 ==========
 
@@ -226,7 +229,7 @@
             '  </div>',
             // Footer
             '  <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between flex-shrink-0">',
-            '    <div class="text-xs text-gray-400" id="poster-form-hint">所有数据仅保存在本地浏览器</div>',
+            '    <div class="text-xs text-gray-400" id="poster-form-hint">数据将保存到后端服务器</div>',
             '    <div class="flex gap-3">',
             '      <button id="poster-form-cancel" class="px-5 py-2 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition text-sm font-medium">取消</button>',
             '      <button id="poster-form-submit" class="px-5 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition text-sm font-medium shadow-sm shadow-brand-500/30 flex items-center gap-1.5"><i class="ph ph-check"></i>保存</button>',
@@ -247,12 +250,50 @@
             showHint('图片大小不能超过 10MB', 'error');
             return;
         }
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            uploadedImage = e.target.result;
-            showPreview(uploadedImage);
-        };
-        reader.readAsDataURL(file);
+        if (isUploading) return;
+        isUploading = true;
+
+        // 缓存原始占位区 HTML 并显示上传中状态
+        var placeholder = document.getElementById('poster-upload-placeholder');
+        if (placeholder) {
+            if (!originalPlaceholderHtml) {
+                originalPlaceholderHtml = placeholder.innerHTML;
+            }
+            placeholder.innerHTML = '<div class="py-4">' +
+                '<i class="ph ph-spinner inline-block animate-spin text-2xl text-brand-500"></i>' +
+                '<p class="text-xs text-gray-400 mt-2">图片上传中...</p>' +
+                '</div>';
+        }
+
+        // 通过 /api/upload 直接上传文件到服务器
+        var formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/api/upload', { method: 'POST', body: formData })
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+                isUploading = false;
+                if (res.success && res.data && res.data.url) {
+                    uploadedImage = res.data.url;
+                    // 恢复占位区 HTML（后续 hidePreview 时可正确显示）
+                    if (placeholder && originalPlaceholderHtml) {
+                        placeholder.innerHTML = originalPlaceholderHtml;
+                    }
+                    showPreview(uploadedImage);
+                } else {
+                    if (placeholder && originalPlaceholderHtml) {
+                        placeholder.innerHTML = originalPlaceholderHtml;
+                    }
+                    showHint(res.error || '上传失败', 'error');
+                }
+            })
+            .catch(function (err) {
+                isUploading = false;
+                if (placeholder && originalPlaceholderHtml) {
+                    placeholder.innerHTML = originalPlaceholderHtml;
+                }
+                showHint('上传失败: ' + err.message, 'error');
+            });
     }
 
     function showPreview(src) {
@@ -389,7 +430,7 @@
         }
         if (type === 'error') {
             setTimeout(function () {
-                hint.textContent = '所有数据仅保存在本地浏览器';
+                hint.textContent = '数据将保存到后端服务器';
                 hint.className = 'text-xs text-gray-400';
             }, 3000);
         }
@@ -466,12 +507,38 @@
         document.getElementById('poster-form-cancel').addEventListener('click', closePosterForm);
         overlay.addEventListener('click', closePosterForm);
 
-        // 提交
+        // 提交（对接后端 API）
         document.getElementById('poster-form-submit').addEventListener('click', function () {
             if (!validate()) return;
+
+            var submitBtn = document.getElementById('poster-form-submit');
+            var originalHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> 保存中...';
+            submitBtn.disabled = true;
+
             var data = collectData();
-            window.dispatchEvent(new CustomEvent('poster-form:submit', { detail: data }));
-            closePosterForm();
+            var url = editId ? '/api/posters/' + encodeURIComponent(editId) : '/api/posters';
+            var method = editId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                if (res.success) {
+                    window.dispatchEvent(new CustomEvent('poster-form:saved', { detail: res.data }));
+                    closePosterForm();
+                } else {
+                    showHint('保存失败：' + (res.error || '未知错误'), 'error');
+                    submitBtn.innerHTML = originalHtml;
+                    submitBtn.disabled = false;
+                }
+            }).catch(function (err) {
+                console.error('[PosterForm] 保存失败:', err);
+                showHint('保存失败：' + err.message, 'error');
+                submitBtn.innerHTML = originalHtml;
+                submitBtn.disabled = false;
+            });
         });
 
         // 上传
@@ -506,7 +573,10 @@
         overlay = document.getElementById('poster-form-overlay');
         selectedTags = [];
         uploadedImage = null;
+        originalPlaceholderHtml = null;
+        isUploading = false;
         editMode = !!data;
+        editId = data && data.id ? data.id : null;
 
         // 标题
         document.getElementById('poster-form-title').textContent = editMode ? '编辑海报信息' : '上传海报';

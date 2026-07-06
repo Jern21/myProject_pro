@@ -1328,8 +1328,9 @@
 
             <!-- Inner Tabs -->
             <div class="flex border-b border-gray-100 mb-5">
-                <button class="pd-tab pb-2 border-b-2 border-brand-600 text-brand-600 font-medium text-sm mr-6" data-tab="info">基本信息</button>
-                <button class="pd-tab pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-800 text-sm transition" data-tab="files">文件地址</button>
+                <button type="button" class="pd-tab pb-2 border-b-2 border-brand-600 text-brand-600 font-medium text-sm mr-6 transition" data-tab="info">基本信息</button>
+                <button type="button" class="pd-tab pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-800 text-sm mr-6 transition" data-tab="files">文件地址</button>
+                <button type="button" class="pd-tab pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-800 text-sm transition" data-tab="server">服务器配置</button>
             </div>
 
             <!-- Tab: 基本信息 -->
@@ -1414,7 +1415,10 @@
                     </div>
                 </div>
 
-                <!-- 服务器配置 -->
+            </div>
+
+            <!-- Tab: 服务器配置 -->
+            <div id="pd-tab-server" class="hidden space-y-4">
                 <div>
                     <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5"><i class="ph ph-hard-drives"></i> 服务器配置</p>
                     <div id="pd-server-enabled-wrap" class="flex items-center gap-2 mb-2">
@@ -2595,23 +2599,32 @@ break;
             var closeBtn = drawer.querySelector('#pd-close');
             if (closeBtn) closeBtn.addEventListener('click', hideProjectDetail);
 
+            function setDetailTab(target) {
+                var infoTab = drawer.querySelector('#pd-tab-info');
+                var filesTab = drawer.querySelector('#pd-tab-files');
+                for (var j = 0; j < tabs.length; j++) {
+                    var isActive = tabs[j].dataset.tab === target;
+                    tabs[j].classList.toggle('border-brand-600', isActive);
+                    tabs[j].classList.toggle('text-brand-600', isActive);
+                    tabs[j].classList.toggle('font-medium', isActive);
+                    tabs[j].classList.toggle('border-transparent', !isActive);
+                    tabs[j].classList.toggle('text-gray-500', !isActive);
+                    tabs[j].classList.toggle('hover:text-gray-800', !isActive);
+                }
+                if (infoTab) infoTab.classList.toggle('hidden', target !== 'info');
+                if (filesTab) filesTab.classList.toggle('hidden', target !== 'files');
+            }
+
             // Tab 切换
             var tabs = drawer.querySelectorAll('.pd-tab');
             for (var i = 0; i < tabs.length; i++) {
                 (function (tab) {
                     tab.addEventListener('click', function () {
-                        var target = tab.dataset.tab;
-                        var infoTab = drawer.querySelector('#pd-tab-info');
-                        var filesTab = drawer.querySelector('#pd-tab-files');
-                        for (var j = 0; j < tabs.length; j++) {
-                            tabs[j].className = 'pd-tab pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-800 text-sm transition';
-                        }
-                        tab.className = 'pd-tab pb-2 border-b-2 border-brand-600 text-brand-600 font-medium text-sm mr-6';
-                        if (infoTab) infoTab.classList.toggle('hidden', target !== 'info');
-                        if (filesTab) filesTab.classList.toggle('hidden', target !== 'files');
+                        setDetailTab(tab.dataset.tab);
                     });
                 })(tabs[i]);
             }
+            setDetailTab('info');
 
             // 编辑项目
             var editBtn = drawer.querySelector('#pd-edit-btn');

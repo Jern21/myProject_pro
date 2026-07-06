@@ -1,70 +1,143 @@
 /**
  * 简历路由
  *
- * 字段来源：resume.html + pdf-importer.js parseResumeText()
+ * 字段来源：resume.html 前端页面（岗位制简历管理 + PDF 上传）
+ *
+ * 数据模型：
+ *   - 每条记录 = 一个岗位的简历版本
+ *   - 包含岗位名称、公司、PDF 文件路径等
  *
  * API：
- *   GET    /api/resume             - 查询简历列表
- *   GET    /api/resume/:id         - 查询单条
- *   POST   /api/resume             - 新建简历版本
- *   PUT    /api/resume/:id         - 更新简历
- *   DELETE /api/resume/:id         - 删除简历版本
+ *   GET    /api/resume              - 查询简历列表
+ *   GET    /api/resume/:id          - 查询单条
+ *   POST   /api/resume              - 新建简历（含 PDF URL）
+ *   PUT    /api/resume/:id          - 更新简历
  *   PUT    /api/resume/:id/activate - 设为当前激活简历
+ *   DELETE /api/resume/:id          - 删除简历
+ *   POST   /api/resume/:id/pdf      - 上传/替换 PDF（multipart form-data）
  */
 'use strict';
 
 var express = require('express');
 var router = express.Router();
+var multer = require('multer');
+var path = require('path');
+var fs = require('fs');
 var Storage = require('../utils/storage');
 var resp = require('../utils/response');
 
 var resumes = new Storage('resume');
 
+// ========== PDF 上传配置 ==========
+
+var UPLOAD_DIR = path.join(__dirname, '..', '..', 'data', 'uploads');
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+var pdfStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, UPLOAD_DIR);
+    },
+    filename: function (req, file, cb) {
+        var ext = path.extname(file.originalname).toLowerCase() || '.pdf';
+        var name = 'resume-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext;
+        cb(null, name);
+    }
+});
+
+var pdfUpload = multer({
+    storage: pdfStorage,
+    limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
+    fileFilter: function (req, file, cb) {
+        var ext = path.extname(file.originalname).toLowerCase();
+        if (ext === '.pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('仅支持 PDF 格式'));
+        }
+    }
+});
+
 // ========== 查询列表 ==========
+
 router.get('/', resp.asyncHandler(function (req, res) {
     var all = resumes.findAll();
-    // 激活的排在最前面
+    var keyword = req.query.keyword;
+
+    if (keyword) {
+        var kw = keyword.toLowerCase();
+        all = all.filter(function (r) {
+            return (r.title && r.title.toLowerCase().indexOf(kw) !== -1) ||
+                   (r.company && r.company.toLowerCase().indexOf(kw) !== -1);
+        });
+    }
+
+    // 激活的排在最前面，然后按创建时间降序
     all.sort(function (a, b) {
         if (a.active && !b.active) return -1;
         if (!a.active && b.active) return 1;
-        return new Date(b.updatedAt) - new Date(a.updatedAt);
+        return new Date(b.createdAt) - new Date(a.createdAt);
     });
+
     return resp.success(res, all);
 }));
 
 // ========== 查询单条 ==========
+
 router.get('/:id', resp.asyncHandler(function (req, res) {
     var record = resumes.findById(req.params.id);
     if (!record) return resp.notFound(res, '简历不存在');
     return resp.success(res, record);
 }));
 
+// ========== 上传 PDF（独立端点，先上传再关联） ==========
+
+router.post('/upload-pdf', function (req, res, next) {
+    pdfUpload.single('file')(req, res, function (err) {
+        if (err) {
+            var msg = err.code === 'LIMIT_FILE_SIZE' ? 'PDF 大小超过 20MB 限制' : (err.message || '上传失败');
+            return resp.error(res, msg, 400);
+        }
+        if (!req.file) {
+            return resp.error(res, '请选择 PDF 文件');
+        }
+        return resp.success(res, {
+            url: '/uploads/' + req.file.filename,
+            filename: req.file.filename,
+            originalName: req.file.originalname,
+            size: req.file.size
+        }, 201);
+    });
+});
+
 // ========== 新建 ==========
+
 router.post('/', resp.asyncHandler(function (req, res) {
     var body = req.body || {};
 
-    if (!body.name) return resp.error(res, '姓名为必填项');
+    if (!body.title) return resp.error(res, '岗位名称为必填项');
 
     var record = resumes.create({
-        // 基本信息
-        name: body.name,
-        title: body.title || '',
+        title: body.title,
+        company: body.company || '',
+        // PDF 关联
+        pdfUrl: body.pdfUrl || '',
+        pdfName: body.pdfName || '',
+        pageCount: parseInt(body.pageCount) || 0,
+        // 结构化简历信息（可选，兼容旧模型）
+        name: body.name || '',
         phone: body.phone || '',
         email: body.email || '',
         location: body.location || '',
         github: body.github || '',
-        // 个人简介
         summary: body.summary || '',
-        // 技能栈
         skills: body.skills || [],
-        // 项目经验
         projects: body.projects || [],
-        // 工作经验
         workExperience: body.workExperience || [],
-        // 教育背景
-        education: body.education || { school: '', major: '', year: '' },
+        education: body.education || {},
         // 版本管理
-        versionLabel: body.versionLabel || '未命名版本',
+        versionLabel: body.versionLabel || '',
         active: body.active || false
     });
 
@@ -77,6 +150,7 @@ router.post('/', resp.asyncHandler(function (req, res) {
 }));
 
 // ========== 更新 ==========
+
 router.put('/:id', resp.asyncHandler(function (req, res) {
     var updated = resumes.update(req.params.id, req.body || {});
     if (!updated) return resp.notFound(res, '简历不存在');
@@ -89,7 +163,41 @@ router.put('/:id', resp.asyncHandler(function (req, res) {
     return resp.success(res, updated);
 }));
 
+// ========== 为已有简历上传/替换 PDF ==========
+
+router.post('/:id/pdf', function (req, res, next) {
+    pdfUpload.single('file')(req, res, function (err) {
+        if (err) {
+            return resp.error(res, err.message || '上传失败', 400);
+        }
+        if (!req.file) {
+            return resp.error(res, '请选择 PDF 文件');
+        }
+
+        var record = resumes.findById(req.params.id);
+        if (!record) return resp.notFound(res, '简历不存在');
+
+        // 删除旧 PDF 文件
+        if (record.pdfUrl) {
+            var oldFilename = path.basename(record.pdfUrl);
+            var oldPath = path.join(UPLOAD_DIR, oldFilename);
+            if (fs.existsSync(oldPath)) {
+                try { fs.unlinkSync(oldPath); } catch (e) {}
+            }
+        }
+
+        var updated = resumes.update(req.params.id, {
+            pdfUrl: '/uploads/' + req.file.filename,
+            pdfName: req.file.originalname,
+            pageCount: parseInt(req.body.pageCount) || 0
+        });
+
+        return resp.success(res, updated);
+    });
+});
+
 // ========== 设为当前激活简历 ==========
+
 router.put('/:id/activate', resp.asyncHandler(function (req, res) {
     var record = resumes.findById(req.params.id);
     if (!record) return resp.notFound(res, '简历不存在');
@@ -100,13 +208,26 @@ router.put('/:id/activate', resp.asyncHandler(function (req, res) {
 }));
 
 // ========== 删除 ==========
+
 router.delete('/:id', resp.asyncHandler(function (req, res) {
-    var ok = resumes.remove(req.params.id);
-    if (!ok) return resp.notFound(res, '简历不存在');
+    var record = resumes.findById(req.params.id);
+    if (!record) return resp.notFound(res, '简历不存在');
+
+    // 删除关联的 PDF 文件
+    if (record.pdfUrl) {
+        var filename = path.basename(record.pdfUrl);
+        var filePath = path.join(UPLOAD_DIR, filename);
+        if (fs.existsSync(filePath)) {
+            try { fs.unlinkSync(filePath); } catch (e) {}
+        }
+    }
+
+    resumes.remove(req.params.id);
     return resp.success(res, { id: req.params.id });
 }));
 
 // ========== 私有：取消其他简历的激活状态 ==========
+
 function _deactivateOthers(activeId) {
     var all = resumes.findAll();
     all.forEach(function (r) {

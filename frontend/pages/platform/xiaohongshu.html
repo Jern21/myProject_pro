@@ -15,256 +15,81 @@
 <script src="../../js/theme.js"></script>
 <script src="../../js/sidebar.js"></script>
 <script src="../../js/header.js"></script>
-    <script src="../../js/spa-router.js"></script>
+<script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
+<script src="../../js/platform-manager.js"></script>
 </head>
 <body class="flex h-screen overflow-hidden text-sm bg-gray-50 text-gray-700">
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
-    <div id="page-view" class="flex-1 flex flex-col overflow-hidden"><!-- Content Area -->
+    <div id="page-view" class="flex-1 flex flex-col overflow-hidden">
         <div class="flex-1 overflow-y-auto p-6 lg:p-8">
             <div class="max-w-[1400px] mx-auto">
 
+                <!-- Page Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white font-bold text-xs">小红书</div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">小红书管理</h2>
+                            <p class="text-sm text-gray-500">管理小红书发布内容，追踪互动与转化</p>
+                        </div>
+                    </div>
+                    <button id="pm-new-btn" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm">
+                        <i class="ph ph-plus"></i> 新建发布
+                    </button>
+                </div>
+
                 <!-- Stats Cards -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white rounded-xl border border-gray-100 p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-gray-500">本月发布</span>
-                            <i class="ph-fill ph-note-pencil text-red-500 text-lg"></i>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">24<span class="text-sm text-gray-400 font-normal ml-1">篇</span></p>
-                        <p class="text-xs text-green-500 mt-1"><i class="ph-fill ph-trend-up"></i> 较上月 +33%</p>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-100 p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-gray-500">总浏览量</span>
-                            <i class="ph-fill ph-eye text-red-500 text-lg"></i>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">38.6k</p>
-                        <p class="text-xs text-green-500 mt-1"><i class="ph-fill ph-trend-up"></i> 较上月 +45%</p>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-100 p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-gray-500">点赞收藏</span>
-                            <i class="ph-fill ph-heart text-red-500 text-lg"></i>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">2,148</p>
-                        <p class="text-xs text-gray-400 mt-1">互动率 5.57%</p>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-100 p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-gray-500">成交金额</span>
-                            <i class="ph-fill ph-currency-cny text-red-500 text-lg"></i>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">¥12,300</p>
-                        <p class="text-xs text-green-500 mt-1"><i class="ph-fill ph-trend-up"></i> 较上月 +28%</p>
-                    </div>
+                <div id="pm-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <!-- 由 platform-manager.js 渲染 -->
                 </div>
 
                 <!-- Filters & Tabs -->
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                    <div class="flex bg-gray-100/80 p-1 rounded-lg">
-                        <button class="px-4 py-1.5 bg-white shadow-sm rounded-md text-gray-800 text-sm font-medium transition-colors">全部 (24)</button>
-                        <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">已发布 (18)</button>
-                        <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">草稿 (4)</button>
-                        <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">已下架 (2)</button>
+                    <div id="pm-tabs" class="flex bg-gray-100/80 p-1 rounded-lg">
+                        <!-- 由 platform-manager.js 渲染 -->
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div id="pm-categories" class="flex items-center gap-2">
                         <span class="text-sm text-gray-500 mr-1">内容分类:</span>
-                        <button class="px-3 py-1.5 bg-red-50 border border-red-300 text-red-600 rounded-lg text-xs font-medium">干货分享</button>
-                        <button class="px-3 py-1.5 bg-white border border-gray-200 text-gray-500 hover:text-gray-800 rounded-lg text-xs font-medium transition-colors">案例展示</button>
-                        <button class="px-3 py-1.5 bg-white border border-gray-200 text-gray-500 hover:text-gray-800 rounded-lg text-xs font-medium transition-colors">引流文案</button>
+                        <!-- 由 platform-manager.js 渲染 -->
                     </div>
                 </div>
 
                 <!-- Posts Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
-                    <!-- Post Card 1 -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="relative aspect-[3/4] bg-gray-900 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="bg-white text-gray-800 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-chart-bar"></i> 查看数据</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-pencil-simple"></i> 编辑记录</button>
-                            </div>
-                            <div class="absolute inset-0 bg-gradient-to-b from-gray-800 to-black flex flex-col items-center justify-start pt-8 p-4 text-center">
-                                <span class="text-gray-400 text-xs tracking-widest uppercase mb-2">CASE STUDY</span>
-                                <h3 class="font-bold text-white text-lg leading-snug mb-6 w-4/5">如何从零打造高转化<span class="text-red-400">小红书爆款</span>？</h3>
-                                <div class="w-3/4 aspect-square bg-gray-800 rounded-xl border border-gray-700 relative shadow-2xl overflow-hidden flex items-center justify-center">
-                                    <i class="ph-fill ph-chart-line-up text-5xl text-red-500/50"></i>
-                                    <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent"></div>
-                                </div>
-                            </div>
-                            <span class="absolute top-3 right-3 z-20 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded">爆款</span>
-                        </div>
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">小红书干货封面-爆款</h4>
-                                    <span class="text-[10px] text-gray-400 flex-shrink-0">06-28</span>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2 truncate">如何从零打造高转化爆款</p>
-                            </div>
-                            <div class="grid grid-cols-3 gap-1 text-center mt-2 pt-2 border-t border-gray-50">
-                                <div>
-                                    <p class="text-xs font-bold text-gray-800">5.2k</p>
-                                    <p class="text-[10px] text-gray-400">浏览</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-red-500">342</p>
-                                    <p class="text-[10px] text-gray-400">点赞</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-green-600">¥4,200</p>
-                                    <p class="text-[10px] text-gray-400">成交</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Post Card 2 -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="relative aspect-[3/4] bg-rose-900 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="bg-white text-gray-800 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-chart-bar"></i> 查看数据</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-pencil-simple"></i> 编辑记录</button>
-                            </div>
-                            <div class="absolute inset-0 bg-gradient-to-b from-rose-700 to-rose-950 flex flex-col items-center justify-center p-4 text-center">
-                                <i class="ph-fill ph-paint-brush text-5xl text-rose-300 mb-4"></i>
-                                <h3 class="font-bold text-white text-lg leading-tight mb-2">UI设计<br>案例分享</h3>
-                                <p class="text-rose-200 text-xs">从需求到交付全流程</p>
-                                <div class="mt-4 flex gap-2">
-                                    <span class="text-[10px] text-rose-100 border border-rose-400 px-2 py-0.5 rounded-full">Figma</span>
-                                    <span class="text-[10px] text-rose-100 border border-rose-400 px-2 py-0.5 rounded-full">Vue3</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">UI案例分享-官网设计</h4>
-                                    <span class="text-[10px] text-gray-400 flex-shrink-0">06-20</span>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2 truncate">从需求到交付全流程展示</p>
-                            </div>
-                            <div class="grid grid-cols-3 gap-1 text-center mt-2 pt-2 border-t border-gray-50">
-                                <div>
-                                    <p class="text-xs font-bold text-gray-800">3.1k</p>
-                                    <p class="text-[10px] text-gray-400">浏览</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-red-500">198</p>
-                                    <p class="text-[10px] text-gray-400">点赞</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-green-600">¥3,800</p>
-                                    <p class="text-[10px] text-gray-400">成交</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Post Card 3 -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="relative aspect-[3/4] bg-purple-900 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="bg-white text-gray-800 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-chart-bar"></i> 查看数据</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-pencil-simple"></i> 编辑记录</button>
-                            </div>
-                            <div class="absolute inset-0 bg-gradient-to-br from-purple-700 to-purple-950 flex flex-col items-center justify-center p-4 text-center">
-                                <i class="ph-fill ph-graduation-cap text-5xl text-purple-300 mb-4"></i>
-                                <h3 class="font-bold text-white text-lg leading-tight mb-2">毕设避坑<br>指南分享</h3>
-                                <p class="text-purple-200 text-xs">10年经验总结 · 干货满满</p>
-                                <span class="mt-4 text-purple-300 font-mono font-bold text-sm">收藏 256+</span>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">毕设避坑指南</h4>
-                                    <span class="text-[10px] text-gray-400 flex-shrink-0">06-12</span>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2 truncate">10年经验总结，干货满满</p>
-                            </div>
-                            <div class="grid grid-cols-3 gap-1 text-center mt-2 pt-2 border-t border-gray-50">
-                                <div>
-                                    <p class="text-xs font-bold text-gray-800">4.5k</p>
-                                    <p class="text-[10px] text-gray-400">浏览</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-red-500">256</p>
-                                    <p class="text-[10px] text-gray-400">收藏</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-green-600">¥1,800</p>
-                                    <p class="text-[10px] text-gray-400">成交</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Post Card 4 (Draft) -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative opacity-80 hover:opacity-100">
-                        <div class="relative aspect-[3/4] bg-gray-100 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="bg-white text-gray-800 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-pencil-simple"></i> 继续编辑</button>
-                            </div>
-                            <div class="absolute inset-0 border-2 border-dashed border-gray-300 m-4 rounded-xl flex flex-col items-center justify-center text-gray-400">
-                                <i class="ph ph-image text-4xl mb-2 text-gray-300"></i>
-                                <span class="text-xs font-medium">排版设计中...</span>
-                                <div class="mt-4 w-3/4 h-2 bg-gray-200 rounded"></div>
-                                <div class="mt-2 w-1/2 h-2 bg-gray-200 rounded"></div>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">前端开发技巧合集</h4>
-                                    <span class="text-[10px] text-gray-400 flex-shrink-0">草稿</span>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2">更新于 2小时前</p>
-                            </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-medium border inline-block bg-gray-50 text-gray-500 border-gray-200">草稿</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Analytics Summary -->
-                <div class="mt-6 bg-white rounded-xl border border-gray-100 p-6">
-                    <h3 class="font-semibold text-gray-800 text-base mb-4">小红书运营复盘</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-800">24</p>
-                            <p class="text-xs text-gray-400 mt-1">本月发布数</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-800">1,608</p>
-                            <p class="text-xs text-gray-400 mt-1">平均浏览量</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-red-500">89.5</p>
-                            <p class="text-xs text-gray-400 mt-1">平均点赞数</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-green-600">11.2%</p>
-                            <p class="text-xs text-gray-400 mt-1">私信转成交率</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-green-600">¥512</p>
-                            <p class="text-xs text-gray-400 mt-1">单帖平均产出</p>
-                        </div>
-                    </div>
+                <div id="pm-posts" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- 由 platform-manager.js 渲染 -->
                 </div>
 
             </div>
         </div>
     </div>
 </main>
+
+<script>
+function initXiaohongshuPage() {
+    if (!window.PlatformManager) return;
+    PlatformManager.init({
+        platform: 'xiaohongshu',
+        label: '小红书',
+        color: 'red',
+        accentClass: 'bg-red-500 text-white',
+        accentLight: 'bg-red-50 text-red-600 border-red-300',
+        accentText: 'text-red-500',
+        categories: ['干货分享', '案例展示', '引流文案', '客户反馈', '其他'],
+        aspectRatio: 'aspect-[3/4]',
+        isVideo: false
+    });
+}
+document.addEventListener('DOMContentLoaded', initXiaohongshuPage);
+window.addEventListener('spa:ready', function(e) {
+    var page = (e && e.detail && e.detail.page) || '';
+    if (page && page.indexOf('xiaohongshu') === -1) return;
+    initXiaohongshuPage();
+});
+</script>
 
 </body>
 </html>

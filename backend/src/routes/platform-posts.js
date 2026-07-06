@@ -15,10 +15,33 @@
 
 var express = require('express');
 var router = express.Router();
+var path = require('path');
+var fs = require('fs');
 var Storage = require('../utils/storage');
 var resp = require('../utils/response');
 
 var posts = new Storage('platform-posts');
+
+// 上传目录（与 upload.js 一致）
+var UPLOAD_DIR = path.join(__dirname, '..', '..', 'data', 'uploads');
+
+// ========== 辅助：根据 URL 删除物理文件 ==========
+
+function deleteFileByUrl(url) {
+    if (!url || url.indexOf('/uploads/') !== 0) return;
+    var filename = path.basename(url);
+    if (filename.indexOf('..') !== -1) return; // 安全检查
+    var filePath = path.join(UPLOAD_DIR, filename);
+    if (fs.existsSync(filePath)) {
+        try { fs.unlinkSync(filePath); } catch (e) {}
+    }
+}
+
+// 批量删除图片文件
+function deleteFilesByUrls(urls) {
+    if (!Array.isArray(urls)) return;
+    urls.forEach(function (url) { deleteFileByUrl(url); });
+}
 
 // ========== 统计概览 ==========
 router.get('/stats/overview', resp.asyncHandler(function (req, res) {
@@ -143,15 +166,34 @@ router.post('/', resp.asyncHandler(function (req, res) {
 
 // ========== 更新 ==========
 router.put('/:id', resp.asyncHandler(function (req, res) {
+    var existing = posts.findById(req.params.id);
+    if (!existing) return resp.notFound(res, '发布记录不存在');
+
+    // 如果图片列表被替换，删除不再使用的旧图片文件
+    if (req.body.images !== undefined && Array.isArray(existing.images)) {
+        var newImages = req.body.images || [];
+        existing.images.forEach(function (oldUrl) {
+            if (newImages.indexOf(oldUrl) === -1) {
+                deleteFileByUrl(oldUrl);
+            }
+        });
+    }
+
     var updated = posts.update(req.params.id, req.body || {});
-    if (!updated) return resp.notFound(res, '发布记录不存在');
     return resp.success(res, updated);
 }));
 
 // ========== 删除 ==========
 router.delete('/:id', resp.asyncHandler(function (req, res) {
-    var ok = posts.remove(req.params.id);
-    if (!ok) return resp.notFound(res, '发布记录不存在');
+    var record = posts.findById(req.params.id);
+    if (!record) return resp.notFound(res, '发布记录不存在');
+
+    // 删除关联的图片文件
+    if (Array.isArray(record.images)) {
+        deleteFilesByUrls(record.images);
+    }
+
+    posts.remove(req.params.id);
     return resp.success(res, { id: req.params.id });
 }));
 

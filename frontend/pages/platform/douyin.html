@@ -15,264 +15,83 @@
 <script src="../../js/theme.js"></script>
 <script src="../../js/sidebar.js"></script>
 <script src="../../js/header.js"></script>
-    <script src="../../js/spa-router.js"></script>
+<script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
+<script src="../../js/platform-manager.js"></script>
 </head>
 <body class="flex h-screen overflow-hidden text-sm bg-gray-50 text-gray-700">
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full overflow-hidden bg-[#f9fafb]">
-    <div id="page-view" class="flex-1 flex flex-col overflow-hidden"><!-- Content Area -->
+    <div id="page-view" class="flex-1 flex flex-col overflow-hidden">
         <div class="flex-1 overflow-y-auto p-6 lg:p-8">
             <div class="max-w-[1400px] mx-auto">
 
+                <!-- Page Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-black flex items-center justify-center text-white">
+                            <i class="ph-fill ph-tiktok-logo text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">抖音管理</h2>
+                            <p class="text-sm text-gray-500">管理抖音视频发布，追踪播放与互动数据</p>
+                        </div>
+                    </div>
+                    <button id="pm-new-btn" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm">
+                        <i class="ph ph-plus"></i> 新建发布
+                    </button>
+                </div>
+
                 <!-- Stats Cards -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white rounded-xl border border-gray-100 p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-gray-500">本月发布</span>
-                            <i class="ph-fill ph-video-camera text-gray-800 text-lg"></i>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">12<span class="text-sm text-gray-400 font-normal ml-1">条</span></p>
-                        <p class="text-xs text-green-500 mt-1"><i class="ph-fill ph-trend-up"></i> 较上月 +50%</p>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-100 p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-gray-500">总播放量</span>
-                            <i class="ph-fill ph-play text-gray-800 text-lg"></i>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">56.2k</p>
-                        <p class="text-xs text-green-500 mt-1"><i class="ph-fill ph-trend-up"></i> 较上月 +67%</p>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-100 p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-gray-500">点赞评论</span>
-                            <i class="ph-fill ph-heart text-gray-800 text-lg"></i>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">3,820</p>
-                        <p class="text-xs text-gray-400 mt-1">互动率 6.80%</p>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-100 p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-gray-500">成交金额</span>
-                            <i class="ph-fill ph-currency-cny text-gray-800 text-lg"></i>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">¥6,800</p>
-                        <p class="text-xs text-green-500 mt-1"><i class="ph-fill ph-trend-up"></i> 较上月 +42%</p>
-                    </div>
+                <div id="pm-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <!-- 由 platform-manager.js 渲染 -->
                 </div>
 
                 <!-- Filters & Tabs -->
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                    <div class="flex bg-gray-100/80 p-1 rounded-lg">
-                        <button class="px-4 py-1.5 bg-white shadow-sm rounded-md text-gray-800 text-sm font-medium transition-colors">全部 (12)</button>
-                        <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">已发布 (9)</button>
-                        <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">草稿 (2)</button>
-                        <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">已下架 (1)</button>
+                    <div id="pm-tabs" class="flex bg-gray-100/80 p-1 rounded-lg">
+                        <!-- 由 platform-manager.js 渲染 -->
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div id="pm-categories" class="flex items-center gap-2">
                         <span class="text-sm text-gray-500 mr-1">内容分类:</span>
-                        <button class="px-3 py-1.5 bg-gray-800 text-white rounded-lg text-xs font-medium">起号攻略</button>
-                        <button class="px-3 py-1.5 bg-white border border-gray-200 text-gray-500 hover:text-gray-800 rounded-lg text-xs font-medium transition-colors">案例展示</button>
-                        <button class="px-3 py-1.5 bg-white border border-gray-200 text-gray-500 hover:text-gray-800 rounded-lg text-xs font-medium transition-colors">引流视频</button>
+                        <!-- 由 platform-manager.js 渲染 -->
                     </div>
                 </div>
 
                 <!-- Posts Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
-                    <!-- Post Card 1 -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="relative aspect-[9/16] bg-orange-100 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="bg-white text-gray-800 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-chart-bar"></i> 查看数据</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-pencil-simple"></i> 编辑记录</button>
-                            </div>
-                            <div class="absolute inset-0 bg-gradient-to-b from-orange-50 to-orange-200 flex flex-col items-center justify-center p-4 text-center">
-                                <div class="absolute top-4 left-4 bg-black/40 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
-                                    <i class="ph-fill ph-play"></i> 00:15
-                                </div>
-                                <h3 class="font-extrabold text-orange-600 text-2xl leading-none mb-4 transform -rotate-6 shadow-sm border-[3px] border-orange-600 p-2 bg-white/80 backdrop-blur-sm">流量密码</h3>
-                                <i class="ph-fill ph-rocket-launch text-6xl text-orange-500 mb-6 drop-shadow-md"></i>
-                                <div class="bg-orange-600 text-white font-bold py-2 px-6 rounded-full shadow-lg shadow-orange-500/30 text-sm">
-                                    3天起号全攻略
-                                </div>
-                            </div>
-                            <span class="absolute top-3 right-3 z-20 px-2 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded">爆款</span>
-                        </div>
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">抖音起号动态封面</h4>
-                                    <span class="text-[10px] text-gray-400 flex-shrink-0">06-20</span>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2 truncate">3天起号全攻略，流量密码</p>
-                            </div>
-                            <div class="grid grid-cols-3 gap-1 text-center mt-2 pt-2 border-t border-gray-50">
-                                <div>
-                                    <p class="text-xs font-bold text-gray-800">8.6k</p>
-                                    <p class="text-[10px] text-gray-400">播放</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-red-500">520</p>
-                                    <p class="text-[10px] text-gray-400">点赞</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-green-600">¥2,800</p>
-                                    <p class="text-[10px] text-gray-400">成交</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Post Card 2 -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="relative aspect-[9/16] bg-gray-900 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="bg-white text-gray-800 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-chart-bar"></i> 查看数据</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-pencil-simple"></i> 编辑记录</button>
-                            </div>
-                            <div class="absolute inset-0 bg-gradient-to-b from-gray-800 to-black flex flex-col items-center justify-center p-4 text-center">
-                                <div class="absolute top-4 left-4 bg-black/40 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
-                                    <i class="ph-fill ph-play"></i> 00:30
-                                </div>
-                                <i class="ph-fill ph-code text-5xl text-cyan-400 mb-4"></i>
-                                <h3 class="font-bold text-white text-lg leading-tight mb-2">全栈开发<br>实战分享</h3>
-                                <p class="text-gray-400 text-xs">从零搭建企业级应用</p>
-                                <div class="mt-4 flex gap-2">
-                                    <span class="text-[10px] text-cyan-300 border border-cyan-500 px-2 py-0.5 rounded-full">Java</span>
-                                    <span class="text-[10px] text-cyan-300 border border-cyan-500 px-2 py-0.5 rounded-full">Vue3</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">全栈开发实战分享</h4>
-                                    <span class="text-[10px] text-gray-400 flex-shrink-0">06-15</span>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2 truncate">从零搭建企业级应用</p>
-                            </div>
-                            <div class="grid grid-cols-3 gap-1 text-center mt-2 pt-2 border-t border-gray-50">
-                                <div>
-                                    <p class="text-xs font-bold text-gray-800">5.2k</p>
-                                    <p class="text-[10px] text-gray-400">播放</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-red-500">310</p>
-                                    <p class="text-[10px] text-gray-400">点赞</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-green-600">¥2,000</p>
-                                    <p class="text-[10px] text-gray-400">成交</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Post Card 3 -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="relative aspect-[9/16] bg-rose-900 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="bg-white text-gray-800 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-chart-bar"></i> 查看数据</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-pencil-simple"></i> 编辑记录</button>
-                            </div>
-                            <div class="absolute inset-0 bg-gradient-to-b from-rose-800 to-rose-950 flex flex-col items-center justify-center p-4 text-center">
-                                <div class="absolute top-4 left-4 bg-black/40 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
-                                    <i class="ph-fill ph-play"></i> 00:22
-                                </div>
-                                <i class="ph-fill ph-graduation-cap text-5xl text-rose-300 mb-4"></i>
-                                <h3 class="font-bold text-white text-lg leading-tight mb-2">毕设避坑<br>视频版</h3>
-                                <p class="text-rose-200 text-xs">3分钟看懂毕设全流程</p>
-                                <span class="mt-4 text-rose-300 font-mono font-bold text-sm">转发 120+</span>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">毕设避坑视频版</h4>
-                                    <span class="text-[10px] text-gray-400 flex-shrink-0">06-08</span>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2 truncate">3分钟看懂毕设全流程</p>
-                            </div>
-                            <div class="grid grid-cols-3 gap-1 text-center mt-2 pt-2 border-t border-gray-50">
-                                <div>
-                                    <p class="text-xs font-bold text-gray-800">6.8k</p>
-                                    <p class="text-[10px] text-gray-400">播放</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-red-500">420</p>
-                                    <p class="text-[10px] text-gray-400">点赞</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-green-600">¥1,200</p>
-                                    <p class="text-[10px] text-gray-400">成交</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Post Card 4 (Draft) -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative opacity-80 hover:opacity-100">
-                        <div class="relative aspect-[9/16] bg-gray-100 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="bg-white text-gray-800 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"><i class="ph ph-pencil-simple"></i> 继续编辑</button>
-                            </div>
-                            <div class="absolute inset-0 border-2 border-dashed border-gray-300 m-4 rounded-xl flex flex-col items-center justify-center text-gray-400">
-                                <i class="ph ph-film-strip text-4xl mb-2 text-gray-300"></i>
-                                <span class="text-xs font-medium">剪辑处理中...</span>
-                                <div class="mt-4 w-3/4 h-2 bg-gray-200 rounded"></div>
-                                <div class="mt-2 w-1/2 h-2 bg-gray-200 rounded"></div>
-                            </div>
-                        </div>
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">官网开发案例视频</h4>
-                                    <span class="text-[10px] text-gray-400 flex-shrink-0">草稿</span>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2">更新于 1小时前</p>
-                            </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-medium border inline-block bg-gray-50 text-gray-500 border-gray-200">草稿</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Analytics Summary -->
-                <div class="mt-6 bg-white rounded-xl border border-gray-100 p-6">
-                    <h3 class="font-semibold text-gray-800 text-base mb-4">抖音运营复盘</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-800">12</p>
-                            <p class="text-xs text-gray-400 mt-1">本月发布数</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-800">4,683</p>
-                            <p class="text-xs text-gray-400 mt-1">平均播放量</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-red-500">318.3</p>
-                            <p class="text-xs text-gray-400 mt-1">平均点赞数</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-green-600">8.5%</p>
-                            <p class="text-xs text-gray-400 mt-1">私信转成交率</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-green-600">¥567</p>
-                            <p class="text-xs text-gray-400 mt-1">单帖平均产出</p>
-                        </div>
-                    </div>
+                <div id="pm-posts" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- 由 platform-manager.js 渲染 -->
                 </div>
 
             </div>
         </div>
     </div>
 </main>
+
+<script>
+function initDouyinPage() {
+    if (!window.PlatformManager) return;
+    PlatformManager.init({
+        platform: 'douyin',
+        label: '抖音',
+        color: 'gray',
+        accentClass: 'bg-black text-white',
+        accentLight: 'bg-gray-100 text-gray-800 border-gray-400',
+        accentText: 'text-gray-800',
+        categories: ['起号攻略', '案例展示', '引流视频', '工具推荐', '其他'],
+        aspectRatio: 'aspect-[9/16]',
+        isVideo: true
+    });
+}
+document.addEventListener('DOMContentLoaded', initDouyinPage);
+window.addEventListener('spa:ready', function(e) {
+    var page = (e && e.detail && e.detail.page) || '';
+    if (page && page.indexOf('douyin') === -1) return;
+    initDouyinPage();
+});
+</script>
 
 </body>
 </html>

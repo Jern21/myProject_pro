@@ -37,7 +37,8 @@
     var selectedTags = [];
     var isOpen = false;
     var editMode = false;
-    var uploadedFiles = {}; // { screenshot: {name,size,type}, showcase: {...}, quote: {...} }
+    var editId = null; // 编辑模式下的订单 ID
+    var uploadedFiles = {}; // { screenshot: {name,size,type,url}, showcase: {...}, quote: {...}, taskBook: {...} }
 
     // ========== 工具函数 ==========
 
@@ -240,12 +241,15 @@
             '        <div class="mt-3">',
             uploadZoneHtml('quote', 'ph-file-pdf', '报价单', '支持 PDF / Word / 图片，点击或拖拽上传', '.pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp'),
             '        </div>',
+            '        <div class="mt-3">',
+            uploadZoneHtml('taskBook', 'ph-file-text', '项目任务书（可选）', '支持 PDF / Word / 图片，点击或拖拽上传', '.pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp,.txt,.md'),
+            '        </div>',
             '      </div>',
             '    </form>',
             '  </div>',
             // Footer
             '  <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between flex-shrink-0">',
-            '    <div class="text-xs text-gray-400" id="order-form-hint">所有数据仅保存在本地浏览器</div>',
+            '    <div class="text-xs text-gray-400" id="order-form-hint">数据将保存到后端服务器</div>',
             '    <div class="flex gap-3">',
             '      <button id="order-form-cancel" class="px-5 py-2 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition text-sm font-medium">取消</button>',
             '      <button id="order-form-submit" class="px-5 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition text-sm font-medium shadow-sm shadow-brand-500/30 flex items-center gap-1.5"><i class="ph ph-check"></i>保存</button>',
@@ -318,30 +322,101 @@
 
     // ========== 文件上传 ==========
 
+    function revokeFileUrl(file) {
+        if (file && file.url && file.url.indexOf('blob:') === 0 && window.URL && window.URL.revokeObjectURL) {
+            window.URL.revokeObjectURL(file.url);
+        }
+    }
+
+    function createFileRecord(file) {
+        var url = '';
+        if (window.URL && window.URL.createObjectURL) {
+            url = window.URL.createObjectURL(file);
+        }
+        return {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            url: url,
+            _needsUpload: true // 标记需要上传到服务器
+        };
+    }
+
+    /**
+     * 上传单个文件到服务器
+     */
+    function uploadFileToServer(file) {
+        if (!file || !file._needsUpload) return Promise.resolve(file);
+        if (!file.url || file.url.indexOf('blob:') !== 0) return Promise.resolve(file);
+
+        // 从 blob URL 获取原始 File 对象
+        return fetch(file.url).then(function (r) { return r.blob(); }).then(function (blob) {
+            var formData = new FormData();
+            formData.append('file', blob, file.name);
+            return fetch('/api/upload', { method: 'POST', body: formData }).then(function (r) { return r.json(); });
+        }).then(function (res) {
+            if (res.success && res.data) {
+                return {
+                    name: res.data.originalName || file.name,
+                    size: res.data.size || file.size,
+                    type: res.data.mimetype || file.type,
+                    url: res.data.url
+                };
+            }
+            return file; // 上传失败则保留原信息
+        }).catch(function (err) {
+            console.error('[OrderForm] 文件上传失败:', err);
+            return file;
+        });
+    }
+
+    /**
+     * 上传所有需要上传的文件
+     */
+    function uploadAllFiles() {
+        var keys = ['screenshot', 'showcase', 'quote', 'taskBook'];
+        var promises = keys.map(function (key) {
+            if (uploadedFiles[key] && uploadedFiles[key]._needsUpload) {
+                return uploadFileToServer(uploadedFiles[key]).then(function (result) {
+                    uploadedFiles[key] = result;
+                });
+            }
+            return Promise.resolve();
+        });
+        return Promise.all(promises);
+    }
+
+    function getFileIconClass(file) {
+        var type = (file && file.type) || '';
+        var name = (file && file.name) || '';
+        var iconClass = 'ph file-icon text-lg ';
+        if (type.startsWith('image/')) {
+            iconClass += 'ph-image text-blue-500';
+        } else if (type.indexOf('pdf') !== -1 || name.match(/\.pdf$/i)) {
+            iconClass += 'ph-file-pdf text-red-500';
+        } else if (type.indexOf('word') !== -1 || name.match(/\.(doc|docx)$/i)) {
+            iconClass += 'ph-file-doc text-blue-600';
+        } else {
+            iconClass += 'ph-file text-gray-500';
+        }
+        return iconClass;
+    }
+
     function handleFileUpload(type, file, zone) {
         var placeholder = zone.querySelector('.upload-placeholder');
         var preview = zone.querySelector('.upload-preview');
         var fileNameEl = zone.querySelector('.file-name');
         var fileIcon = zone.querySelector('.file-icon');
 
-        uploadedFiles[type] = { name: file.name, size: file.size, type: file.type };
+        revokeFileUrl(uploadedFiles[type]);
+        uploadedFiles[type] = createFileRecord(file);
 
         placeholder.classList.add('hidden');
         preview.classList.remove('hidden');
         if (fileNameEl) fileNameEl.textContent = file.name;
 
         if (fileIcon) {
-            var iconClass = 'ph file-icon text-lg ';
-            if (file.type.startsWith('image/')) {
-                iconClass += 'ph-image text-blue-500';
-            } else if (file.type.indexOf('pdf') !== -1) {
-                iconClass += 'ph-file-pdf text-red-500';
-            } else if (file.type.indexOf('word') !== -1 || file.name.match(/\.(doc|docx)$/i)) {
-                iconClass += 'ph-file-doc text-blue-600';
-            } else {
-                iconClass += 'ph-file text-gray-500';
-            }
-            fileIcon.className = iconClass;
+            fileIcon.className = getFileIconClass(uploadedFiles[type]);
         }
     }
 
@@ -385,6 +460,7 @@
             if (removeBtn) {
                 removeBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
+                    revokeFileUrl(uploadedFiles[type]);
                     uploadedFiles[type] = null;
                     placeholder.classList.remove('hidden');
                     zone.querySelector('.upload-preview').classList.add('hidden');
@@ -446,7 +522,8 @@
             uploadedFiles: {
                 screenshot: uploadedFiles.screenshot || null,
                 showcase: uploadedFiles.showcase || null,
-                quote: uploadedFiles.quote || null
+                quote: uploadedFiles.quote || null,
+                taskBook: uploadedFiles.taskBook || null
             }
         };
     }
@@ -482,7 +559,7 @@
         // 上传文件恢复
         var files = data.uploadedFiles || {};
         uploadedFiles = {};
-        ['screenshot', 'showcase', 'quote'].forEach(function (key) {
+        ['screenshot', 'showcase', 'quote', 'taskBook'].forEach(function (key) {
             if (files[key]) {
                 uploadedFiles[key] = files[key];
                 var zone = document.querySelector('.order-upload-zone[data-upload-type="' + key + '"]');
@@ -494,13 +571,7 @@
                     if (ph) ph.classList.add('hidden');
                     if (pv) pv.classList.remove('hidden');
                     if (fnEl) fnEl.textContent = files[key].name;
-                    if (iconEl && files[key].type) {
-                        var ic = 'ph file-icon text-lg ';
-                        if (files[key].type.startsWith('image/')) ic += 'ph-image text-blue-500';
-                        else if (files[key].type.indexOf('pdf') !== -1) ic += 'ph-file-pdf text-red-500';
-                        else ic += 'ph-file text-gray-500';
-                        iconEl.className = ic;
-                    }
+                    if (iconEl) iconEl.className = getFileIconClass(files[key]);
                 }
             }
         });
@@ -535,14 +606,59 @@
                 hint.textContent = '请填写所有必填字段（标 * 号的）';
                 hint.className = 'text-xs text-red-500';
                 setTimeout(function () {
-                    hint.textContent = '所有数据仅保存在本地浏览器';
+                    hint.textContent = '数据将保存到后端服务器';
                     hint.className = 'text-xs text-gray-400';
                 }, 3000);
                 return;
             }
+
+            var submitBtn = document.getElementById('order-form-submit');
+            var originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> 保存中...';
+            submitBtn.disabled = true;
+
             var data = collectData();
-            window.dispatchEvent(new CustomEvent('order-form:submit', { detail: data }));
-            closeOrderForm();
+            if (editId) data.id = editId;
+
+            // 先上传文件，再提交表单
+            uploadAllFiles().then(function () {
+                // 更新 data 中的 uploadedFiles（去除 _needsUpload 标记）
+                var cleanFiles = {};
+                ['screenshot', 'showcase', 'quote', 'taskBook'].forEach(function (key) {
+                    if (uploadedFiles[key]) {
+                        var f = uploadedFiles[key];
+                        cleanFiles[key] = { name: f.name, size: f.size, type: f.type, url: f.url || '' };
+                    }
+                });
+                data.uploadedFiles = cleanFiles;
+
+                var url = editId ? '/api/orders/' + encodeURIComponent(editId) : '/api/orders';
+                var method = editId ? 'PUT' : 'POST';
+
+                return fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(function (r) { return r.json(); });
+            }).then(function (res) {
+                if (res.success) {
+                    window.dispatchEvent(new CustomEvent('order-form:saved', { detail: res.data }));
+                    closeOrderForm();
+                } else {
+                    var hint = document.getElementById('order-form-hint');
+                    hint.textContent = '保存失败：' + (res.error || '未知错误');
+                    hint.className = 'text-xs text-red-500';
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }).catch(function (err) {
+                console.error('[OrderForm] 保存失败:', err);
+                var hint2 = document.getElementById('order-form-hint');
+                hint2.textContent = '保存失败：' + err.message;
+                hint2.className = 'text-xs text-red-500';
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
         });
 
         // 实时计算
@@ -582,6 +698,7 @@
         selectedTags = [];
         uploadedFiles = {};
         editMode = !!data;
+        editId = data && data.id ? data.id : null;
 
         // 标题
         document.getElementById('order-form-title').textContent = editMode ? '编辑我的订单' : '新建我的订单';

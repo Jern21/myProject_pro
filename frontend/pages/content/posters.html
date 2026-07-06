@@ -1,4 +1,4 @@
-﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -48,12 +48,13 @@
 
                     <div class="flex items-center gap-3">
                         <!-- Platform Filters -->
-                        <div class="flex items-center gap-2">
+                        <div id="platform-filters" class="flex items-center gap-2">
                             <span class="text-sm text-gray-500 mr-1">平台:</span>
-                            <button class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-brand-500 hover:text-brand-500 transition-colors bg-white tooltip" title="全部"><i class="ph ph-squares-four"></i></button>
-                            <button class="w-8 h-8 rounded-full border border-yellow-400 bg-yellow-50 flex items-center justify-center transition-colors shadow-sm tooltip overflow-hidden" title="闲鱼" data-platform="xianyu">闲</button>
-                            <button class="w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center transition-colors tooltip overflow-hidden" title="小红书" data-platform="xiaohongshu">小红书</button>
-                            <button class="w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-800 hover:border-gray-800 hover:bg-gray-100 transition-colors tooltip" title="抖音"><i class="ph-fill ph-tiktok-logo"></i></button>
+                            <button data-filter-platform="" class="pf-btn w-8 h-8 rounded-full border border-brand-500 bg-brand-50 flex items-center justify-center text-brand-500 transition-colors tooltip" title="全部"><i class="ph ph-squares-four"></i></button>
+                            <button data-filter-platform="xianyu" class="pf-btn w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-400 hover:border-yellow-400 hover:text-yellow-500 transition-colors tooltip overflow-hidden" title="闲鱼"><img data-platform-icon="xianyu" alt="闲鱼" class="block w-full h-full" style="object-fit:cover" loading="lazy"></button>
+                            <button data-filter-platform="xiaohongshu" class="pf-btn w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-400 hover:border-red-400 hover:text-red-500 transition-colors tooltip overflow-hidden" title="小红书"><img data-platform-icon="xiaohongshu" alt="小红书" class="block w-full h-full" style="object-fit:cover;transform:scale(1.2)" loading="lazy"></button>
+                            <button data-filter-platform="douyin" class="pf-btn w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-400 hover:border-gray-800 hover:bg-gray-100 transition-colors tooltip overflow-hidden" title="抖音"><img data-platform-icon="douyin" alt="抖音" class="block w-full h-full" style="object-fit:cover" loading="lazy"></button>
+                            <button data-filter-platform="wechat" class="pf-btn w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-400 hover:border-green-400 hover:text-green-500 transition-colors tooltip overflow-hidden" title="微信"><img data-platform-icon="wechat" alt="微信" class="block w-full h-full" style="object-fit:cover;transform:scale(1.2)" loading="lazy"></button>
                         </div>
                         <!-- 上传按钮 -->
                         <button id="btn-upload-poster" class="flex items-center gap-1.5 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition text-sm font-medium shadow-sm shadow-brand-500/30">
@@ -62,239 +63,9 @@
                     </div>
                 </div>
 
-                <!-- Posters Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                    
-                    <!-- Poster Card 1 (Xianyu - Vertical) -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="absolute top-3 left-3 z-20">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 bg-white cursor-pointer shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                        </div>
-                        
-                        <div class="relative aspect-[3/4] bg-blue-900 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="poster-view-btn bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300"><i class="ph ph-arrows-out-simple"></i> 查看大图</button>
-                                <button class="bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75"><i class="ph ph-download-simple"></i> 下载原图</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100"><i class="ph ph-pencil-simple"></i> 编辑信息</button>
-                            </div>
-                            
-                            <div class="absolute inset-0 bg-gradient-to-br from-blue-800 to-blue-950 flex flex-col items-center justify-center p-4 text-center">
-                                <div class="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-blue-900 mb-4 shadow-lg shadow-yellow-500/20">
-                                    <i class="ph-fill ph-lightning text-3xl"></i>
-                                </div>
-                                <h3 class="font-bold text-white text-xl leading-tight mb-2 tracking-wide">暑期特惠<br>接单定制</h3>
-                                <p class="text-blue-200 text-xs bg-blue-900/50 px-3 py-1 rounded-full backdrop-blur-sm border border-blue-400/30">前台+后台一套搞定</p>
-                                
-                                <div class="absolute bottom-4 left-4 right-4 h-16 border-t-2 border-dashed border-blue-500/30 flex items-end justify-between px-2 pb-1">
-                                    <span class="text-yellow-400 font-mono font-bold text-sm">¥6800起</span>
-                                    <span class="text-blue-300 text-[10px]">附带源码</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">闲鱼引流主图-07</h4>
-                                    <div class="w-5 h-5 rounded bg-yellow-100 text-yellow-600 flex flex-shrink-0 items-center justify-center text-[10px] font-bold" data-platform="xianyu">闲</div>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2">更新于 2026-07-01</p>
-                            </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="poster-custom-label px-2 py-0.5 rounded text-[10px] font-medium border inline-block" style="color:#2563eb;background-color:rgba(37,99,235,0.1);border-color:rgba(37,99,235,0.28)">引流主图</span>
-                                <div class="poster-card-actions flex items-center gap-1.5">
-                                    <button type="button" class="poster-pin-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 transition flex items-center justify-center" title="置顶">
-                                        <i class="ph ph-push-pin-simple text-sm"></i>
-                                    </button>
-                                    <button type="button" class="poster-delete-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition flex items-center justify-center" title="删除">
-                                        <i class="ph ph-trash text-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Poster Card 2 (Xiaohongshu - Vertical) -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="absolute top-3 left-3 z-20">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 bg-white cursor-pointer shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                        </div>
-                        
-                        <div class="relative aspect-[3/4] bg-gray-900 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="poster-view-btn bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300"><i class="ph ph-arrows-out-simple"></i> 查看大图</button>
-                                <button class="bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75"><i class="ph ph-download-simple"></i> 下载原图</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100"><i class="ph ph-pencil-simple"></i> 编辑信息</button>
-                            </div>
-                            
-                            <div class="absolute inset-0 bg-gradient-to-b from-gray-800 to-black flex flex-col items-center justify-start pt-8 p-4 text-center">
-                                <span class="text-gray-400 text-xs tracking-widest uppercase mb-2">CASE STUDY</span>
-                                <h3 class="font-bold text-white text-lg leading-snug mb-6 w-4/5">如何从零打造高转化<span class="text-red-400">小红书爆款</span>？</h3>
-                                
-                                <div class="w-3/4 aspect-square bg-gray-800 rounded-xl border border-gray-700 relative shadow-2xl overflow-hidden flex items-center justify-center">
-                                    <i class="ph-fill ph-chart-line-up text-5xl text-red-500/50"></i>
-                                    <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent"></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">小红书干货封面-爆款</h4>
-                                    <div class="w-5 h-5 rounded bg-red-50 text-red-500 flex flex-shrink-0 items-center justify-center text-[10px] font-bold" data-platform="xiaohongshu">红</div>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2">更新于 2026-06-28</p>
-                            </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="poster-custom-label px-2 py-0.5 rounded text-[10px] font-medium border inline-block" style="color:#ef4444;background-color:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.28)">爆款封面</span>
-                                <div class="poster-card-actions flex items-center gap-1.5">
-                                    <button type="button" class="poster-pin-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 transition flex items-center justify-center" title="置顶">
-                                        <i class="ph ph-push-pin-simple text-sm"></i>
-                                    </button>
-                                    <button type="button" class="poster-delete-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition flex items-center justify-center" title="删除">
-                                        <i class="ph ph-trash text-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Poster Card 3 (Douyin - Full screen vertical) -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="absolute top-3 left-3 z-20">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 bg-white cursor-pointer shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                        </div>
-                        
-                        <div class="relative aspect-[3/4] bg-orange-100 overflow-hidden">
-                             <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="poster-view-btn bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300"><i class="ph ph-arrows-out-simple"></i> 查看大图</button>
-                                <button class="bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75"><i class="ph ph-download-simple"></i> 下载视频/图</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100"><i class="ph ph-pencil-simple"></i> 编辑信息</button>
-                            </div>
-                            
-                            <div class="absolute inset-0 bg-gradient-to-b from-orange-50 to-orange-200 flex flex-col items-center justify-center p-4 text-center">
-                                <div class="absolute top-4 left-4 bg-black/40 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
-                                    <i class="ph-fill ph-play"></i> 00:15
-                                </div>
-                                <h3 class="font-extrabold text-orange-600 text-2xl leading-none mb-4 transform -rotate-6 shadow-sm border-[3px] border-orange-600 p-2 bg-white/80 backdrop-blur-sm">流量密码</h3>
-                                <i class="ph-fill ph-rocket-launch text-6xl text-orange-500 mb-6 drop-shadow-md"></i>
-                                <div class="bg-orange-600 text-white font-bold py-2 px-6 rounded-full shadow-lg shadow-orange-500/30 text-sm">
-                                    3天起号全攻略
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">抖音起号动态封面</h4>
-                                    <div class="w-5 h-5 rounded bg-gray-900 text-white flex flex-shrink-0 items-center justify-center text-sm" data-platform="douyin"><i class="ph-fill ph-tiktok-logo"></i></div>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2">更新于 2026-06-20</p>
-                            </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="poster-custom-label px-2 py-0.5 rounded text-[10px] font-medium border inline-block" style="color:#f97316;background-color:rgba(249,115,22,0.1);border-color:rgba(249,115,22,0.28)">视频封面</span>
-                                <div class="poster-card-actions flex items-center gap-1.5">
-                                    <button type="button" class="poster-pin-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 transition flex items-center justify-center" title="置顶">
-                                        <i class="ph ph-push-pin-simple text-sm"></i>
-                                    </button>
-                                    <button type="button" class="poster-delete-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition flex items-center justify-center" title="删除">
-                                        <i class="ph ph-trash text-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Poster Card 4 (Draft - Square) -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative opacity-80 hover:opacity-100">
-                         <div class="absolute top-3 left-3 z-20">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 bg-white cursor-pointer shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                        </div>
-                        
-                        <div class="relative aspect-[3/4] bg-gray-100 overflow-hidden">
-                             <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="poster-view-btn bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300"><i class="ph ph-arrows-out-simple"></i> 查看大图</button>
-                                <button class="bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75"><i class="ph ph-pencil-simple"></i> 继续编辑</button>
-                            </div>
-                            
-                            <div class="absolute inset-0 border-2 border-dashed border-gray-300 m-4 rounded-xl flex flex-col items-center justify-center text-gray-400">
-                                <i class="ph ph-image text-4xl mb-2 text-gray-300"></i>
-                                <span class="text-xs font-medium">排版设计中...</span>
-                                <div class="mt-4 w-3/4 h-2 bg-gray-200 rounded"></div>
-                                <div class="mt-2 w-1/2 h-2 bg-gray-200 rounded"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">朋友圈服务清单(7月版)</h4>
-                                    <div class="w-5 h-5 rounded bg-green-50 text-green-500 flex flex-shrink-0 items-center justify-center text-sm" data-platform="wechat"><i class="ph-fill ph-wechat-logo"></i></div>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2">更新于 刚刚</p>
-                            </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="poster-custom-label px-2 py-0.5 rounded text-[10px] font-medium border inline-block" style="color:#64748b;background-color:rgba(100,116,139,0.1);border-color:rgba(100,116,139,0.28)">服务清单</span>
-                                <div class="poster-card-actions flex items-center gap-1.5">
-                                    <button type="button" class="poster-pin-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 transition flex items-center justify-center" title="置顶">
-                                        <i class="ph ph-push-pin-simple text-sm"></i>
-                                    </button>
-                                    <button type="button" class="poster-delete-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition flex items-center justify-center" title="删除">
-                                        <i class="ph ph-trash text-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Poster Card 5 (Xianyu - General) -->
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative">
-                        <div class="absolute top-3 left-3 z-20">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 bg-white cursor-pointer shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                        </div>
-                        
-                        <div class="relative aspect-[3/4] bg-teal-900 overflow-hidden">
-                            <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">
-                                <button class="poster-view-btn bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300"><i class="ph ph-arrows-out-simple"></i> 查看大图</button>
-                                <button class="bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75"><i class="ph ph-download-simple"></i> 下载原图</button>
-                                <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100"><i class="ph ph-pencil-simple"></i> 编辑信息</button>
-                            </div>
-                            
-                            <div class="absolute inset-0 bg-gradient-to-bl from-teal-700 to-teal-950 p-5 flex flex-col">
-                                <div class="bg-white text-teal-900 font-bold px-3 py-1 text-xs rounded w-max mb-4">承接各类</div>
-                                <h3 class="font-bold text-white text-2xl leading-tight mb-2">计算机<br>毕业设计</h3>
-                                <div class="flex gap-2 mt-auto flex-wrap">
-                                    <span class="text-[10px] text-teal-100 border border-teal-500 px-2 py-0.5 rounded-full backdrop-blur-sm">Java</span>
-                                    <span class="text-[10px] text-teal-100 border border-teal-500 px-2 py-0.5 rounded-full backdrop-blur-sm">Python</span>
-                                    <span class="text-[10px] text-teal-100 border border-teal-500 px-2 py-0.5 rounded-full backdrop-blur-sm">Vue3</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 border-t border-gray-50 flex flex-col justify-between flex-1 bg-white relative z-20">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-semibold text-gray-800 text-sm truncate pr-2">闲鱼-毕设代做(新版)</h4>
-                                    <div class="w-5 h-5 rounded bg-yellow-100 text-yellow-600 flex flex-shrink-0 items-center justify-center text-[10px] font-bold" data-platform="xianyu">闲</div>
-                                </div>
-                                <p class="text-xs text-gray-400 mb-2">更新于 2026-06-15</p>
-                            </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="poster-custom-label px-2 py-0.5 rounded text-[10px] font-medium border inline-block" style="color:#0f766e;background-color:rgba(15,118,110,0.1);border-color:rgba(15,118,110,0.28)">毕设接单</span>
-                                <div class="poster-card-actions flex items-center gap-1.5">
-                                    <button type="button" class="poster-pin-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 transition flex items-center justify-center" title="置顶">
-                                        <i class="ph ph-push-pin-simple text-sm"></i>
-                                    </button>
-                                    <button type="button" class="poster-delete-btn w-7 h-7 rounded-md border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition flex items-center justify-center" title="删除">
-                                        <i class="ph ph-trash text-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                <!-- Posters Grid (Dynamic) -->
+                <div id="posters-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    <!-- Cards rendered by JS -->
                 </div>
 
             </div>
@@ -306,130 +77,30 @@
 (function () {
     'use strict';
 
-    var editingCard = null;
+    // SPA 实例 ID，防止多次导航后事件监听器累积
+    var instanceId = 'posters_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    window.__postersActiveInstance = instanceId;
 
-    /**
-     * 从海报卡片 DOM 中提取完整编辑数据
-     *
-     * 提取字段：
-     *   title      → h4.font-semibold 文本
-     *   platform   → div[data-platform] 属性
-     *   labelText  → 卡片底部自定义标签文本
-     *   labelColor → 卡片底部自定义标签颜色
-     *   ratio      → aspect 比例
-     *   desc       → 海报内的 h3 / span 文本（海报主标题）
-     *   effect     → 投放效果（如有）
-     *   onlineDate → 从「更新于 YYYY-MM-DD」解析
-     *   remark     → 海报内副标题/描述文本
-     *   imageHtml  → 海报视觉区 DOM 快照（用于表单预览）
-     */
-    function extractCardData(card) {
-        if (!card) return null;
+    // 页面状态
+    var state = {
+        platform: '',   // 当前平台筛选
+        posters: []     // 当前页所有海报数据
+    };
 
-        // === 标题 ===
-        var titleEl = card.querySelector('h4.font-semibold');
-        var title = titleEl ? titleEl.textContent.trim() : '';
+    // ===================== 工具函数 =====================
 
-        // === 平台 ===
-        var platformEl = card.querySelector('[data-platform]');
-        var platform = platformEl ? platformEl.getAttribute('data-platform') : 'other';
-
-        // === 自定义标签 ===
-        var labelSpan = card.querySelector('.poster-custom-label');
-        var labelText = labelSpan ? labelSpan.textContent.trim() : '自定义标签';
-        var labelColor = labelSpan ? (labelSpan.style.color || '#10b981') : '#10b981';
-
-        // === 比例 ===
-        var ratioEl = card.querySelector('.aspect-\\[3\\/4\\]');
-        var ratio = ratioEl ? '3/4' : '1/1';
-
-        // === 海报视觉快照（克隆后移除 hover 遮罩） ===
-        var imageHtml = '';
-        if (ratioEl) {
-            var clone = ratioEl.cloneNode(true);
-            // 移除 hover 遮罩层（含 opacity-0 的子元素）
-            var overlays = clone.querySelectorAll('.opacity-0');
-            overlays.forEach(function (el) { el.remove(); });
-            imageHtml = clone.outerHTML;
-        }
-
-        // === 海报内主标题（h3 / span） ===
-        var desc = '';
-        var h3 = card.querySelector('.aspect-\\[3\\/4\\] h3');
-        if (h3) {
-            desc = h3.textContent.replace(/\s+/g, ' ').trim();
-        }
-        if (!desc) {
-            var span = card.querySelector('.aspect-\\[3\\/4\\] span.font-medium');
-            if (span) desc = span.textContent.trim();
-        }
-
-        // === 副标题/备注（p 标签内的描述性文字） ===
-        var remark = '';
-        var subP = card.querySelector('.aspect-\\[3\\/4\\] p');
-        if (subP) {
-            remark = subP.textContent.replace(/\s+/g, ' ').trim();
-        }
-
-        // === 实际效果（保留兼容旧卡片数据） ===
-        var effect = '';
-        var statsDiv = card.querySelector('.flex.items-center.gap-1.text-gray-400');
-        if (statsDiv) {
-            var icon = statsDiv.querySelector('i');
-            var iconClass = icon ? icon.className : '';
-            var num = statsDiv.textContent.trim();
-            if (iconClass.indexOf('ph-eye') !== -1) {
-                effect = '浏览 ' + num;
-            } else if (iconClass.indexOf('ph-heart') !== -1) {
-                effect = '点赞 ' + num;
-            } else if (iconClass.indexOf('ph-play') !== -1) {
-                effect = '播放 ' + num;
-            } else {
-                effect = num;
-            }
-        }
-
-        // === 更新日期（解析「更新于 YYYY-MM-DD」） ===
-        var onlineDate = '';
-        var timeEl = card.querySelector('p.text-xs.text-gray-400');
-        if (timeEl) {
-            var timeText = timeEl.textContent.trim();
-            var match = timeText.match(/\d{4}-\d{2}-\d{2}/);
-            if (match) onlineDate = match[0];
-        }
-
-        // === 合并设计备注 ===
-        var fullRemark = '';
-        if (desc) fullRemark += '海报文案：' + desc;
-        if (remark) fullRemark += (fullRemark ? '\n' : '') + remark;
-
-        // === 标签推断（根据标题/描述关键词） ===
-        var tags = [];
-        var allText = (title + ' ' + desc + ' ' + remark).toLowerCase();
-        if (allText.indexOf('引流') !== -1 || allText.indexOf('主图') !== -1) tags.push('引流');
-        if (allText.indexOf('爆款') !== -1) tags.push('爆款');
-        if (allText.indexOf('干货') !== -1) tags.push('干货');
-        if (allText.indexOf('特惠') !== -1 || allText.indexOf('促销') !== -1 || allText.indexOf('7月') !== -1) tags.push('促销');
-        if (allText.indexOf('毕设') !== -1 || allText.indexOf('毕业') !== -1) tags.push('品牌');
-
-        return {
-            title: title,
-            platform: platform,
-            labelText: labelText,
-            labelColor: rgbToHex(labelColor),
-            ratio: ratio,
-            tags: tags,
-            remark: fullRemark,
-            effect: effect,
-            onlineDate: onlineDate,
-            imageHtml: imageHtml
-        };
+    function escapeHtml(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     function rgbToHex(color) {
         if (!color) return '#10b981';
         if (color.charAt(0) === '#') return color;
-
         var match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (!match) return '#10b981';
         return '#' + [match[1], match[2], match[3]].map(function (value) {
@@ -447,32 +118,40 @@
         return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
     }
 
-    function applyLabelStyle(labelEl, text, color) {
-        if (!labelEl) return;
-        color = rgbToHex(color);
-        labelEl.textContent = text || '自定义标签';
-        labelEl.style.color = color;
-        labelEl.style.backgroundColor = hexToRgba(color, 0.1);
-        labelEl.style.borderColor = hexToRgba(color, 0.28);
+    // 获取 SVG 图标绝对路径
+    // 获取 SVG 图标绝对路径
+    function svgIconUrl(platform) {
+        var base = window.ROOT_URL || window.PAGE_BASE || '';
+        var files = {
+            xianyu: '闲鱼.svg',
+            xiaohongshu: '小红书.svg',
+            douyin: '抖音.svg',
+            wechat: '微信.svg'
+        };
+        return base + 'assets/svg/' + files[platform];
     }
 
     function platformBadgeHtml(platform) {
+        // 闲鱼、小红书、抖音、微信使用本地 SVG 图标
+        if (platform === 'xianyu' || platform === 'xiaohongshu' || platform === 'douyin' || platform === 'wechat') {
+            var scale = (platform === 'xiaohongshu' || platform === 'wechat') ? 'transform: scale(1.2);' : '';
+            return '<div class="w-5 h-5 rounded overflow-hidden flex-shrink-0" data-platform="' + platform + '">' +
+                '<img src="' + escapeHtml(svgIconUrl(platform)) + '" alt="' + platform + '" class="block w-full h-full" style="object-fit: cover;' + scale + '" loading="lazy"></div>';
+        }
         var badges = {
-            xianyu: '<div class="w-5 h-5 rounded bg-yellow-100 text-yellow-600 flex flex-shrink-0 items-center justify-center text-[10px] font-bold" data-platform="xianyu">闲</div>',
-            xiaohongshu: '<div class="w-5 h-5 rounded bg-red-50 text-red-500 flex flex-shrink-0 items-center justify-center text-[10px] font-bold" data-platform="xiaohongshu">红</div>',
-            douyin: '<div class="w-5 h-5 rounded bg-gray-900 text-white flex flex-shrink-0 items-center justify-center text-sm" data-platform="douyin"><i class="ph-fill ph-tiktok-logo"></i></div>',
-            wechat: '<div class="w-5 h-5 rounded bg-green-50 text-green-500 flex flex-shrink-0 items-center justify-center text-sm" data-platform="wechat"><i class="ph-fill ph-wechat-logo"></i></div>',
             other: '<div class="w-5 h-5 rounded bg-blue-50 text-blue-500 flex flex-shrink-0 items-center justify-center text-[10px] font-bold" data-platform="other">其</div>'
         };
         return badges[platform] || badges.other;
     }
+
+    // ===================== 视觉区 HTML 构建 =====================
 
     function placeholderVisualHtml() {
         return [
             '<div class="relative aspect-[3/4] bg-gray-100 overflow-hidden">',
             '  <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">',
             '    <button class="poster-view-btn bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300"><i class="ph ph-arrows-out-simple"></i> 查看大图</button>',
-            '    <button class="bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75"><i class="ph ph-pencil-simple"></i> 继续编辑</button>',
+            '    <button class="poster-edit-btn bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75"><i class="ph ph-pencil-simple"></i> 继续编辑</button>',
             '  </div>',
             '  <div class="absolute inset-0 border-2 border-dashed border-gray-300 m-4 rounded-xl flex flex-col items-center justify-center text-gray-400">',
             '    <i class="ph ph-image text-4xl mb-2 text-gray-300"></i>',
@@ -489,8 +168,8 @@
             '<div class="relative aspect-[3/4] bg-gray-100 overflow-hidden">',
             '  <div class="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-3 z-10 backdrop-blur-[2px]">',
             '    <button class="poster-view-btn bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300"><i class="ph ph-arrows-out-simple"></i> 查看大图</button>',
-            '    <button class="bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75"><i class="ph ph-download-simple"></i> 下载原图</button>',
-            '    <button class="bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100"><i class="ph ph-pencil-simple"></i> 编辑信息</button>',
+            '    <button class="poster-download-btn bg-white text-gray-800 hover:bg-brand-50 hover:text-brand-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75"><i class="ph ph-download-simple"></i> 下载原图</button>',
+            '    <button class="poster-edit-btn bg-transparent border border-white/50 text-white hover:bg-white/10 hover:border-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100"><i class="ph ph-pencil-simple"></i> 编辑信息</button>',
             '  </div>',
             '  <img src="' + escapeHtml(src) + '" alt="海报预览" class="absolute inset-0 w-full h-full object-cover">',
             '</div>'
@@ -503,54 +182,16 @@
         return placeholderVisualHtml();
     }
 
-    function updateCardVisual(card, data) {
-        var visual = card ? card.querySelector('.aspect-\\[3\\/4\\]') : null;
-        if (!visual) return;
-
-        var temp = document.createElement('div');
-        temp.innerHTML = visualHtmlFromData(data);
-        var nextVisual = temp.firstElementChild;
-        if (nextVisual) visual.replaceWith(nextVisual);
-    }
-
-    function updateCardFromData(card, data) {
-        if (!card || !data) return;
-
-        var titleEl = card.querySelector('h4.font-semibold');
-        if (titleEl && data.title) titleEl.textContent = data.title;
-
-        var labelEl = card.querySelector('.poster-custom-label');
-        applyLabelStyle(labelEl, data.labelText, data.labelColor);
-
-        var timeEl = card.querySelector('p.text-xs.text-gray-400');
-        if (timeEl && data.onlineDate) {
-            timeEl.textContent = '更新于 ' + data.onlineDate;
-        }
-
-        var badgeWrap = card.querySelector('[data-platform]');
-        if (badgeWrap) {
-            var badgeTemp = document.createElement('div');
-            badgeTemp.innerHTML = platformBadgeHtml(data.platform);
-            if (badgeTemp.firstElementChild) badgeWrap.replaceWith(badgeTemp.firstElementChild);
-        }
-
-        if (data.image || !data.imageHtml) {
-            updateCardVisual(card, data);
-        }
-        bindEditButtons();
-        bindCardActionButtons();
-    }
-
     function buildPosterCardHtml(data) {
         var labelColor = rgbToHex(data.labelColor || '#10b981');
-        var dateText = data.onlineDate || '刚刚';
+        var dateText = data.onlineDate || (data.updatedAt ? data.updatedAt.slice(0, 10) : '刚刚');
         var title = escapeHtml(data.title || '未命名海报');
         var labelText = escapeHtml(data.labelText || '自定义标签');
         var isPlaceholder = !data.image && !data.imageHtml;
         var cardClass = 'bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-hover hover:-translate-y-1 flex flex-col group relative';
         if (isPlaceholder) cardClass += ' opacity-80 hover:opacity-100';
         return [
-            '<div class="' + cardClass + '">',
+            '<div class="' + cardClass + '" data-poster-id="' + escapeHtml(data.id || '') + '">',
             '  <div class="absolute top-3 left-3 z-20">',
             '    <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 bg-white cursor-pointer shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">',
             '  </div>',
@@ -579,28 +220,13 @@
         ].join('');
     }
 
-    function addPosterCard(data) {
-        var grid = document.querySelector('.grid.grid-cols-2');
-        if (!grid) return;
-
-        var temp = document.createElement('div');
-        temp.innerHTML = buildPosterCardHtml(data);
-        var card = temp.firstElementChild;
-        if (!card) return;
-
-        grid.insertBefore(card, grid.firstElementChild);
-        bindEditButtons();
-        bindCardActionButtons();
-    }
+    // ===================== 大图预览 =====================
 
     function buildPosterPreviewHtml(card) {
         var visual = card ? card.querySelector('.aspect-\\[3\\/4\\]') : null;
         if (!visual) return '';
-
         var clone = visual.cloneNode(true);
-        clone.querySelectorAll('.opacity-0').forEach(function (el) {
-            el.remove();
-        });
+        clone.querySelectorAll('.opacity-0').forEach(function (el) { el.remove(); });
         clone.classList.remove('overflow-hidden');
         clone.classList.add('w-full', 'h-full', 'rounded-xl', 'shadow-2xl');
         return clone.outerHTML;
@@ -609,187 +235,590 @@
     function closePosterPreview() {
         var modal = document.getElementById('poster-preview-modal');
         if (!modal) return;
+        if (modal._cleanup) modal._cleanup();
         modal.remove();
         document.body.style.overflow = '';
     }
 
-    function openPosterPreview(card) {
-        var previewHtml = buildPosterPreviewHtml(card);
-        if (!previewHtml) return;
-
+    function openPosterPreview(poster, card) {
+        var data = poster || {};
+        if (!data.image && !data.imageHtml) {
+            // 无图片内容，使用旧的卡片克隆方式
+            var fallbackHtml = buildPosterPreviewHtml(card);
+            if (!fallbackHtml) return;
+        }
         closePosterPreview();
 
-        var titleEl = card.querySelector('h4.font-semibold');
-        var title = titleEl ? titleEl.textContent.trim() : '海报预览';
+        var title = data.title || (card && card.querySelector('h4.font-semibold') ? card.querySelector('h4.font-semibold').textContent.trim() : '海报预览');
+
+        // 构建内容元素
+        var contentHtml = '';
+        if (data.image) {
+            contentHtml = '<img id="poster-preview-img" src="' + escapeHtml(data.image) + '" alt="' + escapeHtml(title) + '" class="block max-w-none select-none pointer-events-none" draggable="false">';
+        } else if (data.imageHtml) {
+            contentHtml = '<div id="poster-preview-content" class="select-none pointer-events-none">' + data.imageHtml + '</div>';
+        } else {
+            contentHtml = '<div id="poster-preview-content" class="select-none pointer-events-none">' + fallbackHtml + '</div>';
+        }
+
         var modal = document.createElement('div');
         modal.id = 'poster-preview-modal';
         modal.className = 'fixed inset-0 z-[10000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4';
         modal.innerHTML = [
-            '<div class="relative w-full max-w-[420px] max-h-[92vh] flex flex-col">',
-            '  <div class="flex items-center justify-between mb-3 text-white">',
-            '    <h3 class="font-semibold text-sm truncate pr-4">' + escapeHtml(title) + '</h3>',
-            '    <button type="button" id="poster-preview-close" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition" title="关闭"><i class="ph ph-x text-lg"></i></button>',
+            '  <div class="absolute top-4 right-4 flex items-center gap-2 z-10">',
+            '    <button type="button" id="pp-zoom-out" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition" title="缩小"><i class="ph ph-minus"></i></button>',
+            '    <span id="pp-zoom-label" class="text-white/80 text-xs w-12 text-center tabular-nums">100%</span>',
+            '    <button type="button" id="pp-zoom-in" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition" title="放大"><i class="ph ph-plus"></i></button>',
+            '    <button type="button" id="pp-reset" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition" title="重置"><i class="ph ph-arrows-clockwise"></i></button>',
+            '    <div class="w-px h-4 bg-white/20 mx-1"></div>',
+            '    <button type="button" id="poster-preview-close" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition" title="关闭"><i class="ph ph-x"></i></button>',
             '  </div>',
-            '  <div class="relative aspect-[3/4] w-full overflow-hidden rounded-xl">',
-            previewHtml,
+            '  <div id="pp-viewport" class="w-full h-full relative overflow-hidden cursor-grab active:cursor-grabbing">',
+            '    <div id="pp-transform-wrap" class="absolute top-1/2 left-1/2 origin-center transition-transform duration-100" style="will-change: transform;">',
+            '      ' + contentHtml,
+            '    </div>',
+            '  </div>'
+        ].join('');
+
+        document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
+
+        // ====== 缩放与拖拽逻辑 ======
+        var scale = 1;
+        var minScale = 0.2;
+        var maxScale = 8;
+        var tx = 0; // translateX (px)
+        var ty = 0; // translateY (px)
+        var isDragging = false;
+        var dragStartX = 0;
+        var dragStartY = 0;
+        var startTx = 0;
+        var startTy = 0;
+
+        var wrap = modal.querySelector('#pp-transform-wrap');
+        var viewport = modal.querySelector('#pp-viewport');
+        var zoomLabel = modal.querySelector('#pp-zoom-label');
+
+        function applyTransform(animate) {
+            wrap.style.transition = animate ? 'transform 0.2s ease-out' : 'none';
+            wrap.style.transform = 'translate(-50%, -50%) translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
+            zoomLabel.textContent = Math.round(scale * 100) + '%';
+        }
+
+        function setScale(newScale, animate) {
+            scale = Math.max(minScale, Math.min(maxScale, newScale));
+            applyTransform(animate);
+        }
+
+        function resetView() {
+            scale = 1;
+            tx = 0;
+            ty = 0;
+            applyTransform(true);
+        }
+
+        // 初始：根据图片实际尺寸自适应到适合视口大小
+        function fitToViewport() {
+            var img = modal.querySelector('#poster-preview-img');
+            var content = modal.querySelector('#poster-preview-content');
+            var naturalW = 0, naturalH = 0;
+
+            if (img) {
+                naturalW = img.naturalWidth || img.offsetWidth;
+                naturalH = img.naturalHeight || img.offsetHeight;
+            } else if (content) {
+                naturalW = content.offsetWidth;
+                naturalH = content.offsetHeight;
+            }
+
+            if (!naturalW || !naturalH) return;
+
+            var vw = viewport.clientWidth - 40;
+            var vh = viewport.clientHeight - 40;
+            var fit = Math.min(vw / naturalW, vh / naturalH, 1);
+            scale = fit < minScale ? minScale : fit;
+            // 设置内容原始尺寸
+            if (img) {
+                img.style.width = naturalW + 'px';
+                img.style.height = naturalH + 'px';
+            }
+            applyTransform(false);
+        }
+
+        // 等图片加载完成后再 fit
+        var imgEl = modal.querySelector('#poster-preview-img');
+        if (imgEl) {
+            if (imgEl.complete && imgEl.naturalWidth) {
+                fitToViewport();
+            } else {
+                imgEl.addEventListener('load', fitToViewport);
+                imgEl.addEventListener('error', function () { applyTransform(false); });
+            }
+        } else {
+            // HTML 内容，延迟一帧获取尺寸
+            requestAnimationFrame(fitToViewport);
+        }
+
+        // 滚轮缩放（以鼠标位置为缩放中心）
+        viewport.addEventListener('wheel', function (e) {
+            e.preventDefault();
+            var delta = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+            var newScale = Math.max(minScale, Math.min(maxScale, scale * delta));
+            if (newScale === scale) return;
+
+            // 以鼠标位置为锚点缩放
+            var rect = viewport.getBoundingClientRect();
+            var mx = e.clientX - rect.left - rect.width / 2;
+            var my = e.clientY - rect.top - rect.height / 2;
+            tx = mx - (mx - tx) * (newScale / scale);
+            ty = my - (my - ty) * (newScale / scale);
+            scale = newScale;
+            applyTransform(false);
+        }, { passive: false });
+
+        // 拖拽平移
+        viewport.addEventListener('mousedown', function (e) {
+            if (e.button !== 0) return;
+            isDragging = true;
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            startTx = tx;
+            startTy = ty;
+            viewport.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', onDragMove);
+        function onDragMove(e) {
+            if (!isDragging) return;
+            tx = startTx + (e.clientX - dragStartX);
+            ty = startTy + (e.clientY - dragStartY);
+            applyTransform(false);
+        }
+
+        document.addEventListener('mouseup', onDragEnd);
+        function onDragEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            viewport.style.cursor = 'grab';
+        }
+
+        // 触摸拖拽（移动端）
+        var touchStartX = 0, touchStartY = 0, touchStartTx = 0, touchStartStartTy = 0;
+        var lastTouchDist = 0;
+        viewport.addEventListener('touchstart', function (e) {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                touchStartTx = tx;
+                touchStartStartTy = ty;
+            } else if (e.touches.length === 2) {
+                lastTouchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
+        }, { passive: true });
+
+        viewport.addEventListener('touchmove', function (e) {
+            if (e.touches.length === 1) {
+                tx = touchStartTx + (e.touches[0].clientX - touchStartX);
+                ty = touchStartStartTy + (e.touches[0].clientY - touchStartY);
+                applyTransform(false);
+                e.preventDefault();
+            } else if (e.touches.length === 2) {
+                var dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                if (lastTouchDist > 0) {
+                    var ratio = dist / lastTouchDist;
+                    setScale(scale * ratio, false);
+                }
+                lastTouchDist = dist;
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // 按钮控制
+        modal.querySelector('#pp-zoom-in').addEventListener('click', function () { setScale(scale * 1.2, true); });
+        modal.querySelector('#pp-zoom-out').addEventListener('click', function () { setScale(scale / 1.2, true); });
+        modal.querySelector('#pp-reset').addEventListener('click', resetView);
+
+        // 关闭
+        modal.querySelector('#poster-preview-close').addEventListener('click', closePosterPreview);
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) closePosterPreview();
+        });
+
+        // 清理事件监听
+        var origClose = closePosterPreview;
+        modal._cleanup = function () {
+            document.removeEventListener('mousemove', onDragMove);
+            document.removeEventListener('mouseup', onDragEnd);
+        };
+    }
+
+    // ===================== API 调用 =====================
+
+    function api(url, options) {
+        options = options || {};
+        options.headers = options.headers || {};
+        if (options.body && typeof options.body !== 'string') {
+            options.headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify(options.body);
+        }
+        return fetch(url, options).then(function (r) { return r.json(); });
+    }
+
+    // ===================== Toast 提示 =====================
+
+    var toastTimer = null;
+    function showToast(msg) {
+        var existing = document.getElementById('poster-toast');
+        if (existing) existing.remove();
+        if (toastTimer) clearTimeout(toastTimer);
+        var toast = document.createElement('div');
+        toast.id = 'poster-toast';
+        toast.className = 'fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-[90]';
+        toast.innerHTML = '<i class="ph-fill ph-check-circle text-green-400"></i><span>' + escapeHtml(msg) + '</span>';
+        document.body.appendChild(toast);
+        requestAnimationFrame(function () {
+            toast.classList.remove('translate-y-10', 'opacity-0');
+        });
+        toastTimer = setTimeout(function () {
+            toast.classList.add('translate-y-10', 'opacity-0');
+            setTimeout(function () { toast.remove(); }, 300);
+        }, 2500);
+    }
+
+    // ===================== 从后端加载海报列表 =====================
+
+    function loadPosters() {
+        var grid = document.getElementById('posters-grid');
+        if (!grid) return;
+
+        grid.innerHTML = '<div class="col-span-full py-20 text-center text-gray-400"><i class="ph ph-spinner animate-spin text-2xl block mb-2"></i>加载中...</div>';
+
+        var params = new URLSearchParams();
+        if (state.platform) params.set('platform', state.platform);
+
+        api('/api/posters?' + params.toString()).then(function (res) {
+            if (window.__postersActiveInstance !== instanceId) return;
+            if (!res.success) {
+                grid.innerHTML = '<div class="col-span-full py-20 text-center text-red-400"><i class="ph ph-warning-circle text-2xl block mb-2"></i>加载失败</div>';
+                return;
+            }
+            state.posters = res.data || [];
+            renderPosters(state.posters);
+            updateTabCounts();
+        }).catch(function (err) {
+            console.error('[Posters] 加载失败:', err);
+            if (window.__postersActiveInstance !== instanceId) return;
+            grid.innerHTML = '<div class="col-span-full py-20 text-center text-red-400"><i class="ph ph-warning-circle text-2xl block mb-2"></i>加载失败，请检查后端服务是否启动</div>';
+        });
+    }
+
+    // ===================== 渲染海报列表 =====================
+
+    function renderPosters(list) {
+        var grid = document.getElementById('posters-grid');
+        if (!grid) return;
+        if (!list.length) {
+            grid.innerHTML = '<div class="col-span-full py-20 text-center text-gray-400"><i class="ph ph-image text-4xl block mb-3 text-gray-300"></i>暂无海报数据</div>';
+            return;
+        }
+        grid.innerHTML = list.map(function (p) {
+            return buildPosterCardHtml(p);
+        }).join('');
+        bindCardActions();
+    }
+
+    // ===================== 更新 Tab 计数 =====================
+
+    function updateTabCounts() {
+        var tabButtons = document.querySelectorAll('.flex.items-center.gap-4.border-b button');
+        if (!tabButtons.length) return;
+        var all = state.posters.length;
+        var labelCounts = {};
+        state.posters.forEach(function (p) {
+            var label = p.labelText || '其他';
+            labelCounts[label] = (labelCounts[label] || 0) + 1;
+        });
+        tabButtons.forEach(function (btn) {
+            var text = btn.textContent.trim();
+            var match = text.match(/^(.+?)\s*\(\d+\)$/);
+            var label = match ? match[1] : text;
+            var count = label === '全部海报' ? all : (labelCounts[label] || 0);
+            // 保留原始子元素结构（图标+文字），仅更新括号数字
+            var numSpan = btn.querySelector('.tab-count');
+            if (numSpan) {
+                numSpan.textContent = '(' + count + ')';
+            } else {
+                btn.innerHTML = btn.innerHTML.replace(/\(\d+\)/, '(' + count + ')');
+            }
+        });
+    }
+
+    // ===================== 卡片事件绑定（事件委托） =====================
+
+    function findPosterById(id) {
+        return state.posters.find(function (p) { return p.id === id; }) || null;
+    }
+
+    function bindCardActions() {
+        var cards = document.querySelectorAll('#posters-grid > div[data-poster-id]');
+        cards.forEach(function (card) {
+            var id = card.getAttribute('data-poster-id');
+            var poster = findPosterById(id) || {};
+
+            // 查看大图
+            var viewBtn = card.querySelector('.poster-view-btn');
+            if (viewBtn && !viewBtn.dataset.bound) {
+                viewBtn.dataset.bound = '1';
+                viewBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openPosterPreview(poster, card);
+                });
+            }
+
+            // 编辑信息
+            card.querySelectorAll('.poster-edit-btn').forEach(function (btn) {
+                if (btn.dataset.bound) return;
+                btn.dataset.bound = '1';
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.openPosterForm) window.openPosterForm(poster);
+                });
+            });
+
+            // 下载原图
+            card.querySelectorAll('.poster-download-btn').forEach(function (btn) {
+                if (btn.dataset.bound) return;
+                btn.dataset.bound = '1';
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (poster.image) {
+                        var link = document.createElement('a');
+                        link.href = poster.image;
+                        link.download = poster.title || 'poster';
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                    } else {
+                        showToast('该海报暂无图片文件');
+                    }
+                });
+            });
+
+            // 置顶
+            var pinBtn = card.querySelector('.poster-pin-btn');
+            if (pinBtn && !pinBtn.dataset.bound) {
+                pinBtn.dataset.bound = '1';
+                pinBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    pinPoster(id);
+                });
+            }
+
+            // 删除
+            var deleteBtn = card.querySelector('.poster-delete-btn');
+            if (deleteBtn && !deleteBtn.dataset.bound) {
+                deleteBtn.dataset.bound = '1';
+                deleteBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showDeleteConfirm(id, poster.title || '此海报');
+                });
+            }
+        });
+    }
+
+    // ===================== 置顶海报 =====================
+
+    function pinPoster(id) {
+        var maxSort = state.posters.reduce(function (max, p) {
+            return Math.max(max, p.sortOrder || 0);
+        }, 0);
+        api('/api/posters/' + encodeURIComponent(id), {
+            method: 'PUT',
+            body: { sortOrder: maxSort + 1 }
+        }).then(function (res) {
+            if (window.__postersActiveInstance !== instanceId) return;
+            if (res.success) {
+                showToast('已置顶');
+                loadPosters();
+            } else {
+                showToast('操作失败');
+            }
+        }).catch(function () {
+            if (window.__postersActiveInstance !== instanceId) return;
+            showToast('操作失败');
+        });
+    }
+
+    // ===================== 删除确认弹窗 =====================
+
+    function showDeleteConfirm(id, title) {
+        // 移除已有弹窗
+        var existing = document.getElementById('poster-delete-modal');
+        if (existing) existing.remove();
+
+        var modal = document.createElement('div');
+        modal.id = 'poster-delete-modal';
+        modal.className = 'fixed inset-0 z-[10001] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4';
+        modal.innerHTML = [
+            '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform transition-all">',
+            '  <div class="flex flex-col items-center text-center">',
+            '    <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4">',
+            '      <i class="ph ph-warning text-2xl text-red-500"></i>',
+            '    </div>',
+            '    <h3 class="font-semibold text-gray-800 mb-1">确认删除</h3>',
+            '    <p class="text-sm text-gray-500 mb-6">确定要删除「' + escapeHtml(title) + '」吗？此操作不可撤销。</p>',
+            '    <div class="flex gap-3 w-full">',
+            '      <button type="button" id="poster-delete-cancel" class="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition font-medium text-sm">取消</button>',
+            '      <button type="button" id="poster-delete-confirm-btn" class="flex-1 px-4 py-2.5 rounded-lg bg-red-500 hover:bg-red-600 text-white transition font-medium text-sm">删除</button>',
+            '    </div>',
             '  </div>',
             '</div>'
         ].join('');
 
-        modal.addEventListener('click', function (e) {
-            if (e.target === modal || e.target.closest('#poster-preview-close')) {
-                closePosterPreview();
-            }
-        });
         document.body.appendChild(modal);
-        document.body.style.overflow = 'hidden';
-    }
 
-    function escapeHtml(value) {
-        return String(value || '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
+        var cancelBtn = modal.querySelector('#poster-delete-cancel');
+        var confirmBtn = modal.querySelector('#poster-delete-confirm-btn');
 
-    /**
-     * 绑定所有卡片中的编辑按钮
-     */
-    function bindEditButtons() {
-        var cards = document.querySelectorAll('.grid > div.group');
-        cards.forEach(function (card) {
-            // 找到“编辑信息” / “继续编辑”按钮
-            var editBtns = card.querySelectorAll('button');
-            editBtns.forEach(function (btn) {
-                var text = btn.textContent.trim();
-                if (text === '编辑信息' || text === '继续编辑') {
-                    if (btn.dataset.posterBound) return;
-                    btn.dataset.posterBound = '1';
-                    btn.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        var data = extractCardData(card);
-                        editingCard = card;
-                        if (window.openPosterForm) {
-                            window.openPosterForm(data);
-                        }
-                    });
+        cancelBtn.addEventListener('click', function () { modal.remove(); });
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) modal.remove();
+        });
+
+        confirmBtn.addEventListener('click', function () {
+            confirmBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> 删除中...';
+            confirmBtn.disabled = true;
+            cancelBtn.disabled = true;
+
+            api('/api/posters/' + encodeURIComponent(id), { method: 'DELETE' }).then(function (res) {
+                if (window.__postersActiveInstance !== instanceId) return;
+                modal.remove();
+                if (res.success) {
+                    showToast('海报已删除');
+                    loadPosters();
+                } else {
+                    showToast('删除失败');
                 }
+            }).catch(function () {
+                if (window.__postersActiveInstance !== instanceId) return;
+                modal.remove();
+                showToast('删除失败');
             });
         });
     }
 
-    /**
-     * 绑定卡片右下角操作按钮：置顶 / 删除
-     */
-    function bindCardActionButtons() {
-        var cards = document.querySelectorAll('.grid > div.group');
-        cards.forEach(function (card) {
-            var pinBtn = card.querySelector('.poster-pin-btn');
-            var deleteBtn = card.querySelector('.poster-delete-btn');
-            var viewBtn = card.querySelector('.poster-view-btn');
+    // ===================== 平台筛选器 =====================
 
-            if (viewBtn && !viewBtn.dataset.posterBound) {
-                viewBtn.dataset.posterBound = '1';
-                viewBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openPosterPreview(card);
+    function bindPlatformFilters() {
+        var container = document.getElementById('platform-filters');
+        if (!container) return;
+        container.querySelectorAll('.pf-btn').forEach(function (btn) {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = '1';
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var platform = btn.getAttribute('data-filter-platform') || '';
+                state.platform = platform;
+
+                // 更新按钮样式
+                container.querySelectorAll('.pf-btn').forEach(function (b) {
+                    b.className = b.className
+                        .replace(/border-brand-500/g, 'border-gray-200')
+                        .replace(/bg-brand-50/g, 'bg-white')
+                        .replace(/text-brand-500/g, 'text-gray-400');
                 });
-            }
+                btn.classList.remove('border-gray-200', 'bg-white', 'text-gray-400');
+                btn.classList.add('border-brand-500', 'bg-brand-50', 'text-brand-500');
 
-            if (pinBtn && !pinBtn.dataset.posterBound) {
-                pinBtn.dataset.posterBound = '1';
-                pinBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    var grid = card.parentElement;
-                    if (!grid || grid.firstElementChild === card) return;
-
-                    grid.insertBefore(card, grid.firstElementChild);
-                    pinBtn.classList.remove('text-gray-400', 'border-gray-200');
-                    pinBtn.classList.add('text-brand-600', 'border-brand-200', 'bg-brand-50');
-                    pinBtn.title = '已置顶';
-                });
-            }
-
-            if (deleteBtn && !deleteBtn.dataset.posterBound) {
-                deleteBtn.dataset.posterBound = '1';
-                deleteBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    var titleEl = card.querySelector('h4.font-semibold');
-                    var title = titleEl ? titleEl.textContent.trim() : '这张海报';
-                    if (!window.confirm('确定删除“' + title + '”吗？')) return;
-                    card.remove();
-                });
-            }
+                loadPosters();
+            });
         });
     }
 
-    // 绑定上传按钮
+    // ===================== 上传按钮 =====================
+
     function bindUploadButton() {
         var btn = document.getElementById('btn-upload-poster');
-        if (btn && !btn.dataset.posterBound) {
-            btn.dataset.posterBound = '1';
+        if (btn && !btn.dataset.bound) {
+            btn.dataset.bound = '1';
             btn.addEventListener('click', function (e) {
                 e.preventDefault();
-                editingCard = null;
                 if (window.openPosterForm) window.openPosterForm();
             });
         }
     }
 
-    function bindPosterFormSubmit() {
-        if (window.__posterCardSubmitBound) return;
-        window.__posterCardSubmitBound = true;
-
-        window.addEventListener('poster-form:submit', function (e) {
-            var data = e.detail || {};
-            if (editingCard) {
-                updateCardFromData(editingCard, data);
-                editingCard = null;
-                return;
-            }
-
-            addPosterCard(data);
-        });
-    }
+    // ===================== 预览键盘 =====================
 
     function bindPreviewKeyboard() {
         if (window.__posterPreviewKeyboardBound) return;
         window.__posterPreviewKeyboardBound = true;
-
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closePosterPreview();
         });
-
         window.addEventListener('spa:cleanup-forms', closePosterPreview);
     }
 
-    // 初始化
-    function init() {
-        bindUploadButton();
-        bindEditButtons();
-        bindCardActionButtons();
-        bindPosterFormSubmit();
-        bindPreviewKeyboard();
+    // ===================== 表单保存回调 =====================
+
+    function bindFormSaved() {
+        if (window.__posterFormSavedBound) return;
+        window.__posterFormSavedBound = true;
+
+        window.addEventListener('poster-form:saved', function () {
+            if (window.__postersActiveInstance !== instanceId) return;
+            loadPosters();
+            showToast('海报保存成功');
+        });
     }
 
-    // DOMContentLoaded + SPA 切换后重新绑定
+    // ===================== 初始化筛选按钮图标 =====================
+
+    function initFilterIcons() {
+        document.querySelectorAll('img[data-platform-icon]').forEach(function (img) {
+            var platform = img.getAttribute('data-platform-icon');
+            if (img.src) return; // 已设置则跳过
+            img.src = svgIconUrl(platform);
+        });
+    }
+
+    // ===================== 初始化 =====================
+
+    function init() {
+        if (window.__postersActiveInstance !== instanceId) return;
+        if (!document.getElementById('posters-grid')) return;
+
+        initFilterIcons();
+        bindUploadButton();
+        bindPlatformFilters();
+        bindPreviewKeyboard();
+        bindFormSaved();
+        loadPosters();
+    }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
-    // SPA 切换时重新绑定（仅当前页面为海报页时执行）
+
     window.addEventListener('spa:ready', function (e) {
+        if (window.__postersActiveInstance !== instanceId) return;
         var page = (e.detail && e.detail.page) || '';
         if (page && page.indexOf('posters') === -1) return;
+        if (!document.getElementById('posters-grid')) return;
         init();
     });
 })();
