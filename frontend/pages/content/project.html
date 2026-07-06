@@ -2602,6 +2602,7 @@ break;
             function setDetailTab(target) {
                 var infoTab = drawer.querySelector('#pd-tab-info');
                 var filesTab = drawer.querySelector('#pd-tab-files');
+                var serverTab = drawer.querySelector('#pd-tab-server');
                 for (var j = 0; j < tabs.length; j++) {
                     var isActive = tabs[j].dataset.tab === target;
                     tabs[j].classList.toggle('border-brand-600', isActive);
@@ -2613,6 +2614,7 @@ break;
                 }
                 if (infoTab) infoTab.classList.toggle('hidden', target !== 'info');
                 if (filesTab) filesTab.classList.toggle('hidden', target !== 'files');
+                if (serverTab) serverTab.classList.toggle('hidden', target !== 'server');
             }
 
             // Tab 切换

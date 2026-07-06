@@ -243,7 +243,6 @@
     function openPosterPreview(poster, card) {
         var data = poster || {};
         if (!data.image && !data.imageHtml) {
-            // 无图片内容，使用旧的卡片克隆方式
             var fallbackHtml = buildPosterPreviewHtml(card);
             if (!fallbackHtml) return;
         }
@@ -261,23 +260,20 @@
             contentHtml = '<div id="poster-preview-content" class="select-none pointer-events-none">' + fallbackHtml + '</div>';
         }
 
+        // 根据海报比例确定容器尺寸
+        var ratio = data.ratio || '3/4';
+        var ratioClass = ratio === '1/1' ? 'aspect-square' : 'aspect-[3/4]';
+
         var modal = document.createElement('div');
         modal.id = 'poster-preview-modal';
-        modal.className = 'fixed inset-0 z-[10000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4';
+        modal.className = 'fixed inset-0 z-[10000] bg-black/30 flex items-center justify-center p-8';
         modal.innerHTML = [
-            '  <div class="absolute top-4 right-4 flex items-center gap-2 z-10">',
-            '    <button type="button" id="pp-zoom-out" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition" title="缩小"><i class="ph ph-minus"></i></button>',
-            '    <span id="pp-zoom-label" class="text-white/80 text-xs w-12 text-center tabular-nums">100%</span>',
-            '    <button type="button" id="pp-zoom-in" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition" title="放大"><i class="ph ph-plus"></i></button>',
-            '    <button type="button" id="pp-reset" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition" title="重置"><i class="ph ph-arrows-clockwise"></i></button>',
-            '    <div class="w-px h-4 bg-white/20 mx-1"></div>',
-            '    <button type="button" id="poster-preview-close" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition" title="关闭"><i class="ph ph-x"></i></button>',
+            '<div id="pp-viewport" class="relative h-[80vh] ' + ratioClass + ' max-w-full cursor-grab active:cursor-grabbing">',
+            '  <div id="pp-transform-wrap" class="absolute top-1/2 left-1/2 origin-center" style="will-change: transform;">',
+            '    ' + contentHtml,
             '  </div>',
-            '  <div id="pp-viewport" class="w-full h-full relative overflow-hidden cursor-grab active:cursor-grabbing">',
-            '    <div id="pp-transform-wrap" class="absolute top-1/2 left-1/2 origin-center transition-transform duration-100" style="will-change: transform;">',
-            '      ' + contentHtml,
-            '    </div>',
-            '  </div>'
+            '</div>',
+            '<span id="pp-zoom-label" class="fixed bottom-6 left-1/2 -translate-x-1/2 text-gray-700 text-xs font-medium bg-white/80 px-3 py-1 rounded-full pointer-events-none z-10">100%</span>'
         ].join('');
 
         document.body.appendChild(modal);
@@ -286,35 +282,23 @@
         // ====== 缩放与拖拽逻辑 ======
         var scale = 1;
         var minScale = 0.2;
-        var maxScale = 8;
-        var tx = 0; // translateX (px)
-        var ty = 0; // translateY (px)
+        var maxScale = 3;
+        var tx = 0;
+        var ty = 0;
         var isDragging = false;
         var dragStartX = 0;
         var dragStartY = 0;
         var startTx = 0;
         var startTy = 0;
 
-        var wrap = modal.querySelector('#pp-transform-wrap');
         var viewport = modal.querySelector('#pp-viewport');
+        var wrap = modal.querySelector('#pp-transform-wrap');
         var zoomLabel = modal.querySelector('#pp-zoom-label');
 
         function applyTransform(animate) {
             wrap.style.transition = animate ? 'transform 0.2s ease-out' : 'none';
             wrap.style.transform = 'translate(-50%, -50%) translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
             zoomLabel.textContent = Math.round(scale * 100) + '%';
-        }
-
-        function setScale(newScale, animate) {
-            scale = Math.max(minScale, Math.min(maxScale, newScale));
-            applyTransform(animate);
-        }
-
-        function resetView() {
-            scale = 1;
-            tx = 0;
-            ty = 0;
-            applyTransform(true);
         }
 
         // 初始：根据图片实际尺寸自适应到适合视口大小
@@ -333,11 +317,10 @@
 
             if (!naturalW || !naturalH) return;
 
-            var vw = viewport.clientWidth - 40;
-            var vh = viewport.clientHeight - 40;
+            var vw = viewport.clientWidth;
+            var vh = viewport.clientHeight;
             var fit = Math.min(vw / naturalW, vh / naturalH, 1);
             scale = fit < minScale ? minScale : fit;
-            // 设置内容原始尺寸
             if (img) {
                 img.style.width = naturalW + 'px';
                 img.style.height = naturalH + 'px';
@@ -345,7 +328,6 @@
             applyTransform(false);
         }
 
-        // 等图片加载完成后再 fit
         var imgEl = modal.querySelector('#poster-preview-img');
         if (imgEl) {
             if (imgEl.complete && imgEl.naturalWidth) {
@@ -355,7 +337,6 @@
                 imgEl.addEventListener('error', function () { applyTransform(false); });
             }
         } else {
-            // HTML 内容，延迟一帧获取尺寸
             requestAnimationFrame(fitToViewport);
         }
 
@@ -366,7 +347,6 @@
             var newScale = Math.max(minScale, Math.min(maxScale, scale * delta));
             if (newScale === scale) return;
 
-            // 以鼠标位置为锚点缩放
             var rect = viewport.getBoundingClientRect();
             var mx = e.clientX - rect.left - rect.width / 2;
             var my = e.clientY - rect.top - rect.height / 2;
@@ -403,7 +383,7 @@
             viewport.style.cursor = 'grab';
         }
 
-        // 触摸拖拽（移动端）
+        // 触摸支持
         var touchStartX = 0, touchStartY = 0, touchStartTx = 0, touchStartStartTy = 0;
         var lastTouchDist = 0;
         viewport.addEventListener('touchstart', function (e) {
@@ -432,27 +412,21 @@
                     e.touches[0].clientY - e.touches[1].clientY
                 );
                 if (lastTouchDist > 0) {
-                    var ratio = dist / lastTouchDist;
-                    setScale(scale * ratio, false);
+                    var newScale = Math.max(minScale, Math.min(maxScale, scale * (dist / lastTouchDist)));
+                    scale = newScale;
+                    applyTransform(false);
                 }
                 lastTouchDist = dist;
                 e.preventDefault();
             }
         }, { passive: false });
 
-        // 按钮控制
-        modal.querySelector('#pp-zoom-in').addEventListener('click', function () { setScale(scale * 1.2, true); });
-        modal.querySelector('#pp-zoom-out').addEventListener('click', function () { setScale(scale / 1.2, true); });
-        modal.querySelector('#pp-reset').addEventListener('click', resetView);
-
-        // 关闭
-        modal.querySelector('#poster-preview-close').addEventListener('click', closePosterPreview);
+        // 点击图片外区域关闭
         modal.addEventListener('click', function (e) {
             if (e.target === modal) closePosterPreview();
         });
 
-        // 清理事件监听
-        var origClose = closePosterPreview;
+        // 清理
         modal._cleanup = function () {
             document.removeEventListener('mousemove', onDragMove);
             document.removeEventListener('mouseup', onDragEnd);
