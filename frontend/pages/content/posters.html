@@ -38,12 +38,9 @@
                 
                 <!-- Filters & Tabs -->
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                    <!-- Tabs -->
-                    <div class="flex bg-gray-100/80 p-1 rounded-lg">
-                        <button class="px-4 py-1.5 bg-white shadow-sm rounded-md text-gray-800 text-sm font-medium transition-colors">全部海报 (24)</button>
-                        <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">引流主图 (8)</button>
-                        <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">爆款封面 (6)</button>
-                        <button class="px-4 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-sm font-medium transition-colors">服务清单 (5)</button>
+                    <!-- Tabs (Dynamic) -->
+                    <div id="poster-tabs" class="flex bg-gray-100/80 p-1 rounded-lg">
+                        <!-- Tabs rendered by JS -->
                     </div>
 
                     <div class="flex items-center gap-3">
@@ -84,7 +81,10 @@
     // 页面状态
     var state = {
         platform: '',   // 当前平台筛选
-        posters: []     // 当前页所有海报数据
+        label: '',      // 当前标签筛选
+        posters: [],    // 当前页所有海报数据（可能已筛选）
+        labels: [],     // 标签分类数据
+        total: 0        // 海报总数（不受 label 筛选影响）
     };
 
     // ===================== 工具函数 =====================
@@ -468,7 +468,7 @@
 
     // ===================== 从后端加载海报列表 =====================
 
-    function loadPosters() {
+    function loadPosters(initTabs) {
         var grid = document.getElementById('posters-grid');
         if (!grid) return;
 
@@ -476,6 +476,7 @@
 
         var params = new URLSearchParams();
         if (state.platform) params.set('platform', state.platform);
+        if (state.label) params.set('label', state.label);
 
         api('/api/posters?' + params.toString()).then(function (res) {
             if (window.__postersActiveInstance !== instanceId) return;
@@ -485,7 +486,10 @@
             }
             state.posters = res.data || [];
             renderPosters(state.posters);
-            updateTabCounts();
+            // 首次加载或需要刷新 tabs 时，从海报数据生成标签分类
+            if (initTabs) {
+                renderTabsFromPosters();
+            }
         }).catch(function (err) {
             console.error('[Posters] 加载失败:', err);
             if (window.__postersActiveInstance !== instanceId) return;
@@ -508,29 +512,77 @@
         bindCardActions();
     }
 
-    // ===================== 更新 Tab 计数 =====================
+    // ===================== 标签分类 Tabs =====================
 
-    function updateTabCounts() {
-        var tabButtons = document.querySelectorAll('.flex.items-center.gap-4.border-b button');
-        if (!tabButtons.length) return;
-        var all = state.posters.length;
-        var labelCounts = {};
-        state.posters.forEach(function (p) {
-            var label = p.labelText || '其他';
-            labelCounts[label] = (labelCounts[label] || 0) + 1;
-        });
-        tabButtons.forEach(function (btn) {
-            var text = btn.textContent.trim();
-            var match = text.match(/^(.+?)\s*\(\d+\)$/);
-            var label = match ? match[1] : text;
-            var count = label === '全部海报' ? all : (labelCounts[label] || 0);
-            // 保留原始子元素结构（图标+文字），仅更新括号数字
-            var numSpan = btn.querySelector('.tab-count');
-            if (numSpan) {
-                numSpan.textContent = '(' + count + ')';
-            } else {
-                btn.innerHTML = btn.innerHTML.replace(/\(\d+\)/, '(' + count + ')');
+    function loadLabels() {
+        var params = new URLSearchParams();
+        if (state.platform) params.set('platform', state.platform);
+
+        api('/api/posters/labels?' + params.toString()).then(function (res) {
+            if (window.__postersActiveInstance !== instanceId) return;
+            if (!res.success) return;
+            state.labels = res.data || [];
+            // 计算总数（所有标签计数之和）
+            state.total = state.labels.reduce(function (sum, l) { return sum + l.count; }, 0);
+            renderTabs();
+        }).catch(function (err) {
+            console.error('[Posters] 标签加载失败:', err);
+            // 后端不支持时，从海报数据兑底生成
+            if (state.posters.length) {
+                renderTabsFromPosters();
             }
+        });
+    }
+
+    // 兑底：从海报数据中生成标签统计
+    function renderTabsFromPosters() {
+        var labelMap = {};
+        state.posters.forEach(function (p) {
+            var label = p.labelText || '自定义标签';
+            if (!labelMap[label]) {
+                labelMap[label] = { label: label, count: 0, color: p.labelColor || '#10b981' };
+            }
+            labelMap[label].count++;
+        });
+        state.labels = Object.values(labelMap)
+            .sort(function (a, b) { return b.count - a.count; })
+            .slice(0, 7);
+        state.total = state.posters.length;
+        renderTabs();
+    }
+
+    function renderTabs() {
+        var container = document.getElementById('poster-tabs');
+        if (!container) return;
+
+        // 如果当前选中的标签不在列表中了，重置为空（全部）
+        if (state.label && !state.labels.some(function (l) { return l.label === state.label; })) {
+            state.label = '';
+        }
+
+        var html = '<button data-tab-label="" class="poster-tab px-4 py-1.5 ' + (state.label === '' ? 'bg-white shadow-sm text-gray-800' : 'text-gray-500 hover:text-gray-800') + ' rounded-md text-sm font-medium transition-colors">全部海报 (' + state.total + ')</button>';
+
+        state.labels.forEach(function (item) {
+            var active = state.label === item.label;
+            html += '<button data-tab-label="' + escapeHtml(item.label) + '" class="poster-tab px-4 py-1.5 ' + (active ? 'bg-white shadow-sm text-gray-800' : 'text-gray-500 hover:text-gray-800') + ' rounded-md text-sm font-medium transition-colors">' + escapeHtml(item.label) + ' (' + item.count + ')</button>';
+        });
+
+        container.innerHTML = html;
+        bindTabClicks();
+    }
+
+    function bindTabClicks() {
+        var container = document.getElementById('poster-tabs');
+        if (!container) return;
+        container.querySelectorAll('.poster-tab').forEach(function (btn) {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = '1';
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                state.label = btn.getAttribute('data-tab-label') || '';
+                renderTabs();
+                loadPosters();
+            });
         });
     }
 
@@ -716,7 +768,9 @@
                 btn.classList.remove('border-gray-200', 'bg-white', 'text-gray-400');
                 btn.classList.add('border-brand-500', 'bg-brand-50', 'text-brand-500');
 
-                loadPosters();
+                // 切换平台时重置标签筛选，重新加载海报并生成 tabs
+                state.label = '';
+                loadPosters(true);
             });
         });
     }
@@ -753,7 +807,9 @@
 
         window.addEventListener('poster-form:saved', function () {
             if (window.__postersActiveInstance !== instanceId) return;
-            loadPosters();
+            // 保存后重置标签筛选，重新加载全量数据并生成 tabs
+            state.label = '';
+            loadPosters(true);
             showToast('海报保存成功');
         });
     }
@@ -779,7 +835,8 @@
         bindPlatformFilters();
         bindPreviewKeyboard();
         bindFormSaved();
-        loadPosters();
+        // 先加载海报，成功后从海报数据生成 tabs
+        loadPosters(true);
     }
 
     if (document.readyState === 'loading') {

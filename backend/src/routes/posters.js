@@ -4,7 +4,8 @@
  * 字段来源：poster-form.js collectData()
  *
  * API：
- *   GET    /api/posters             - 查询列表（支持 platform/keyword 筛选）
+ *   GET    /api/posters             - 查询列表（支持 platform/keyword/label 筛选）
+ *   GET    /api/posters/labels      - 获取标签分类列表（上限7个）
  *   GET    /api/posters/:id         - 查询单条
  *   POST   /api/posters             - 新建
  *   PUT    /api/posters/:id         - 更新
@@ -54,14 +55,45 @@ router.post('/batch', resp.asyncHandler(function (req, res) {
     return resp.success(res, { removed: removed });
 }));
 
+// ========== 标签分类列表（上限7个，不含"全部海报"） ==========
+router.get('/labels', resp.asyncHandler(function (req, res) {
+    var all = posters.findAll();
+    var platform = req.query.platform;
+
+    if (platform) {
+        all = all.filter(function (p) { return p.platform === platform; });
+    }
+
+    // 统计每个 labelText 出现次数
+    var labelMap = {};
+    all.forEach(function (p) {
+        var label = p.labelText || '自定义标签';
+        if (!labelMap[label]) {
+            labelMap[label] = { label: label, count: 0, color: p.labelColor || '#10b981' };
+        }
+        labelMap[label].count++;
+    });
+
+    // 按数量降序排列，取前7个
+    var labels = Object.values(labelMap)
+        .sort(function (a, b) { return b.count - a.count; })
+        .slice(0, 7);
+
+    return resp.success(res, labels);
+}));
+
 // ========== 查询列表 ==========
 router.get('/', resp.asyncHandler(function (req, res) {
     var all = posters.findAll();
     var platform = req.query.platform;
+    var label = req.query.label;
     var keyword = req.query.keyword;
 
     if (platform) {
         all = all.filter(function (p) { return p.platform === platform; });
+    }
+    if (label) {
+        all = all.filter(function (p) { return (p.labelText || '自定义标签') === label; });
     }
     if (keyword) {
         var kw = keyword.toLowerCase();

@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'xiaohongshu.html': 'pages/platform/xiaohongshu.html',
         'douyin.html': 'pages/platform/douyin.html',
         'posters.html': 'pages/content/posters.html',
+        'canvas.html': 'pages/content/canvas.html',
         'stats.html': 'pages/content/stats.html',
         'project.html': 'pages/content/project.html',
         'resume.html': 'pages/personal/resume.html',
@@ -50,6 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </a>
                 <a href="${PB}${ROUTES['posters.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="posters.html">
                     <i class="ph ph-image text-lg mr-3 icon-base text-gray-500"></i>宣传海报
+                </a>
+                <a href="${PB}${ROUTES['canvas.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="canvas.html">
+                    <i class="ph ph-infinity text-lg mr-3 icon-base text-gray-500"></i>无限画布
                 </a>
                 
                 <!-- Expanded Menu: Platform Management -->

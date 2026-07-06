@@ -67,6 +67,11 @@
             secondaryAction: { label: '从模板创建', icon: 'ph ph-copy', variant: 'secondary' },
             action: { label: '上传海报', icon: 'ph ph-upload-simple', variant: 'primary' }
         },
+        'canvas.html': {
+            type: 'standard',
+            title: '无限画布',
+            subtitle: '创意节点、分支衍生与提示词沉淀'
+        },
         'stats.html': {
             type: 'standard',
             title: '数据统计',

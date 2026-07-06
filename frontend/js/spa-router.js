@@ -27,6 +27,7 @@
         'xiaohongshu.html': 'pages/platform/xiaohongshu.html',
         'douyin.html': 'pages/platform/douyin.html',
         'posters.html': 'pages/content/posters.html',
+        'canvas.html': 'pages/content/canvas.html',
         'stats.html': 'pages/content/stats.html',
         'project.html': 'pages/content/project.html',
         'resume.html': 'pages/personal/resume.html',
