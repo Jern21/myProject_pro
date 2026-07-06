@@ -861,7 +861,6 @@
             // 防重复绑定
             if (!navItems.length || navItems[0].dataset.navBound) return;
             navItems.forEach(function(item) {
-                item.dataset.navBound = '1';
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
                     navItems.forEach(function(n) { n.classList.remove('active'); });
@@ -883,6 +882,7 @@
                         }
                     }
                 });
+                item.dataset.navBound = '1'; // 标记放在绑定之后
             });
 
             // 滚动时自动高亮对应区块
@@ -910,7 +910,6 @@
         function initThemeSwitcher() {
             var themeCards = document.querySelectorAll('.theme-card');
             if (!themeCards.length || themeCards[0].dataset.themeBound) return;
-            themeCards[0].dataset.themeBound = '1';
 
             function updateUI(theme) {
                 themeCards.forEach(function(card) {
@@ -957,6 +956,9 @@
             window.addEventListener('themechange', function(e) {
                 updateUI(e.detail.theme);
             });
+
+            // 所有逻辑完成后才标记为已绑定（放在末尾确保异常时允许重试）
+            themeCards[0].dataset.themeBound = '1';
         }
 
         // ========== AI生图配置 ==========
