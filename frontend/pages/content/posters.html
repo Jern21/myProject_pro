@@ -733,7 +733,8 @@
                 modal.remove();
                 if (res.success) {
                     showToast('海报已删除');
-                    loadPosters();
+                    state.label = '';
+                    loadPosters(true);
                 } else {
                     showToast('删除失败');
                 }

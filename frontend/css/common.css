@@ -5,12 +5,10 @@
 
 /* ========== 基础重置 ========== */
 :root {
-    --table-head-column-odd-tint: rgba(15, 23, 42, 0.015);
-    --table-head-column-even-tint: rgba(99, 102, 241, 0.06);
-    --table-column-odd-tint: rgba(255, 255, 255, 0);
-    --table-column-even-tint: rgba(99, 102, 241, 0.035);
-    --table-column-hover-odd-tint: rgba(99, 102, 241, 0.055);
-    --table-column-hover-even-tint: rgba(99, 102, 241, 0.09);
+    --table-head-row-tint: rgba(15, 23, 42, 0.025);
+    --table-row-odd-tint: rgba(255, 255, 255, 0);
+    --table-row-even-tint: rgba(99, 102, 241, 0.035);
+    --table-row-hover-tint: rgba(99, 102, 241, 0.085);
 }
 
 body {
@@ -49,35 +47,25 @@ select {
     padding-right: 2rem !important;
 }
 
-/* ========== 表格单双列底色区分 ========== */
-table thead > tr > th:not([colspan]):nth-child(odd),
-table thead > tr > td:not([colspan]):nth-child(odd) {
-    background-image: linear-gradient(var(--table-head-column-odd-tint), var(--table-head-column-odd-tint)) !important;
+/* ========== 表格单双行底色区分 ========== */
+table thead > tr > th,
+table thead > tr > td {
+    background-image: linear-gradient(var(--table-head-row-tint), var(--table-head-row-tint)) !important;
 }
 
-table thead > tr > th:not([colspan]):nth-child(even),
-table thead > tr > td:not([colspan]):nth-child(even) {
-    background-image: linear-gradient(var(--table-head-column-even-tint), var(--table-head-column-even-tint)) !important;
+table tbody > tr:nth-child(odd) > th,
+table tbody > tr:nth-child(odd) > td {
+    background-image: linear-gradient(var(--table-row-odd-tint), var(--table-row-odd-tint)) !important;
 }
 
-table tbody > tr > th:not([colspan]):nth-child(odd),
-table tbody > tr > td:not([colspan]):nth-child(odd) {
-    background-image: linear-gradient(var(--table-column-odd-tint), var(--table-column-odd-tint)) !important;
+table tbody > tr:nth-child(even) > th,
+table tbody > tr:nth-child(even) > td {
+    background-image: linear-gradient(var(--table-row-even-tint), var(--table-row-even-tint)) !important;
 }
 
-table tbody > tr > th:not([colspan]):nth-child(even),
-table tbody > tr > td:not([colspan]):nth-child(even) {
-    background-image: linear-gradient(var(--table-column-even-tint), var(--table-column-even-tint)) !important;
-}
-
-table tbody > tr:hover > th:not([colspan]):nth-child(odd),
-table tbody > tr:hover > td:not([colspan]):nth-child(odd) {
-    background-image: linear-gradient(var(--table-column-hover-odd-tint), var(--table-column-hover-odd-tint)) !important;
-}
-
-table tbody > tr:hover > th:not([colspan]):nth-child(even),
-table tbody > tr:hover > td:not([colspan]):nth-child(even) {
-    background-image: linear-gradient(var(--table-column-hover-even-tint), var(--table-column-hover-even-tint)) !important;
+table tbody > tr:hover > th,
+table tbody > tr:hover > td {
+    background-image: linear-gradient(var(--table-row-hover-tint), var(--table-row-hover-tint)) !important;
 }
 
 /* ========== 通用组件类 ========== */

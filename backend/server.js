@@ -52,6 +52,7 @@ app.use('/api/resume', require('./src/routes/resume'));
 app.use('/api/upload', require('./src/routes/upload'));
 app.use('/api/settings', require('./src/routes/settings'));
 app.use('/api/stats', require('./src/routes/stats'));
+app.use('/api/image-gen', require('./src/routes/image-gen'));
 
 // API 健康检查
 app.get('/api/health', function (req, res) {

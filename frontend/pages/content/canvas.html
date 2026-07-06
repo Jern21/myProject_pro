@@ -35,6 +35,10 @@
                 #infinite-canvas-page .node-dragging {
                     cursor: grabbing;
                 }
+                #infinite-canvas-page .ic-terminal-shell:focus-within {
+                    border-color: rgba(99,102,241,0.38);
+                    box-shadow: 0 22px 60px -28px rgba(99,102,241,0.65), 0 0 26px rgba(56,189,248,0.16), 0 0 0 1px rgba(99,102,241,0.18);
+                }
                 @keyframes ic-dash {
                     to { stroke-dashoffset: -20; }
                 }
@@ -87,7 +91,7 @@
                 </div>
             </div>
 
-            <div id="float-terminal" class="absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-xl bg-white/90 border border-zinc-200/80 backdrop-blur-lg rounded-2xl px-3.5 py-3 shadow-xl z-30 transition-all duration-300 focus-within:border-zinc-300">
+            <div id="float-terminal" class="ic-terminal-shell absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-xl bg-white/90 border border-zinc-200/80 backdrop-blur-lg rounded-2xl px-3.5 py-3 shadow-xl z-30 transition-all duration-300 focus-within:border-indigo-300">
                 <div id="terminal-reference-info" class="hidden flex items-center justify-between bg-violet-50/70 text-violet-700 px-2.5 py-1.5 rounded-xl text-[10px] mb-2 border border-violet-100/60">
                     <span class="flex items-center gap-1.5 font-medium">
                         <i class="ph ph-git-branch text-violet-500"></i>
@@ -96,6 +100,14 @@
                     <button id="btn-clear-reference" type="button" class="text-violet-400 hover:text-violet-600 transition-colors">
                         <i class="ph-fill ph-x-circle text-xs"></i>
                     </button>
+                </div>
+
+                <div id="api-status-badge" class="hidden items-center justify-between bg-amber-50 text-amber-700 px-2.5 py-1.5 rounded-xl text-[10px] mb-2 border border-amber-100/60">
+                    <span class="flex items-center gap-1.5 font-medium">
+                        <i class="ph ph-warning-circle text-amber-500"></i>
+                        AI生图API未配置，当前生成为预览占位图
+                    </span>
+                    <button type="button" onclick="window.spaNavigate('settings.html')" class="text-amber-600 hover:text-amber-800 underline font-medium transition-colors">去配置</button>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -181,6 +193,54 @@
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
+    }
+
+    // ========== API 调用相关 ==========
+
+    function getApiBase() {
+        if (window.ROOT_URL) return window.ROOT_URL + 'api/image-gen';
+        var base = window.PAGE_BASE || '';
+        var url = window.location.href.split('#')[0].split('?')[0];
+        url = url.substring(0, url.lastIndexOf('/'));
+        if (base) {
+            var ups = (base.match(/\.\.\//g) || []).length;
+            for (var i = 0; i < ups; i++) url = url.substring(0, url.lastIndexOf('/'));
+        }
+        return url + '/api/image-gen';
+    }
+
+    // 检查 API 是否已配置，未配置时显示提示
+    function checkApiConfig() {
+        fetch(getApiBase() + '/config')
+            .then(function (r) { return r.json(); })
+            .then(function (result) {
+                if (result.success && result.data) {
+                    var configured = result.data.apiKeyConfigured && result.data.apiUrl;
+                    var badge = document.getElementById('api-status-badge');
+                    if (!configured && badge) {
+                        badge.classList.remove('hidden');
+                    } else if (configured && badge) {
+                        badge.classList.add('hidden');
+                    }
+                }
+            })
+            .catch(function () {});
+    }
+
+    // 调用后端 API 生成图片，返回 Promise<string(imageUrl)>
+    function generateImageViaApi(prompt, ratio) {
+        return fetch(getApiBase() + '/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: prompt, ratio: ratio })
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (result) {
+                if (result.success && result.data && result.data.imageUrl) {
+                    return result.data.imageUrl;
+                }
+                throw new Error(result.error || '生图失败');
+            });
     }
 
     function hashText(text) {
@@ -435,34 +495,80 @@
         promptInput.value = '';
         promptInput.style.height = 'auto';
 
-        setTimeout(function () {
-            if (!isActivePage()) return;
-            nodes = nodes.filter(function (n) { return n.id !== skeletonId; });
-            var newNodeId = 'node-' + Date.now();
-            nodes.push({
-                id: newNodeId,
-                parentId: selectedParentId,
-                rawPrompt: rawPrompt,
-                fullPrompt: finalPrompt,
-                imageUrl: createMockImage(finalPrompt, selectedAspectRatio),
-                aspectRatio: selectedAspectRatio,
-                x: coordinates.x,
-                y: coordinates.y,
-                isSkeleton: false
+        // 调用后端 API 生成图片
+        generateImageViaApi(finalPrompt, selectedAspectRatio)
+            .then(function (imageUrl) {
+                if (!isActivePage()) return;
+                nodes = nodes.filter(function (n) { return n.id !== skeletonId; });
+                var newNodeId = 'node-' + Date.now();
+                nodes.push({
+                    id: newNodeId,
+                    parentId: selectedParentId,
+                    rawPrompt: rawPrompt,
+                    fullPrompt: finalPrompt,
+                    imageUrl: imageUrl,
+                    aspectRatio: selectedAspectRatio,
+                    x: coordinates.x,
+                    y: coordinates.y,
+                    isSkeleton: false
+                });
+                selectedParentId = null;
+                terminalRefInfo.classList.add('hidden');
+                renderNodes();
+                showToast('新创意画面已投放到画布', 'success');
+            })
+            .catch(function (err) {
+                if (!isActivePage()) return;
+                // 移除骨架节点
+                nodes = nodes.filter(function (n) { return n.id !== skeletonId; });
+                renderNodes();
+                var errMsg = err && err.message ? err.message : '生图失败';
+                // 如果后端未配置 API，回退到 mock 预览图并提示
+                if (errMsg.indexOf('未配置') !== -1 || errMsg.indexOf('设置中心') !== -1) {
+                    var fallbackId = 'node-' + Date.now();
+                    nodes.push({
+                        id: fallbackId,
+                        parentId: selectedParentId,
+                        rawPrompt: rawPrompt,
+                        fullPrompt: finalPrompt,
+                        imageUrl: createMockImage(finalPrompt, selectedAspectRatio),
+                        aspectRatio: selectedAspectRatio,
+                        x: coordinates.x,
+                        y: coordinates.y,
+                        isSkeleton: false
+                    });
+                    selectedParentId = null;
+                    terminalRefInfo.classList.add('hidden');
+                    renderNodes();
+                    showToast('API未配置，已生成预览占位图。请在「设置中心→AI生图配置」中配置', 'info');
+                } else {
+                    showToast(errMsg, 'error');
+                }
             });
-            selectedParentId = null;
-            terminalRefInfo.classList.add('hidden');
-            renderNodes();
-            showToast('新创意画面已投放到画布', 'success');
-        }, 720);
     }
 
     function downloadImageNode(nodeId) {
         var node = nodes.find(function (n) { return n.id === nodeId; });
         if (!node || !node.imageUrl) return;
+        var imageUrl = node.imageUrl;
+
+        // data URI 直接下载
+        if (imageUrl.indexOf('data:') === 0) {
+            var link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = 'Canvas_Node_' + Date.now() + '.svg';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            showToast('图像已开始下载', 'success');
+            return;
+        }
+
+        // 远程 URL：通过后端代理下载，避免 CORS
+        var proxyUrl = getApiBase() + '/proxy?url=' + encodeURIComponent(imageUrl);
         var link = document.createElement('a');
-        link.href = node.imageUrl;
-        link.download = 'Canvas_Node_' + Date.now() + '.svg';
+        link.href = proxyUrl;
+        link.download = 'Canvas_Node_' + Date.now() + '.png';
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -622,6 +728,7 @@
     setupCanvasInteraction();
     renderNodes();
     syncViewportMatrix();
+    checkApiConfig();
 })();
 </script>
 </body>
