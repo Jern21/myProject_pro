@@ -19,3 +19,6 @@ desktop.ini
 .env
 .env.local
 .env.*.local
+
+# ============ 工作文档 ============
+工作内容.md

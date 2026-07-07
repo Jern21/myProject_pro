@@ -42,7 +42,7 @@
                 <!-- ========== 企业项目 ========== -->
                 <div id="scope-enterprise-content">
                 <!-- Summary Cards -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+                <div id="ent-summary" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
                     <!-- Card 1 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-4 shadow-soft relative overflow-hidden">
                         <p class="text-gray-500 text-xs">全部项目</p>
@@ -491,7 +491,7 @@
                                         <th class="py-3 px-2 font-medium text-center w-[70px]">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody class="text-gray-800 text-sm">
+                                <tbody id="ent-list-tbody" class="text-gray-800 text-sm">
                                     <!-- 待确认需求 -->
                                     <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">
                                         <td class="py-3 px-4">
@@ -724,7 +724,7 @@
                 <!-- ========== 个人项目 ========== -->
                 <div id="scope-personal-content" class="hidden">
                     <!-- Personal Summary Cards -->
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+                    <div id="per-summary" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
                         <div class="rounded-xl border border-gray-100 bg-white p-4 shadow-soft relative overflow-hidden">
                             <p class="text-gray-500 text-xs">全部项目</p>
                             <h3 class="text-2xl font-bold text-gray-800 mt-1 mb-0.5">10</h3>
@@ -1093,14 +1093,14 @@
                                             <th class="py-3 px-2 font-medium w-[100px]">状态</th>
                                             <th class="py-3 px-2 font-medium w-[80px]">优先级</th>
                                             <th class="py-3 px-2 font-medium w-[90px]">项目类型</th>
-                                            <th class="py-3 px-2 font-medium w-[80px]">归属</th>
-                                            <th class="py-3 px-2 font-medium w-[90px]">金额</th>
-                                            <th class="py-3 px-2 font-medium">进度</th>
-                                            <th class="py-3 px-2 font-medium w-[90px]">截止/完成</th>
-                                            <th class="py-3 px-2 font-medium text-center w-[70px]">操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-gray-800 text-sm">
+                                        <th class="py-3 px-2 font-medium w-[80px]">归属</th>
+                                        <th class="py-3 px-2 font-medium w-[90px]">金额</th>
+                                        <th class="py-3 px-2 font-medium">进度</th>
+                                        <th class="py-3 px-2 font-medium w-[90px]">截止/完成</th>
+                                        <th class="py-3 px-2 font-medium text-center w-[70px]">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="per-list-tbody" class="text-gray-800 text-sm">
                                         <!-- 待确认需求 -->
                                         <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">
                                             <td class="py-3 px-4">
@@ -1595,32 +1595,363 @@
             }
         }
 
-        // ========== 项目数据存储（模拟数据库） ==========
-        var PROJECT_DATA = {
-            '电商平台重构': { code: '', status: '待确认需求', priority: '高', type: '网站开发', scope: 'enterprise', deadline: '2025-07-05', amount: '', progress: 0, desc: '基于Vue3+Spring Boot的电商平台全面重构', customer: '刘总', tags: '', notes: '', localPath: 'D:\\Projects\\电商平台重构', cloudEnabled: true, cloudPath: 'https://pan.baidu.com/s/1a2b3c4d', cloudType: 'baidu' },
-            '企业APP UI设计': { code: '', status: '待确认需求', priority: '中', type: 'UI/设计', scope: 'enterprise', deadline: '2025-07-08', amount: '', progress: 0, desc: '设计企业内部管理APP的UI界面', customer: '陈女士', tags: '', notes: '', localPath: 'D:\\Designs\\企业APP-UI', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            '企业官网定制开发': { code: 'DD20250703001', status: '开发/设计中', priority: '高', type: '网站开发', scope: 'enterprise', deadline: '2025-07-13', amount: '6800', progress: 65, desc: '企业官网定制开发', customer: '张先生', tags: '长期合作', notes: '客户要求响应式设计', localPath: 'D:\\Projects\\企业官网', cloudEnabled: true, cloudPath: 'git@github.com:user/enterprise-website.git', cloudType: 'github' },
-            '小程序功能开发': { code: 'DD20250702013', status: '开发/设计中', priority: '高', type: '小程序', scope: 'enterprise', deadline: '2025-07-17', amount: '8500', progress: 40, desc: '小程序功能开发', customer: '赵先生', tags: '', notes: '', localPath: 'D:\\Projects\\小程序开发', cloudEnabled: true, cloudPath: 'https://gitee.com/user/mini-program.git', cloudType: 'gitee' },
-            '后台管理系统开发': { code: 'DD20250630011', status: '开发/设计中', priority: '中', type: '网站开发', scope: 'enterprise', deadline: '2025-07-03', amount: '12000', progress: 80, desc: '后台管理系统开发', customer: '刘总', tags: '紧急', notes: '已逾期，需加快进度', localPath: 'D:\\Projects\\后台管理系统', cloudEnabled: true, cloudPath: 'https://pan.aliyun.com/s/abc123', cloudType: 'aliyun' },
-            '海报设计批量制作': { code: 'DD20250702015', status: '开发/设计中', priority: '低', type: '平面设计', scope: 'enterprise', deadline: '2025-07-07', amount: '980', progress: 30, desc: '海报设计批量制作', customer: '李女士', tags: '', notes: '', localPath: 'D:\\Designs\\海报批量', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            '小红书推广设计': { code: 'DD20250702015', status: '待验收', priority: '中', type: 'UI/设计', scope: 'enterprise', deadline: '', amount: '980', progress: 100, desc: '小红书推广设计', customer: '李女士', tags: '', notes: '', localPath: 'D:\\Designs\\小红书推广', cloudEnabled: true, cloudPath: 'https://pan.baidu.com/s/xyz789', cloudType: 'baidu' },
-            'Logo设计': { code: 'DD20250629010', status: '待验收', priority: '低', type: 'UI/设计', scope: 'enterprise', deadline: '', amount: '300', progress: 100, desc: 'Logo设计', customer: '孙女士', tags: '', notes: '', localPath: 'D:\\Designs\\Logo设计', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            '抖音短视频剪辑': { code: 'DD20250702014', status: '已完成', priority: '', type: '视频剪辑', scope: 'enterprise', deadline: '', amount: '1250', progress: 100, desc: '抖音短视频剪辑', customer: '王同学', tags: '', notes: '', localPath: 'D:\\Videos\\抖音剪辑', cloudEnabled: true, cloudPath: 'https://1drv.ms/u/s!abc', cloudType: 'onedrive' },
-            '宣传海报设计': { code: 'DD20250701012', status: '已完成', priority: '', type: '平面设计', scope: 'enterprise', deadline: '', amount: '580', progress: 100, desc: '宣传海报设计', customer: '陈女士', tags: '', notes: '', localPath: 'D:\\Designs\\宣传海报', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            'PPT美化设计': { code: 'DD20250628009', status: '已完成', priority: '', type: '平面设计', scope: 'enterprise', deadline: '', amount: '450', progress: 100, desc: 'PPT美化设计', customer: '周先生', tags: '', notes: '', localPath: 'D:\\Designs\\PPT美化', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            '旧版网站改版': { code: 'DD20250620005', status: '已关闭', priority: '', type: '网站开发', scope: 'enterprise', deadline: '', amount: '2000', progress: 100, desc: '旧版网站改版', customer: '吴先生', tags: '', notes: '项目已关闭', localPath: 'D:\\Projects\\旧版网站改版', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            // 个人项目
-            '个人博客重构': { code: 'GR20250704001', status: '待确认需求', priority: '高', type: '网站开发', scope: 'personal', deadline: '2025-07-10', amount: '', progress: 0, desc: '基于Next.js重构个人技术博客', customer: '个人', tags: '', notes: '', localPath: 'D:\\Personal\\博客重构', cloudEnabled: true, cloudPath: 'git@github.com:user/blog.git', cloudType: 'github' },
-            '学习计划制定': { code: 'GR20250703002', status: '待确认需求', priority: '中', type: '其他', scope: 'personal', deadline: '2025-07-12', amount: '', progress: 0, desc: '制定下半年技术学习路线图', customer: '个人', tags: '', notes: '', localPath: '', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            '个人作品集网站': { code: 'GR20250704001', status: '开发/设计中', priority: '高', type: '网站开发', scope: 'personal', deadline: '2025-07-10', amount: '', progress: 50, desc: '个人作品集网站', customer: '个人', tags: '', notes: '', localPath: 'D:\\Personal\\作品集', cloudEnabled: true, cloudPath: 'https://github.com/user/portfolio', cloudType: 'github' },
-            '技术博客撰写': { code: 'GR20250703002', status: '开发/设计中', priority: '中', type: '内容创作', scope: 'personal', deadline: '2025-07-15', amount: '', progress: 30, desc: '技术博客撰写', customer: '个人', tags: '', notes: '', localPath: '', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            '开源工具开发': { code: 'GR20250702003', status: '开发/设计中', priority: '低', type: '其他', scope: 'personal', deadline: '2025-07-04', amount: '', progress: 20, desc: '开源工具开发', customer: '个人', tags: '', notes: '已逾期', localPath: 'D:\\Personal\\开源工具', cloudEnabled: true, cloudPath: 'git@github.com:user/open-tool.git', cloudType: 'github' },
-            '简历优化设计': { code: 'GR20250701004', status: '待验收', priority: '中', type: 'UI/设计', scope: 'personal', deadline: '', amount: '', progress: 100, desc: '简历优化设计', customer: '个人', tags: '', notes: '', localPath: 'D:\\Personal\\简历设计', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            '个人介绍PPT': { code: 'GR20250630005', status: '待验收', priority: '低', type: '平面设计', scope: 'personal', deadline: '', amount: '', progress: 100, desc: '个人介绍PPT', customer: '个人', tags: '', notes: '', localPath: 'D:\\Personal\\介绍PPT', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            'GitHub主页美化': { code: 'GR20250628006', status: '已完成', priority: '', type: '网站开发', scope: 'personal', deadline: '', amount: '', progress: 100, desc: 'GitHub主页美化', customer: '个人', tags: '', notes: '', localPath: '', cloudEnabled: true, cloudPath: 'https://github.com/user', cloudType: 'github' },
-            '读书笔记整理': { code: 'GR20250625007', status: '已完成', priority: '', type: '内容创作', scope: 'personal', deadline: '', amount: '', progress: 100, desc: '读书笔记整理', customer: '个人', tags: '', notes: '', localPath: 'D:\\Personal\\读书笔记', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' },
-            '旧版个人网站': { code: 'GR20250620008', status: '已关闭', priority: '', type: '网站开发', scope: 'personal', deadline: '', amount: '', progress: 100, desc: '旧版个人网站', customer: '个人', tags: '', notes: '已关闭', localPath: 'D:\\Personal\\旧版网站', cloudEnabled: false, cloudPath: '', cloudType: 'baidu' }
+        // ========== 项目数据（从后端 API 加载） ==========
+        var projectCache = [];
+        var projectMap = {};
+
+        // 看板列配置
+        var KANBAN_COLUMNS = [
+            { key: '待确认需求', dotClass: 'bg-gray-400', colClass: 'bg-gray-50', headerBorder: 'border-gray-100' },
+            { key: '开发/设计中', dotClass: 'bg-green-500', colClass: 'bg-green-50/30', headerBorder: 'border-green-100/50' },
+            { key: '待验收', dotClass: 'bg-orange-500', colClass: 'bg-orange-50/30', headerBorder: 'border-orange-100/50' },
+            { key: '已完成', dotClass: 'bg-purple-500', colClass: 'bg-purple-50/30', headerBorder: 'border-purple-100/50' },
+            { key: '已关闭', dotClass: 'bg-gray-400', colClass: 'bg-gray-50', headerBorder: 'border-gray-100' }
+        ];
+
+        // 类型标签样式映射
+        var TYPE_TAG_STYLES = {
+            '网站开发': 'bg-blue-50 text-blue-600 border-blue-100',
+            '小程序': 'bg-cyan-50 text-cyan-600 border-cyan-100',
+            'UI/设计': 'bg-purple-50 text-purple-600 border-purple-100',
+            '平面设计': 'bg-orange-50 text-orange-600 border-orange-100',
+            '视频剪辑': 'bg-gray-100 text-gray-600 border-gray-200',
+            '内容创作': 'bg-green-50 text-green-600 border-green-100',
+            '其他': 'bg-gray-100 text-gray-600 border-gray-200'
         };
+
+        // 优先级样式映射
+        var PRIORITY_STYLES = {
+            '高': { badge: 'text-red-600 bg-red-50 border-red-100', label: '高优先级' },
+            '中': { badge: 'text-yellow-600 bg-yellow-50 border-yellow-100', label: '中优先级' },
+            '低': { badge: 'text-gray-500 bg-gray-50 border-gray-200', label: '低优先级' }
+        };
+
+        // 状态样式映射（列表视图）
+        var STATUS_BADGE_STYLES = {
+            '待确认需求': 'text-gray-600 bg-gray-50 border-gray-200',
+            '开发/设计中': 'text-green-600 bg-green-50 border-green-100',
+            '待验收': 'text-orange-600 bg-orange-50 border-orange-100',
+            '已完成': 'text-purple-600 bg-purple-50 border-purple-100',
+            '已关闭': 'text-gray-500 bg-gray-100 border-gray-200'
+        };
+
+        // 状态圆点颜色（列表视图）
+        var STATUS_DOT_STYLES = {
+            '待确认需求': 'bg-gray-400',
+            '开发/设计中': 'bg-green-500',
+            '待验收': 'bg-orange-500',
+            '已完成': 'bg-purple-500',
+            '已关闭': 'bg-gray-400'
+        };
+
+        // 进度条颜色
+        var PROGRESS_BAR_STYLES = {
+            '待确认需求': 'bg-gray-300',
+            '开发/设计中': 'bg-brand-500',
+            '待验收': 'bg-green-500',
+            '已完成': 'bg-green-500',
+            '已关闭': 'bg-gray-300'
+        };
+
+        // 头像背景色池
+        var AVATAR_COLORS = [
+            { bg: 'bfdbfe', color: '1d4ed8' },
+            { bg: 'd1fae5', color: '047857' },
+            { bg: 'fef3c7', color: '92400e' },
+            { bg: 'fecaca', color: 'b91c1c' },
+            { bg: 'e0e7ff', color: '4338ca' },
+            { bg: 'fde68a', color: 'b45309' },
+            { bg: 'f3f4f6', color: '6b7280' }
+        ];
+
+        function getAvatarUrl(name) {
+            var ch = (name || '?').charAt(0);
+            var hash = 0;
+            for (var i = 0; i < (name || '').length; i++) { hash = ((hash << 5) - hash + name.charCodeAt(i)) | 0; }
+            var c = AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+            return 'https://ui-avatars.com/api/?name=' + encodeURIComponent(ch) + '&background=' + c.bg + '&color=' + c.color;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function formatAmount(amount) {
+            if (!amount) return '—';
+            return '¥' + Number(amount).toLocaleString();
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '—';
+            var parts = dateStr.split('-');
+            if (parts.length >= 2) return parts[1] + '-' + parts[2];
+            return dateStr;
+        }
+
+        function daysUntil(dateStr) {
+            if (!dateStr) return null;
+            var target = new Date(dateStr);
+            var now = new Date();
+            now.setHours(0, 0, 0, 0);
+            target.setHours(0, 0, 0, 0);
+            return Math.ceil((target - now) / 86400000);
+        }
+
+        // ========== API 调用 ==========
+        function loadProjects() {
+            return fetch('/api/projects').then(function (r) { return r.json(); }).then(function (res) {
+                if (!res.success) { console.error('[Project] 加载失败:', res.error); return; }
+                projectCache = res.data || [];
+                projectMap = {};
+                projectCache.forEach(function (p) {
+                    // 兼容 description / desc 字段
+                    if (!p.desc) p.desc = p.description || '';
+                    if (!p.nginxConfigs) p.nginxConfigs = [];
+                    projectMap[p.name] = p;
+                });
+                renderAll();
+            }).catch(function (err) {
+                console.error('[Project] 加载失败:', err);
+            });
+        }
+
+        function saveProjectToAPI(data, isEdit, editId) {
+            var url = '/api/projects';
+            var method = 'POST';
+            if (isEdit && editId) {
+                url = '/api/projects/' + encodeURIComponent(editId);
+                method = 'PUT';
+            }
+            return fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(function (r) { return r.json(); });
+        }
+
+        function moveProjectToAPI(id, newStatus) {
+            return fetch('/api/projects/' + encodeURIComponent(id), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            }).then(function (r) { return r.json(); });
+        }
+
+        // ========== 渲染：摘要卡片 ==========
+        function renderSummary(scope) {
+            var containerId = scope === 'personal' ? 'per-summary' : 'ent-summary';
+            var container = document.getElementById(containerId);
+            if (!container) return;
+
+            var items = projectCache.filter(function (p) { return p.scope === scope; });
+            var today = new Date().toISOString().slice(0, 10);
+            var total = items.length;
+            var inProgress = items.filter(function (p) { return p.status === '开发/设计中'; }).length;
+            var review = items.filter(function (p) { return p.status === '待验收'; }).length;
+            var completed = items.filter(function (p) { return p.status === '已完成'; }).length;
+            var overdue = items.filter(function (p) {
+                return p.deadline && p.deadline < today && p.status !== '已完成' && p.status !== '已关闭';
+            }).length;
+
+            var cards = [
+                { label: '全部项目', value: total, sub: '', icon: 'ph-fill ph-kanban', iconBg: 'bg-blue-50 text-blue-500' },
+                { label: '进行中', value: inProgress, sub: total ? '占比 ' + Math.round(inProgress / total * 100) + '%' : '', icon: 'ph-fill ph-arrows-clockwise', iconBg: 'bg-green-50 text-green-500' },
+                { label: '待验收', value: review, sub: total ? '占比 ' + Math.round(review / total * 100) + '%' : '', icon: 'ph-fill ph-hourglass-high', iconBg: 'bg-orange-50 text-orange-500' },
+                { label: '已完成', value: completed, sub: total ? '占比 ' + Math.round(completed / total * 100) + '%' : '', icon: 'ph-fill ph-check-circle', iconBg: 'bg-purple-50 text-purple-500' }
+            ];
+
+            var html = cards.map(function (c) {
+                return '<div class="rounded-xl border border-gray-100 bg-white p-4 shadow-soft relative overflow-hidden">' +
+                    '<p class="text-gray-500 text-xs">' + c.label + '</p>' +
+                    '<h3 class="text-2xl font-bold text-gray-800 mt-1 mb-0.5">' + c.value + '</h3>' +
+                    '<p class="text-[10px] text-gray-400">' + c.sub + '</p>' +
+                    '<div class="absolute right-3 top-3 w-9 h-9 rounded-lg ' + c.iconBg + ' flex items-center justify-center">' +
+                    '<i class="' + c.icon + ' text-lg"></i></div></div>';
+            }).join('');
+
+            // 逾期卡片
+            html += '<div class="rounded-xl border border-red-100 bg-red-50/30 p-4 shadow-soft relative overflow-hidden">' +
+                '<p class="text-red-500 text-xs">已逾期</p>' +
+                '<h3 class="text-2xl font-bold text-red-600 mt-1 mb-0.5">' + overdue + '</h3>' +
+                '<p class="text-[10px] text-red-400">需及时处理</p>' +
+                '<div class="absolute right-3 top-3 w-9 h-9 rounded-lg bg-red-100 text-red-500 flex items-center justify-center">' +
+                '<i class="ph-fill ph-warning text-lg"></i></div></div>';
+
+            container.innerHTML = html;
+        }
+
+        // ========== 渲染：看板视图 ==========
+        function renderKanban(scope) {
+            var kanbanId = scope === 'personal' ? 'p-kanban-view' : 'kanban-view';
+            var kanban = document.getElementById(kanbanId);
+            if (!kanban) return;
+
+            var items = projectCache.filter(function (p) { return p.scope === scope; });
+
+            var html = KANBAN_COLUMNS.map(function (col) {
+                var colItems = items.filter(function (p) { return p.status === col.key; });
+                var cardsHtml = colItems.map(function (p) { return buildKanbanCard(p); }).join('');
+                return '<div class="flex-shrink-0 w-72 ' + col.colClass + ' rounded-xl border border-gray-100 flex flex-col max-h-[calc(100vh-260px)]">' +
+                    '<div class="p-4 border-b ' + col.headerBorder + ' flex items-center justify-between">' +
+                    '<div class="flex items-center gap-2">' +
+                    '<span class="w-2 h-2 rounded-full ' + col.dotClass + '"></span>' +
+                    '<h3 class="font-semibold ' + (col.key === '已关闭' ? 'text-gray-500' : 'text-gray-700') + ' text-sm">' + col.key + '</h3>' +
+                    '</div>' +
+                    '<span class="text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border border-gray-200">' + colItems.length + '</span>' +
+                    '</div>' +
+                    '<div class="flex-1 overflow-y-auto p-3 space-y-3">' +
+                    cardsHtml +
+                    '<button class="w-full py-2.5 border border-dashed border-gray-300 text-gray-400 rounded-lg hover:text-brand-600 hover:border-brand-400 transition-colors text-xs flex items-center justify-center gap-1" onclick="window.openEditForm(null)">' +
+                    '<i class="ph ph-plus"></i> 添加项目</button>' +
+                    '</div></div>';
+            }).join('');
+
+            kanban.innerHTML = html;
+        }
+
+        function buildKanbanCard(p) {
+            var priStyle = PRIORITY_STYLES[p.priority];
+            var typeStyle = TYPE_TAG_STYLES[p.type] || TYPE_TAG_STYLES['其他'];
+            var isCompleted = p.status === '已完成';
+            var isClosed = p.status === '已关闭';
+            var opacityClass = isCompleted ? ' opacity-90' : (isClosed ? ' opacity-70' : '');
+            var titleColor = isClosed ? 'text-gray-600' : 'text-gray-800';
+
+            // 优先级徽章
+            var badgeHtml = '';
+            if (isCompleted) {
+                badgeHtml = '<span class="text-[10px] text-green-600 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5"><i class="ph ph-check"></i> 已交付</span>';
+            } else if (isClosed) {
+                badgeHtml = '<span class="text-[10px] text-gray-500 bg-gray-100 border border-gray-200 px-1.5 py-0.5 rounded font-medium">已关闭</span>';
+            } else if (priStyle) {
+                badgeHtml = '<span class="text-[10px] ' + priStyle.badge + ' border px-1.5 py-0.5 rounded font-medium">' + priStyle.label + '</span>';
+            }
+
+            // 副标题行
+            var subtitle = '';
+            if (p.status === '开发/设计中' || p.status === '待验收') {
+                var parts = [];
+                if (p.code) parts.push(p.code);
+                if (p.amount) parts.push(formatAmount(p.amount));
+                subtitle = parts.join(' · ');
+            } else {
+                subtitle = p.description || '';
+            }
+
+            // 进度条（仅开发中/待验收显示）
+            var progressHtml = '';
+            if ((p.status === '开发/设计中' || p.status === '待验收') && p.progress > 0) {
+                var progColor = p.status === '待验收' ? 'bg-green-500' : 'bg-brand-500';
+                progressHtml = '<div class="mb-3">' +
+                    '<div class="flex justify-between text-[10px] text-gray-400 mb-1"><span>进度</span><span>' + p.progress + '%</span></div>' +
+                    '<div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="' + progColor + ' h-full rounded-full" style="width:' + p.progress + '%"></div></div>' +
+                    '</div>';
+            }
+
+            // 日期/剩余天数
+            var dateHtml = '';
+            if (p.deadline && !isCompleted && !isClosed) {
+                var days = daysUntil(p.deadline);
+                if (days !== null) {
+                    if (days < 0) {
+                        dateHtml = '<span class="text-xs text-red-500 flex items-center gap-1"><i class="ph ph-warning"></i> 逾期' + Math.abs(days) + '天</span>';
+                    } else if (days === 0) {
+                        dateHtml = '<span class="text-xs text-orange-500 flex items-center gap-1"><i class="ph ph-clock"></i> 今天截止</span>';
+                    } else {
+                        dateHtml = '<span class="text-xs text-gray-400 flex items-center gap-1"><i class="ph ph-clock"></i> 剩余' + days + '天</span>';
+                    }
+                }
+            } else if (isCompleted || isClosed) {
+                dateHtml = '<span class="text-xs text-gray-400">' + formatDate(p.deadline || '') + '</span>';
+            } else {
+                dateHtml = '<span class="text-xs text-gray-400 flex items-center gap-1"><i class="ph ph-calendar"></i> ' + formatDate(p.deadline) + '</span>';
+            }
+
+            // 标签
+            var tagsHtml = '<span class="tag ' + typeStyle + '">' + escapeHtml(p.type) + '</span>';
+            if (p.tags) {
+                var tags = p.tags.split(/[,，]/).filter(function (t) { return t.trim(); });
+                for (var i = 0; i < tags.length; i++) {
+                    tagsHtml += '<span class="tag bg-yellow-50 text-yellow-600 border border-yellow-100">' + escapeHtml(tags[i].trim()) + '</span>';
+                }
+            }
+
+            var avatarClass = isClosed ? 'grayscale' : '';
+
+            return '<div class="bg-white rounded-lg border border-gray-100 p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow group' + opacityClass + '">' +
+                '<div class="flex items-start justify-between mb-2">' + badgeHtml +
+                '<button class="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-dots-three-vertical"></i></button>' +
+                '</div>' +
+                '<h4 class="font-medium ' + titleColor + ' text-sm mb-1">' + escapeHtml(p.name) + '</h4>' +
+                (subtitle ? '<p class="text-xs text-gray-500 mb-2 ' + (p.status === '开发/设计中' || p.status === '待验收' ? '' : 'line-clamp-2') + '">' + escapeHtml(subtitle) + '</p>' : '') +
+                progressHtml +
+                '<div class="flex items-center gap-2 mb-3">' + tagsHtml + '</div>' +
+                '<div class="flex items-center justify-between">' +
+                '<div class="flex items-center gap-1.5">' +
+                '<img src="' + getAvatarUrl(p.customer) + '" class="w-6 h-6 rounded-full ' + avatarClass + '">' +
+                '<span class="text-xs ' + (isClosed ? 'text-gray-400' : 'text-gray-600') + '">' + escapeHtml(p.customer) + '</span>' +
+                '</div>' + dateHtml + '</div></div>';
+        }
+
+        // ========== 渲染：列表视图 ==========
+        function renderList(scope) {
+            var tbodyId = scope === 'personal' ? 'per-list-tbody' : 'ent-list-tbody';
+            var tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+
+            var items = projectCache.filter(function (p) { return p.scope === scope; });
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="py-8 text-center text-gray-400 text-sm">暂无项目数据</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = items.map(function (p) { return buildListRow(p, scope); }).join('');
+        }
+
+        function buildListRow(p, scope) {
+            var dotClass = STATUS_DOT_STYLES[p.status] || 'bg-gray-400';
+            var statusBadge = STATUS_BADGE_STYLES[p.status] || STATUS_BADGE_STYLES['待确认需求'];
+            var priStyle = PRIORITY_STYLES[p.priority];
+            var typeStyle = TYPE_TAG_STYLES[p.type] || TYPE_TAG_STYLES['其他'];
+            var progBarClass = PROGRESS_BAR_STYLES[p.status] || 'bg-gray-300';
+
+            // 优先级
+            var priHtml = '';
+            if (p.priority === '高') priHtml = '<span class="text-[10px] text-red-600 bg-red-50 border border-red-100 px-1.5 py-0.5 rounded font-medium">高</span>';
+            else if (p.priority === '中') priHtml = '<span class="text-[10px] text-yellow-600 bg-yellow-50 border border-yellow-100 px-1.5 py-0.5 rounded font-medium">中</span>';
+            else if (p.priority === '低') priHtml = '<span class="text-[10px] text-gray-500 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded font-medium">低</span>';
+            else priHtml = '<span class="text-[10px] text-gray-400">—</span>';
+
+            var scopeLabel = scope === 'personal' ? '个人' : escapeHtml(p.customer || '—');
+
+            return '<tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">' +
+                '<td class="py-3 px-4"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full ' + dotClass + ' flex-shrink-0"></span>' +
+                '<span class="font-medium text-gray-800 truncate">' + escapeHtml(p.name) + '</span></div>' +
+                (p.code ? '<p class="text-xs text-gray-400 mt-0.5 truncate">' + escapeHtml(p.code) + '</p>' : '') +
+                '</td>' +
+                '<td class="py-3 px-2"><span class="text-xs ' + statusBadge + ' border px-1.5 py-0.5 rounded">' + p.status + '</span></td>' +
+                '<td class="py-3 px-2">' + priHtml + '</td>' +
+                '<td class="py-3 px-2"><span class="tag ' + typeStyle + '">' + escapeHtml(p.type) + '</span></td>' +
+                '<td class="py-3 px-2"><span class="text-xs text-gray-500">' + scopeLabel + '</span></td>' +
+                '<td class="py-3 px-2 text-xs text-gray-500">' + (p.amount ? formatAmount(p.amount) : '—') + '</td>' +
+                '<td class="py-3 px-2"><div class="flex items-center gap-2"><div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden max-w-[80px]"><div class="' + progBarClass + ' h-full rounded-full" style="width:' + (p.progress || 0) + '%"></div></div><span class="text-[10px] text-gray-400">' + (p.progress || 0) + '%</span></div></td>' +
+                '<td class="py-3 px-2 text-xs text-gray-500">' + formatDate(p.deadline) + '</td>' +
+                '<td class="py-3 px-2 text-center"><button class="w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition mx-auto"><i class="ph ph-dots-three"></i></button></td>' +
+                '</tr>';
+        }
+
+        // ========== 渲染全部 ==========
+        function renderAll() {
+            renderSummary('enterprise');
+            renderSummary('personal');
+            renderKanban('enterprise');
+            renderKanban('personal');
+            renderList('enterprise');
+            renderList('personal');
+            // 重新绑定右键菜单（因为 DOM 已重建）
+            bindContextMenu();
+        }
 
         // ========== Toast ==========
         var toastTimer = null;
@@ -1681,18 +2012,14 @@
             return '';
         }
         function getProjectData(name) {
-            if (PROJECT_DATA[name]) {
-                // 兼容旧数据：nginxConfig 字符串 → nginxConfigs 数组
-                var d = PROJECT_DATA[name];
-                if (d.nginxConfig && !d.nginxConfigs) {
-                    d.nginxConfigs = [{ name: '默认', config: d.nginxConfig }];
-                    delete d.nginxConfig;
-                }
+            if (name && projectMap[name]) {
+                var d = projectMap[name];
                 if (!d.nginxConfigs) d.nginxConfigs = [];
+                if (!d.desc) d.desc = d.description || '';
                 return d;
             }
-            // 返回默认空数据
-            return { code: '', status: '待确认需求', priority: '中', type: '网站开发', scope: 'enterprise', deadline: '', amount: '', progress: 0, desc: '', customer: '', tags: '', notes: '', localPath: '', cloudEnabled: false, cloudPath: '', cloudType: 'baidu', serverEnabled: false, serverAddr: '', serverSpec: '', nginxConfigs: [] };
+            // 返回默认空数据（新建项目）
+            return { id: '', code: '', status: '待确认需求', priority: '中', type: '网站开发', scope: 'enterprise', deadline: '', amount: '', progress: 0, desc: '', description: '', customer: '', tags: '', notes: '', localPath: '', cloudEnabled: false, cloudPath: '', cloudType: 'baidu', serverEnabled: false, serverAddr: '', serverSpec: '', nginxConfigs: [] };
         }
 
         // ========== 右键上下文菜单 ==========
@@ -1870,15 +2197,27 @@ break;
             var oldStatus = data.status || '待确认需求';
             if (oldStatus === newStatus) return;
 
-            // 1. 更新数据存储
+            // 1. 乐观更新本地数据
             data.status = newStatus;
-            PROJECT_DATA[projectName] = data;
+            if (projectMap[projectName]) projectMap[projectName].status = newStatus;
 
-            // 2. 更新看板卡片（企业 + 个人）
-            updateKanbanCardStatus(projectName, oldStatus, newStatus);
+            // 2. 重新渲染看板和列表
+            renderAll();
 
-            // 3. 更新列表行中的状态标签
-            updateListRowStatus(projectName, newStatus);
+            // 3. 同步到后端 API
+            if (data.id) {
+                moveProjectToAPI(data.id, newStatus).then(function (res) {
+                    if (!res.success) {
+                        console.error('[Project] 移动状态失败:', res.error);
+                        showToast('移动状态失败，正在恢复...', 'ph ph-warning', '#fbbf24');
+                        data.status = oldStatus;
+                        if (projectMap[projectName]) projectMap[projectName].status = oldStatus;
+                        renderAll();
+                    }
+                }).catch(function (err) {
+                    console.error('[Project] 移动状态失败:', err);
+                });
+            }
 
             showToast('已移动至「' + newStatus + '」', 'ph-fill ph-arrows-left-right', '#60a5fa');
         }
@@ -2300,6 +2639,7 @@ break;
 
                     // 收集表单数据
                     var updated = {
+                        name: name,
                         code: (modal.querySelector('#pf-code') || {}).value || '',
                         status: (modal.querySelector('#pf-status') || {}).value || '',
                         priority: (modal.querySelector('#pf-priority') || {}).value || '',
@@ -2322,21 +2662,35 @@ break;
                         nginxConfigs: collectNginxConfigs(modal)
                     };
 
-                    // 更新数据存储（若名称变更，迁移数据）
-                    if (name !== projectName) {
-                        delete PROJECT_DATA[projectName];
-                    }
-                    PROJECT_DATA[name] = updated;
+                    var isEdit = !!projectName && !!data.id;
+                    var editId = data.id;
 
-                    showToast('项目信息已保存', 'ph-fill ph-check-circle', '#4ade80');
-                    closeModal();
+                    showToast('正在保存...', 'ph ph-spinner', '#60a5fa');
+                    saveBtn.disabled = true;
 
-                    // 如果详情面板打开，刷新内容
-                    if (currentDetailProject !== null) {
-                        var newName = (name !== projectName) ? name : projectName;
-                        currentDetailProject = newName;
-                        showProjectDetail(newName);
-                    }
+                    saveProjectToAPI(updated, isEdit, editId).then(function (res) {
+                        saveBtn.disabled = false;
+                        if (!res.success) {
+                            showToast('保存失败：' + (res.error || ''), 'ph ph-warning', '#fbbf24');
+                            return;
+                        }
+                        showToast('项目信息已保存', 'ph-fill ph-check-circle', '#4ade80');
+                        closeModal();
+
+                        // 重新从 API 加载数据并渲染
+                        loadProjects().then(function () {
+                            // 如果详情面板打开，刷新内容
+                            if (currentDetailProject !== null) {
+                                var newName = (name !== projectName) ? name : projectName;
+                                currentDetailProject = newName;
+                                showProjectDetail(newName);
+                            }
+                        });
+                    }).catch(function (err) {
+                        saveBtn.disabled = false;
+                        console.error('[Project] 保存失败:', err);
+                        showToast('保存失败，请检查网络', 'ph ph-warning', '#fbbf24');
+                    });
                 });
             }
         }
@@ -2430,19 +2784,33 @@ break;
                 var serverAddr = modal.querySelector('#pf-server-addr').value;
                 var serverSpec = modal.querySelector('#pf-server-spec').value;
                 var nginxConfigs = collectNginxConfigs(modal);
-                if (PROJECT_DATA[projectName]) {
-                    PROJECT_DATA[projectName].localPath = localPath;
-                    PROJECT_DATA[projectName].cloudEnabled = cloudEnabled;
-                    PROJECT_DATA[projectName].cloudPath = cloudPath;
-                    PROJECT_DATA[projectName].serverEnabled = serverEnabled;
-                    PROJECT_DATA[projectName].serverAddr = serverAddr;
-                    PROJECT_DATA[projectName].serverSpec = serverSpec;
-                    PROJECT_DATA[projectName].nginxConfigs = nginxConfigs;
-                } else {
-                    PROJECT_DATA[projectName] = { localPath: localPath, cloudEnabled: cloudEnabled, cloudPath: cloudPath, cloudType: 'baidu', serverEnabled: serverEnabled, serverAddr: serverAddr, serverSpec: serverSpec, nginxConfigs: nginxConfigs, code: '', status: '待确认需求', priority: '中', type: '网站开发', scope: 'enterprise', deadline: '', amount: '', progress: 0, desc: '', customer: '', tags: '', notes: '' };
-                }
-                showToast('项目信息已保存', 'ph-fill ph-check-circle', '#4ade80');
-                closeModal();
+
+                var updated = Object.assign({}, data, {
+                    localPath: localPath,
+                    cloudEnabled: cloudEnabled,
+                    cloudPath: cloudPath,
+                    serverEnabled: serverEnabled,
+                    serverAddr: serverAddr,
+                    serverSpec: serverSpec,
+                    nginxConfigs: nginxConfigs
+                });
+
+                var isEdit = !!projectName && !!data.id;
+                var editId = data.id;
+
+                showToast('正在保存...', 'ph ph-spinner', '#60a5fa');
+                saveProjectToAPI(updated, isEdit, editId).then(function (res) {
+                    if (!res.success) {
+                        showToast('保存失败：' + (res.error || ''), 'ph ph-warning', '#fbbf24');
+                        return;
+                    }
+                    showToast('项目信息已保存', 'ph-fill ph-check-circle', '#4ade80');
+                    closeModal();
+                    loadProjects();
+                }).catch(function (err) {
+                    console.error('[Project] 保存失败:', err);
+                    showToast('保存失败，请检查网络', 'ph ph-warning', '#fbbf24');
+                });
             });
         }
 
@@ -2776,6 +3144,8 @@ break;
             bindContextMenu();
             // 详情面板绑定
             bindDetailDrawer();
+            // 从后端加载项目数据
+            loadProjects();
         }
 
         if (document.readyState === 'loading') {

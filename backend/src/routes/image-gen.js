@@ -33,6 +33,55 @@ var DEFAULT_CONFIG = {
     timeout: 90000
 };
 
+function normalizeTimeoutMs(value) {
+    var timeout = parseInt(value, 10);
+    if (!timeout || timeout <= 0) return DEFAULT_CONFIG.timeout;
+    // 设置页填写单位是“秒”；兼容历史已保存的毫秒值。
+    return timeout < 1000 ? timeout * 1000 : timeout;
+}
+
+function normalizeImageApiUrl(value) {
+    var apiUrl = String(value || '').trim();
+    if (!apiUrl) return '';
+
+    var parsedUrl;
+    try {
+        parsedUrl = new URL(apiUrl);
+    } catch (e) {
+        return apiUrl;
+    }
+
+    var pathname = parsedUrl.pathname.replace(/\/+$/, '');
+    if (!pathname || pathname === '/') {
+        parsedUrl.pathname = '/v1/images/generations';
+        return parsedUrl.toString();
+    }
+    if (/\/images\/generations$/i.test(pathname)) {
+        parsedUrl.pathname = pathname;
+        return parsedUrl.toString();
+    }
+    if (/\/v1$/i.test(pathname)) {
+        parsedUrl.pathname = pathname + '/images/generations';
+        return parsedUrl.toString();
+    }
+
+    return apiUrl;
+}
+
+function formatResponsePreview(response) {
+    var contentType = response.headers && response.headers['content-type']
+        ? String(response.headers['content-type']).split(';')[0]
+        : 'unknown';
+    var snippet = String(response.body || '')
+        .replace(/<script[\s\S]*?<\/script>/gi, '')
+        .replace(/<style[\s\S]*?<\/style>/gi, '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 180);
+    return 'HTTP ' + response.statusCode + ' / ' + contentType + (snippet ? ' / ' + snippet : '');
+}
+
 // ========== 读写 settings.json ==========
 
 function readSettings() {
@@ -86,8 +135,9 @@ function httpRequest(url, options, body) {
         });
 
         req.on('error', reject);
-        req.setTimeout(options.timeout || 90000, function () {
-            req.destroy(new Error('请求超时（' + (options.timeout || 90000) / 1000 + 's）'));
+        var timeoutMs = normalizeTimeoutMs(options.timeout);
+        req.setTimeout(timeoutMs, function () {
+            req.destroy(new Error('请求超时（' + Math.round(timeoutMs / 1000) + 's）'));
         });
 
         if (body) {
@@ -193,16 +243,17 @@ router.post('/generate', resp.asyncHandler(async function (req, res) {
     });
 
     try {
-        var response = await httpRequest(config.apiUrl, {
+        var apiUrl = normalizeImageApiUrl(config.apiUrl);
+        var response = await httpRequest(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + config.apiKey
             },
-            timeout: config.timeout || 90000
+            timeout: normalizeTimeoutMs(config.timeout)
         }, requestBody);
 
-        if (response.statusCode !== 200) {
+        if (response.statusCode < 200 || response.statusCode >= 300) {
             var errMsg = 'AI生图服务返回错误（HTTP ' + response.statusCode + '）';
             try {
                 var errBody = JSON.parse(response.body);
@@ -213,7 +264,9 @@ router.post('/generate', resp.asyncHandler(async function (req, res) {
                 } else if (errBody.detail) {
                     errMsg = typeof errBody.detail === 'string' ? errBody.detail : JSON.stringify(errBody.detail);
                 }
-            } catch (e) {}
+            } catch (e) {
+                errMsg += '：' + formatResponsePreview(response);
+            }
             return resp.error(res, errMsg, response.statusCode >= 400 && response.statusCode < 500 ? response.statusCode : 500);
         }
 
@@ -221,7 +274,7 @@ router.post('/generate', resp.asyncHandler(async function (req, res) {
         try {
             result = JSON.parse(response.body);
         } catch (e) {
-            return resp.error(res, 'AI生图服务返回了非JSON格式的数据，请检查API地址是否正确');
+            return resp.error(res, 'AI生图服务返回了非JSON格式的数据，请检查API地址是否正确：' + formatResponsePreview(response));
         }
 
         var imageUrl = extractImageUrl(result);
@@ -266,16 +319,17 @@ router.post('/test', resp.asyncHandler(async function (req, res) {
     });
 
     try {
-        var response = await httpRequest(config.apiUrl, {
+        var apiUrl = normalizeImageApiUrl(config.apiUrl);
+        var response = await httpRequest(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + config.apiKey
             },
-            timeout: 90000
+            timeout: normalizeTimeoutMs(config.timeout)
         }, requestBody);
 
-        if (response.statusCode === 200) {
+        if (response.statusCode >= 200 && response.statusCode < 300) {
             return resp.success(res, { status: 'ok', message: '连接成功，API配置有效' });
         } else if (response.statusCode === 401 || response.statusCode === 403) {
             return resp.error(res, '鉴权失败，请检查API密钥是否正确');
@@ -287,7 +341,9 @@ router.post('/test', resp.asyncHandler(async function (req, res) {
             try {
                 var errBody = JSON.parse(response.body);
                 detail = errBody.error && errBody.error.message ? errBody.error.message : (errBody.message || '');
-            } catch (e) {}
+            } catch (e) {
+                detail = formatResponsePreview(response);
+            }
             return resp.error(res, '服务可达但返回异常（HTTP ' + response.statusCode + '）' + (detail ? ': ' + detail : ''));
         }
     } catch (e) {

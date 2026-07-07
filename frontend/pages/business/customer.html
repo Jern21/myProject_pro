@@ -81,116 +81,54 @@
             <div class="p-6 lg:p-8">
                 
                 <!-- Summary Cards Row -->
-                <div class="flex gap-4 mb-6 overflow-x-auto pb-2 scrollbar-hide">
-                    <!-- Card 1 -->
-                    <div class="min-w-[180px] rounded-xl border border-blue-100 bg-white p-4 relative shadow-sm flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">全部客户</p>
-                            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
-                                <i class="ph-fill ph-users text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1">86</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><span class="text-gray-400 mr-1">较上月</span> <i class="ph ph-arrow-up mr-0.5"></i> 12%</p>
-                    </div>
-                    
-                    <!-- Card 2 -->
-                    <div class="min-w-[180px] rounded-xl border border-green-100 bg-white p-4 relative shadow-sm flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">本月新增</p>
-                            <div class="w-8 h-8 rounded-full bg-green-50 text-green-500 flex items-center justify-center">
-                                <i class="ph-fill ph-user-plus text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1">12</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><span class="text-gray-400 mr-1">较上月</span> <i class="ph ph-arrow-up mr-0.5"></i> 20%</p>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="min-w-[180px] rounded-xl border border-blue-100 bg-white p-4 relative shadow-sm flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">成交客户</p>
-                            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
-                                <i class="ph-fill ph-check-circle text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1">58</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><span class="text-gray-400 mr-1">较上月</span> <i class="ph ph-arrow-up mr-0.5"></i> 15%</p>
-                    </div>
-
-                    <!-- Card 4 -->
-                    <div class="min-w-[180px] rounded-xl border border-yellow-100 bg-white p-4 relative shadow-sm flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">高价值客户</p>
-                            <div class="w-8 h-8 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center">
-                                <i class="ph-fill ph-crown text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1">18</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><span class="text-gray-400 mr-1">较上月</span> <i class="ph ph-arrow-up mr-0.5"></i> 28%</p>
-                    </div>
-
-                    <!-- Card 5 -->
-                    <div class="min-w-[180px] rounded-xl border border-purple-100 bg-white p-4 relative shadow-sm flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">复购客户</p>
-                            <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center">
-                                <i class="ph-fill ph-users-three text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1">23</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><span class="text-gray-400 mr-1">较上月</span> <i class="ph ph-arrow-up mr-0.5"></i> 18%</p>
-                    </div>
-
-                    <!-- Card 6 -->
-                    <div class="min-w-[180px] rounded-xl border border-red-100 bg-white p-4 relative shadow-sm flex-1">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-gray-500 text-xs">待跟进客户</p>
-                            <div class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
-                                <i class="ph-fill ph-clock text-lg"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1">16</h3>
-                        <p class="text-[10px] text-red-500 flex items-center"><span class="text-gray-400 mr-1">较上月</span> <i class="ph ph-arrow-down mr-0.5"></i> 5%</p>
-                    </div>
+                <div id="summary-cards" class="flex gap-4 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+                    <!-- 动态渲染 -->
                 </div>
 
                 <!-- Filters Section -->
                 <div class="flex items-end gap-3 mb-6 flex-wrap bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                     <div class="w-[140px]">
                         <label class="block text-xs text-gray-500 mb-1.5">客户来源</label>
-                        <select class="custom-select w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
-                            <option>全部来源</option>
+                        <select id="filter-source" class="custom-select w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
+                            <option value="">全部来源</option>
+                            <option value="闲鱼">闲鱼</option>
+                            <option value="小红书">小红书</option>
+                            <option value="抖音">抖音</option>
+                            <option value="微信">微信</option>
+                            <option value="淘宝">淘宝</option>
+                            <option value="朋友推荐">朋友推荐</option>
                         </select>
                     </div>
                     <div class="w-[140px]">
-                        <label class="block text-xs text-gray-500 mb-1.5">客户标签</label>
-                        <select class="custom-select w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
-                            <option>全部标签</option>
+                        <label class="block text-xs text-gray-500 mb-1.5">客户等级</label>
+                        <select id="filter-level" class="custom-select w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
+                            <option value="">全部等级</option>
+                            <option value="A 高价值">A 高价值</option>
+                            <option value="B 普通客户">B 普通客户</option>
+                            <option value="C 潜在客户">C 潜在客户</option>
                         </select>
                     </div>
                     <div class="w-[140px]">
-                        <label class="block text-xs text-gray-500 mb-1.5">成交状态</label>
-                        <select class="custom-select w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
-                            <option>全部状态</option>
+                        <label class="block text-xs text-gray-500 mb-1.5">客户类型</label>
+                        <select id="filter-type" class="custom-select w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
+                            <option value="">全部状态</option>
+                            <option value="成交客户">成交客户</option>
+                            <option value="潜在客户">潜在客户</option>
+                            <option value="流失客户">流失客户</option>
+                            <option value="黑名单">黑名单</option>
                         </select>
                     </div>
                     
                     <div class="w-[240px]">
-                        <label class="block text-xs text-gray-500 mb-1.5">注册时间</label>
-                        <div class="relative flex items-center">
-                            <input type="text" placeholder="开始日期" class="w-full border border-gray-200 border-r-0 rounded-l-lg px-3 py-1.5 text-xs outline-none bg-gray-50 focus:border-brand-500 z-10 text-center">
-                            <span class="bg-gray-50 border-t border-b border-gray-200 py-1.5 px-2 text-xs text-gray-400">-</span>
-                            <input type="text" placeholder="结束日期" class="w-full border border-gray-200 border-l-0 rounded-r-lg px-3 py-1.5 text-xs outline-none bg-gray-50 focus:border-brand-500 z-10 text-center">
-                            <i class="ph ph-calendar-blank absolute right-2 text-gray-400 text-sm z-20"></i>
-                        </div>
+                        <label class="block text-xs text-gray-500 mb-1.5">搜索</label>
+                        <input type="text" id="filter-keyword" placeholder="搜索客户姓名/电话/需求..." class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none bg-gray-50 focus:border-brand-500 transition-colors">
                     </div>
                     
                     <div class="flex gap-2 ml-auto">
-                        <button class="px-5 py-1.5 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                        <button id="filter-reset-btn" class="px-5 py-1.5 border border-gray-200 text-gray-600 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                             重置
                         </button>
-                        <button class="px-5 py-1.5 border border-brand-100 text-brand-600 bg-brand-50 rounded-lg hover:bg-brand-100 transition-colors text-sm font-medium flex items-center gap-1.5">
+                        <button id="filter-btn" class="px-5 py-1.5 border border-brand-100 text-brand-600 bg-brand-50 rounded-lg hover:bg-brand-100 transition-colors text-sm font-medium flex items-center gap-1.5">
                             <i class="ph ph-funnel"></i> 筛选
                         </button>
                     </div>
@@ -200,12 +138,12 @@
                 <div class="border border-gray-100 rounded-xl shadow-sm bg-white overflow-hidden mb-6">
                     <!-- Tabs -->
                     <div class="flex justify-between items-center border-b border-gray-100 px-4 pt-2">
-                        <div class="flex">
-                            <button class="px-4 py-3 border-b-2 border-brand-600 text-brand-600 font-medium text-sm mr-2">全部客户</button>
-                            <button class="px-4 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium text-sm transition-colors mx-2">成交客户</button>
-                            <button class="px-4 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium text-sm transition-colors mx-2">潜在客户</button>
-                            <button class="px-4 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium text-sm transition-colors mx-2">流失客户</button>
-                            <button class="px-4 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium text-sm transition-colors ml-2">黑名单</button>
+                        <div id="tab-bar" class="flex">
+                            <button class="cust-tab px-4 py-3 border-b-2 border-brand-600 text-brand-600 font-medium text-sm mr-2" data-type="">全部客户</button>
+                            <button class="cust-tab px-4 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium text-sm transition-colors mx-2" data-type="成交客户">成交客户</button>
+                            <button class="cust-tab px-4 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium text-sm transition-colors mx-2" data-type="潜在客户">潜在客户</button>
+                            <button class="cust-tab px-4 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium text-sm transition-colors mx-2" data-type="流失客户">流失客户</button>
+                            <button class="cust-tab px-4 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium text-sm transition-colors ml-2" data-type="黑名单">黑名单</button>
                         </div>
                         <button id="add-customer-btn" class="mb-2 px-4 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors shadow-sm shadow-brand-500/30">
                             <i class="ph ph-plus"></i> 新增客户
@@ -227,349 +165,22 @@
                                     <th class="py-3 px-4 font-medium text-center">操作</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-gray-800 text-sm">
-                                
-                                <!-- Row 1 (Active/Selected) -->
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors bg-brand-50/30 cursor-pointer">
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://ui-avatars.com/api/?name=张&background=bfdbfe&color=1d4ed8" alt="Avatar" class="w-10 h-10 rounded-full">
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-medium text-gray-900">张先生</span>
-                                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-100">成交客户</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">企业官网定制开发</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>138****5678</span>
-                                            <i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <span class="px-2 py-0.5 bg-green-50 text-green-600 border border-green-100 rounded text-xs flex items-center inline-flex gap-1">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> 闲鱼
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-2 font-medium">¥ 6,800</td>
-                                    <td class="py-4 px-2 text-center text-gray-600">3</td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex gap-1 flex-wrap">
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">爽快型</span>
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">大厂员工</span>
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">复购客户</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <p class="text-gray-800">今天 14:32</p>
-                                    </td>
-                                    <td class="py-4 px-4 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="cust-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="cust-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                
-                                <!-- Row 2 -->
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://ui-avatars.com/api/?name=李&background=fecaca&color=b91c1c" alt="Avatar" class="w-10 h-10 rounded-full">
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-medium text-gray-900">李女士</span>
-                                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-100">成交客户</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">小红书推广设计</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>139****8822</span>
-                                            <i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <span class="px-2 py-0.5 bg-red-50 text-red-500 border border-red-100 rounded text-xs flex items-center inline-flex gap-1">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div> 小红书
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-2 font-medium">¥ 980</td>
-                                    <td class="py-4 px-2 text-center text-gray-600">1</td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex gap-1 flex-wrap">
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">纠结比价型</span>
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">急单</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <p class="text-gray-800">昨天 11:20</p>
-                                    </td>
-                                    <td class="py-4 px-4 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="cust-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="cust-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Row 3 -->
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://ui-avatars.com/api/?name=王&background=fde68a&color=b45309" alt="Avatar" class="w-10 h-10 rounded-full">
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-medium text-gray-900">王同学</span>
-                                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-100">成交客户</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">抖音视频剪辑</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>137****3321</span>
-                                            <i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-800 border border-gray-200 rounded text-xs flex items-center inline-flex gap-1">
-                                            <i class="ph-fill ph-tiktok-logo"></i> 抖音
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-2 font-medium">¥ 1,250</td>
-                                    <td class="py-4 px-2 text-center text-gray-600">2</td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex gap-1 flex-wrap">
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">爽快型</span>
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">学生党</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2 text-gray-500 text-xs">
-                                        <p>07-02 18:45</p>
-                                    </td>
-                                    <td class="py-4 px-4 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="cust-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="cust-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Row 4 (Potential) -->
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://ui-avatars.com/api/?name=赵&background=e5e7eb&color=374151" alt="Avatar" class="w-10 h-10 rounded-full">
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-medium text-gray-900">赵先生</span>
-                                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-orange-50 text-orange-500 border border-orange-100">潜在客户</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">小程序功能开发</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>136****7719</span>
-                                            <i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <span class="px-2 py-0.5 bg-red-50 text-red-500 border border-red-100 rounded text-xs flex items-center inline-flex gap-1">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div> 小红书
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-2 font-medium text-gray-400">-</td>
-                                    <td class="py-4 px-2 text-center text-gray-600">0</td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex gap-1 flex-wrap">
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">比价中</span>
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">预算有限</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2 text-gray-500 text-xs">
-                                        <p>07-02 16:22</p>
-                                    </td>
-                                    <td class="py-4 px-4 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="cust-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="cust-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Row 5 -->
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://ui-avatars.com/api/?name=陈&background=d1fae5&color=047857" alt="Avatar" class="w-10 h-10 rounded-full">
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-medium text-gray-900">陈女士</span>
-                                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-100">成交客户</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">宣传海报设计</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>138****2298</span>
-                                            <i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <span class="px-2 py-0.5 bg-green-50 text-green-600 border border-green-100 rounded text-xs flex items-center inline-flex gap-1">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> 闲鱼
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-2 font-medium">¥ 980</td>
-                                    <td class="py-4 px-2 text-center text-gray-600">1</td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex gap-1 flex-wrap">
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">爽快型</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2 text-gray-500 text-xs">
-                                        <p>07-01 09:15</p>
-                                    </td>
-                                    <td class="py-4 px-4 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="cust-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="cust-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Row 6 (High Value) -->
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://ui-avatars.com/api/?name=刘&background=bfdbfe&color=1d4ed8" alt="Avatar" class="w-10 h-10 rounded-full">
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-medium text-gray-900">刘总</span>
-                                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-50 text-red-600 border border-red-100 flex items-center gap-0.5"><i class="ph-fill ph-crown text-[10px]"></i> 高价值客户</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">后台管理系统开发</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>139****9921</span>
-                                            <i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2">
-                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-800 border border-gray-200 rounded text-xs flex items-center inline-flex gap-1">
-                                            <i class="ph-fill ph-tiktok-logo"></i> 抖音
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-2 font-medium">¥ 12,000</td>
-                                    <td class="py-4 px-2 text-center text-gray-600">5</td>
-                                    <td class="py-4 px-2">
-                                        <div class="flex gap-1 flex-wrap">
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">大客户</span>
-                                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">长期合作</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2 text-gray-500 text-xs">
-                                        <p>06-30 22:10</p>
-                                    </td>
-                                    <td class="py-4 px-4 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="cust-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                            <button class="cust-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Row 7 (Lost) -->
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors text-gray-500 cursor-pointer">
-                                    <td class="py-4 px-2 opacity-70">
-                                        <div class="flex items-center gap-2">
-                                            <img src="https://ui-avatars.com/api/?name=孙&background=f3f4f6&color=6b7280" alt="Avatar" class="w-8 h-8 rounded-full grayscale">
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-medium text-gray-700">孙女士</span>
-                                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 border border-gray-200">流失客户</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5 truncate">Logo设计</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2 opacity-70">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>137****6655</span>
-                                            <i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2 opacity-70">
-                                        <span class="px-2 py-0.5 bg-green-50 text-green-600 border border-green-100 rounded text-xs flex items-center inline-flex gap-1">
-                                            <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> 闲鱼
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-2 opacity-70 font-medium">¥ 300</td>
-                                    <td class="py-4 px-2 opacity-70 text-center">1</td>
-                                    <td class="py-4 px-2 opacity-70">
-                                        <div class="flex gap-1 flex-wrap">
-                                            <span class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">已流失</span>
-                                            <span class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">无预算</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2 text-xs opacity-70">
-                                        <p>06-29 20:30</p>
-                                    </td>
-                                    <td class="py-4 px-2 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                        <button class="cust-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button>
-                                        <button class="cust-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button>
-                                    </div>
-                                    </td>
-                                </tr>
-
+                            <tbody id="customer-tbody" class="text-gray-800 text-sm">
+                                <!-- 动态渲染 -->
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Pagination -->
                     <div class="p-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-                        <div>共 86 条</div>
-                        <div class="flex items-center gap-2">
-                            <button class="w-8 h-8 rounded flex items-center justify-center border border-gray-200 hover:bg-gray-50"><i class="ph ph-caret-left"></i></button>
-                            <button class="w-8 h-8 rounded flex items-center justify-center border border-brand-500 bg-brand-50 text-brand-600 font-medium">1</button>
-                            <button class="w-8 h-8 rounded flex items-center justify-center hover:bg-gray-50">2</button>
-                            <button class="w-8 h-8 rounded flex items-center justify-center hover:bg-gray-50">3</button>
-                            <button class="w-8 h-8 rounded flex items-center justify-center hover:bg-gray-50">4</button>
-                            <button class="w-8 h-8 rounded flex items-center justify-center hover:bg-gray-50">5</button>
-                            <span>...</span>
-                            <button class="w-8 h-8 rounded flex items-center justify-center hover:bg-gray-50">9</button>
-                            <button class="w-8 h-8 rounded flex items-center justify-center border border-gray-200 hover:bg-gray-50"><i class="ph ph-caret-right"></i></button>
-                            
-                            <select class="custom-select ml-2 border border-gray-200 rounded px-2 py-1 bg-white outline-none">
-                                <option>10条/页</option>
-                            </select>
-                            
-                            <span class="ml-2">跳至</span>
-                            <input type="text" value="1" class="w-10 text-center border border-gray-200 rounded py-1 outline-none focus:border-brand-500">
-                            <span>页</span>
-                        </div>
+                        <div id="total-count">共 0 条</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Right Side Drawer (Fixed Customer Details) -->
-        <div class="fixed right-0 top-20 bottom-0 w-[380px] bg-white shadow-drawer border-l border-gray-100 z-20 flex flex-col">
+        <div id="detail-drawer" class="fixed right-0 top-20 bottom-0 w-[380px] bg-white shadow-drawer border-l border-gray-100 z-20 flex flex-col" style="display:none;">
             <!-- Header -->
             <div class="p-5 flex items-center justify-between">
                 <h3 class="font-bold text-gray-800 text-base">客户详情</h3>
@@ -581,22 +192,20 @@
                 
                 <!-- Customer Header Info -->
                 <div class="flex items-start gap-4 mb-5">
-                    <img id="detail-avatar" src="https://ui-avatars.com/api/?name=张&background=bfdbfe&color=1d4ed8" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-white shadow-sm">
+                    <img id="detail-avatar" src="" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-white shadow-sm">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <h2 id="detail-name" class="text-lg font-bold text-gray-900">张先生</h2>
-                            <span id="detail-type" class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-100">成交客户</span>
-                            <span id="detail-level" class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-50 text-green-600 border border-green-100 flex items-center gap-0.5"><span class="w-2.5 h-2.5 rounded-sm bg-green-200 flex items-center justify-center text-green-700 text-[8px] font-bold">A</span> 高价值客户</span>
+                            <h2 id="detail-name" class="text-lg font-bold text-gray-900"></h2>
+                            <span id="detail-type" class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 border border-blue-100"></span>
+                            <span id="detail-level" class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-50 text-green-600 border border-green-100"></span>
                         </div>
-                        <p id="detail-phone" class="text-sm text-gray-600 flex items-center gap-1.5">
-                            138****5678 <i class="ph-fill ph-wechat-logo text-green-500"></i>
-                        </p>
+                        <p id="detail-phone" class="text-sm text-gray-600 flex items-center gap-1.5"></p>
                     </div>
                 </div>
                 
                 <div class="flex items-center gap-4 text-xs text-gray-500 mb-6">
-                    <p>客户来源: <span id="detail-source" class="text-gray-700">闲鱼</span></p>
-                    <p>添加时间: <span id="detail-addtime" class="text-gray-700">2025-06-20 14:32</span></p>
+                    <p>客户来源: <span id="detail-source" class="text-gray-700"></span></p>
+                    <p>添加时间: <span id="detail-addtime" class="text-gray-700"></span></p>
                 </div>
 
                 <!-- Inner Tabs -->
@@ -612,48 +221,41 @@
                     <!-- Tags -->
                     <div>
                         <p class="text-xs text-gray-500 mb-2">客户标签</p>
-                        <div id="detail-tags" class="flex gap-2 flex-wrap">
-                            <span class="px-2 py-1 text-xs text-brand-600 bg-brand-50 border border-brand-100 rounded cursor-pointer hover:bg-brand-100 transition-colors">爽快型</span>
-                            <span class="px-2 py-1 text-xs text-brand-600 bg-brand-50 border border-brand-100 rounded cursor-pointer hover:bg-brand-100 transition-colors">大厂员工</span>
-                            <span class="px-2 py-1 text-xs text-brand-600 bg-brand-50 border border-brand-100 rounded cursor-pointer hover:bg-brand-100 transition-colors">复购客户</span>
-                            <button class="px-2 py-1 text-xs text-gray-400 border border-dashed border-gray-300 rounded hover:text-gray-600 hover:border-gray-400 transition-colors"><i class="ph ph-plus"></i></button>
-                        </div>
+                        <div id="detail-tags" class="flex gap-2 flex-wrap"></div>
                     </div>
 
                     <!-- Detail Grid -->
                     <div class="grid grid-cols-2 gap-y-5 gap-x-4">
                         <div>
                             <p class="text-xs text-gray-500 mb-1">客户等级</p>
-                            <p id="detail-level-grid" class="text-sm font-medium text-brand-600 flex items-center gap-1"><span class="w-4 h-4 rounded bg-brand-100 flex items-center justify-center text-[10px] font-bold">A</span> 高价值客户</p>
+                            <p id="detail-level-grid" class="text-sm font-medium text-brand-600"></p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 mb-1">累计消费</p>
-                            <p id="detail-amount" class="text-sm font-bold text-gray-900">¥ 28,600</p>
+                            <p id="detail-amount" class="text-sm font-bold text-gray-900"></p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 mb-1">订单数量</p>
-                            <p id="detail-orders" class="text-sm font-medium text-gray-800">5 单</p>
+                            <p id="detail-orders" class="text-sm font-medium text-gray-800"></p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 mb-1">首次成交</p>
-                            <p id="detail-firstdeal" class="text-sm font-medium text-gray-800">2025-04-12</p>
+                            <p id="detail-firstdeal" class="text-sm font-medium text-gray-800"></p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 mb-1">最近状态</p>
-                            <p id="detail-status" class="text-sm font-medium text-green-500">正常</p>
+                            <p id="detail-status" class="text-sm font-medium text-green-500"></p>
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 mb-1">跟进状态</p>
-                            <p id="detail-followstatus" class="text-sm font-medium text-green-500">跟进中</p>
+                            <p id="detail-followstatus" class="text-sm font-medium text-green-500"></p>
                         </div>
                     </div>
 
                     <!-- Notes Box -->
                     <div>
                         <p class="text-xs text-gray-500 mb-2 flex justify-between items-center">客户备注 <i class="ph ph-pencil-simple text-gray-400 hover:text-brand-500 cursor-pointer"></i></p>
-                        <div id="detail-notes" class="bg-gray-50 p-3 rounded-lg text-xs text-gray-600 leading-relaxed border border-gray-100">
-                            客户响应速度快，需求明确，长期维护，关系良好，有新需求会优先考虑合作。
-                        </div>
+                        <div id="detail-notes" class="bg-gray-50 p-3 rounded-lg text-xs text-gray-600 leading-relaxed border border-gray-100"></div>
                     </div>
                 </div>
 
@@ -696,7 +298,7 @@
     (function () {
         'use strict';
 
-        // ========== SPA 模式下注入自定义 CSS（SPA 路由不会迁移 <style> 标签） ==========
+        // ========== SPA 模式下注入自定义 CSS ==========
         if (!document.getElementById('cust-page-styles')) {
             var styleEl = document.createElement('style');
             styleEl.id = 'cust-page-styles';
@@ -714,25 +316,13 @@
             document.head.appendChild(styleEl);
         }
 
-        // ========== 客户扩展数据（表格中未展示的字段） ==========
-        var CUST_EXTRA = {
-            '张先生': { addTime: '2025-06-20 14:32', totalAmount: '¥ 28,600', orderCount: '5 单', firstDeal: '2025-04-12', status: '正常', level: 'A 高价值', followStatus: '跟进中', notes: '客户响应速度快，需求明确，长期维护，关系良好，有新需求会优先考虑合作。', desc: '企业官网定制开发' },
-            '李女士': { addTime: '2025-06-25 11:20', totalAmount: '¥ 980', orderCount: '1 单', firstDeal: '2025-06-28', status: '正常', level: 'B 普通客户', followStatus: '跟进中', notes: '客户比较纠结价格，但对设计要求较高，需耐心沟通。', desc: '小红书推广设计' },
-            '王同学': { addTime: '2025-06-18 18:45', totalAmount: '¥ 1,250', orderCount: '2 单', firstDeal: '2025-06-20', status: '正常', level: 'B 普通客户', followStatus: '已成交', notes: '学生客户，预算有限但付款爽快，寒暑假有稳定需求。', desc: '抖音视频剪辑' },
-            '赵先生': { addTime: '2025-06-28 16:22', totalAmount: '-', orderCount: '0 单', firstDeal: '—', status: '正常', level: 'C 潜在客户', followStatus: '待跟进', notes: '潜在客户，预算有限，还在比价。计划7.05再次跟进。', desc: '小程序功能开发' },
-            '陈女士': { addTime: '2025-06-15 09:15', totalAmount: '¥ 980', orderCount: '1 单', firstDeal: '2025-06-18', status: '正常', level: 'B 普通客户', followStatus: '已成交', notes: '爽快型客户，需求明确，付款及时。', desc: '宣传海报设计' },
-            '刘总': { addTime: '2025-05-10 22:10', totalAmount: '¥ 28,600', orderCount: '5 单', firstDeal: '2025-05-15', status: '正常', level: 'A 高价值', followStatus: '跟进中', notes: '高价值客户，累计消费¥28,600。需求明确，付款爽快。当前项目：后台管理系统开发。联系方式：139****9921，微信同号。偏好晚间沟通，通常22:00后在线。', desc: '后台管理系统开发' },
-            '孙女士': { addTime: '2025-05-20 20:30', totalAmount: '¥ 300', orderCount: '1 单', firstDeal: '2025-05-22', status: '已流失', level: 'C 流失客户', followStatus: '已流失', notes: '已流失客户，后续无预算，暂不跟进。', desc: 'Logo设计' }
-        };
+        // ========== 数据缓存 ==========
+        var customerCache = [];
+        var customerMap = {};
+        var selectedCustomerId = null;
+        var currentFilter = { keyword: '', source: '', level: '', type: '' };
 
-        // 状态颜色映射
-        var FOLLOW_STATUS_COLOR = {
-            '跟进中': 'text-green-500',
-            '已成交': 'text-blue-500',
-            '待跟进': 'text-orange-500',
-            '已流失': 'text-gray-400'
-        };
-
+        // ========== 颜色映射 ==========
         var SOURCE_COLORS = {
             '闲鱼': 'bg-yellow-50 text-yellow-600',
             '小红书': 'bg-red-50 text-red-600',
@@ -742,124 +332,235 @@
             '朋友推荐': 'bg-blue-50 text-blue-600'
         };
 
-        // 当前编辑的行
-        var editingRow = null;
+        var FOLLOW_STATUS_COLOR = {
+            '跟进中': 'text-green-500',
+            '已成交': 'text-blue-500',
+            '待跟进': 'text-orange-500',
+            '已流失': 'text-gray-400'
+        };
 
-        // ========== 从行 DOM 提取数据 ==========
-        function extractRowData(row) {
-            var cells = row.querySelectorAll('td');
-            if (cells.length < 8) return null;
+        var TYPE_STYLES = {
+            '成交客户': 'bg-blue-50 text-blue-600 border-blue-100',
+            '潜在客户': 'bg-orange-50 text-orange-500 border-orange-100',
+            '流失客户': 'bg-gray-100 text-gray-500 border-gray-200',
+            '黑名单': 'bg-red-50 text-red-500 border-red-100'
+        };
 
-            // 客户信息（cell 0）
-            var img = cells[0].querySelector('img');
-            var nameEl = cells[0].querySelector('span.font-medium');
-            var typeEl = cells[0].querySelector('span:nth-of-type(2)');
-            var descEl = cells[0].querySelector('p.text-xs');
-            var name = nameEl ? nameEl.textContent.trim() : '';
-            var avatar = img ? img.src : '';
-            var typeText = typeEl ? typeEl.textContent.trim() : '';
-            var descText = descEl ? descEl.textContent.trim() : '';
-
-            // 联系方式（cell 1）
-            var phoneText = cells[1].textContent.trim();
-
-            // 客户来源（cell 2）
-            var sourceEl = cells[2].querySelector('span');
-            var source = sourceEl ? sourceEl.textContent.trim() : '';
-
-            // 成交金额（cell 3）
-            var amount = cells[3].textContent.trim();
-
-            // 订单数（cell 4）
-            var orderCount = cells[4].textContent.trim();
-
-            // 标签（cell 5）
-            var tagEls = cells[5].querySelectorAll('span');
-            var tags = [];
-            tagEls.forEach(function (t) { tags.push(t.textContent.trim()); });
-
-            // 最近跟进（cell 6）
-            var followTime = cells[6].textContent.trim();
-
-            // 扩展数据
-            var extra = CUST_EXTRA[name] || {};
-
-            return {
-                name: name,
-                avatar: avatar,
-                type: typeText,
-                desc: descText,
-                phone: phoneText,
-                source: source,
-                amount: amount,
-                orderCount: orderCount,
-                level: extra.level || '',
-                tags: tags,
-                followStatus: extra.followStatus || '',
-                followTime: followTime,
-                addTime: extra.addTime || '—',
-                totalAmount: extra.totalAmount || amount,
-                realOrderCount: extra.orderCount || orderCount,
-                firstDeal: extra.firstDeal || '—',
-                status: extra.status || '正常',
-                notes: extra.notes || ''
-            };
+        // ========== 工具函数 ==========
+        function escapeAttr(s) {
+            return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+        function escapeHtml(s) {
+            return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;');
         }
 
-        // ========== 更新详情面板 ==========
-        function updateDetailPanel(data) {
-            if (!data) return;
+        // ========== API 加载 ==========
+        function loadCustomers() {
+            var params = new URLSearchParams();
+            if (currentFilter.keyword) params.append('keyword', currentFilter.keyword);
+            if (currentFilter.source) params.append('source', currentFilter.source);
+            if (currentFilter.level) params.append('level', currentFilter.level);
+            if (currentFilter.type) params.append('type', currentFilter.type);
+
+            var url = '/api/customers';
+            var qs = params.toString();
+            if (qs) url += '?' + qs;
+
+            return fetch(url)
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                    if (res.success) {
+                        customerCache = res.data || [];
+                        customerMap = {};
+                        customerCache.forEach(function (c) { customerMap[c.id] = c; });
+                        renderTable();
+                        renderSummary();
+                    }
+                })
+                .catch(function (err) {
+                    console.error('加载客户列表失败:', err);
+                });
+        }
+
+        // ========== 渲染摘要卡片 ==========
+        function renderSummary() {
+            var all = customerCache;
+            var total = all.length;
+            var dealt = all.filter(function (c) { return c.type === '成交客户'; }).length;
+            var potential = all.filter(function (c) { return c.type === '潜在客户'; }).length;
+            var highValue = all.filter(function (c) { return c.level && c.level.charAt(0) === 'A'; }).length;
+            var lost = all.filter(function (c) { return c.type === '流失客户'; }).length;
+            var repurchase = all.filter(function (c) { return c.tags && c.tags.indexOf('复购客户') !== -1; }).length;
+
+            var cards = [
+                { label: '全部客户', value: total, icon: 'ph-users', bg: 'bg-blue-50 text-blue-500', border: 'border-blue-100' },
+                { label: '成交客户', value: dealt, icon: 'ph-check-circle', bg: 'bg-blue-50 text-blue-500', border: 'border-blue-100' },
+                { label: '潜在客户', value: potential, icon: 'ph-user-plus', bg: 'bg-green-50 text-green-500', border: 'border-green-100' },
+                { label: '高价值客户', value: highValue, icon: 'ph-crown', bg: 'bg-yellow-50 text-yellow-500', border: 'border-yellow-100' },
+                { label: '复购客户', value: repurchase, icon: 'ph-users-three', bg: 'bg-purple-50 text-purple-500', border: 'border-purple-100' },
+                { label: '流失客户', value: lost, icon: 'ph-clock', bg: 'bg-red-50 text-red-500', border: 'border-red-100' }
+            ];
+
+            var html = cards.map(function (c) {
+                return '<div class="min-w-[180px] rounded-xl border ' + c.border + ' bg-white p-4 relative shadow-sm flex-1">' +
+                    '<div class="flex justify-between items-start mb-2">' +
+                    '<p class="text-gray-500 text-xs">' + c.label + '</p>' +
+                    '<div class="w-8 h-8 rounded-full ' + c.bg + ' flex items-center justify-center">' +
+                    '<i class="ph-fill ' + c.icon + ' text-lg"></i></div></div>' +
+                    '<h3 class="text-2xl font-bold text-gray-800 mb-1">' + c.value + '</h3>' +
+                    '</div>';
+            }).join('');
+
+            var container = document.getElementById('summary-cards');
+            if (container) container.innerHTML = html;
+        }
+
+        // ========== 渲染表格 ==========
+        function renderTable() {
+            var tbody = document.getElementById('customer-tbody');
+            if (!tbody) return;
+
+            document.getElementById('total-count').textContent = '共 ' + customerCache.length + ' 条';
+
+            if (customerCache.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="py-12 text-center text-gray-400"><i class="ph ph-users text-3xl mb-2 block"></i>暂无客户数据</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = customerCache.map(function (c, idx) {
+                var typeStyle = TYPE_STYLES[c.type] || 'bg-gray-50 text-gray-500 border-gray-100';
+                var sourceColor = SOURCE_COLORS[c.source] || 'bg-gray-50 text-gray-500';
+                var isLost = c.type === '流失客户';
+                var rowClass = isLost ? 'border-b border-gray-50 hover:bg-gray-50/80 transition-colors text-gray-500 cursor-pointer' : 'border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer';
+                var opacityCls = isLost ? 'opacity-70' : '';
+                var selectedCls = c.id === selectedCustomerId ? ' bg-brand-50/30' : '';
+
+                var tagsHtml = (c.tags || []).map(function (t) {
+                    return '<span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">' + escapeAttr(t) + '</span>';
+                }).join('');
+
+                var avatar = c.avatar || ('https://ui-avatars.com/api/?name=' + encodeURIComponent((c.name || '客').charAt(0)) + '&background=e0e7ff&color=4f46e5');
+                var avatarCls = isLost ? 'w-8 h-8 rounded-full grayscale' : 'w-10 h-10 rounded-full';
+
+                return '<tr class="' + rowClass + selectedCls + '" data-cid="' + c.id + '">' +
+                    '<td class="py-4 px-2 ' + opacityCls + '">' +
+                    '<div class="flex items-center gap-3">' +
+                    '<img src="' + escapeAttr(avatar) + '" alt="Avatar" class="' + avatarCls + '">' +
+                    '<div><div class="flex items-center gap-2">' +
+                    '<span class="font-medium text-gray-900">' + escapeAttr(c.name) + '</span>' +
+                    '<span class="px-1.5 py-0.5 rounded text-[10px] font-medium border ' + typeStyle + '">' + escapeAttr(c.type || '') + '</span>' +
+                    '</div><p class="text-xs text-gray-500 mt-0.5">' + escapeAttr(c.desc || '') + '</p></div></div></td>' +
+                    '<td class="py-4 px-2 ' + opacityCls + '"><div class="flex items-center gap-1.5"><span>' + escapeAttr(c.phone || '') + '</span><i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i></div></td>' +
+                    '<td class="py-4 px-2 ' + opacityCls + '"><span class="px-2 py-0.5 ' + sourceColor + ' border border-gray-100 rounded text-xs inline-flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full" style="background:currentColor"></div> ' + escapeAttr(c.source || '') + '</span></td>' +
+                    '<td class="py-4 px-2 ' + opacityCls + ' font-medium">' + escapeAttr(c.amount || '-') + '</td>' +
+                    '<td class="py-4 px-2 ' + opacityCls + ' text-center text-gray-600">' + (c.orderCount || 0) + '</td>' +
+                    '<td class="py-4 px-2 ' + opacityCls + '"><div class="flex gap-1 flex-wrap">' + tagsHtml + '</div></td>' +
+                    '<td class="py-4 px-2 ' + opacityCls + '"><p class="text-gray-800">' + escapeAttr(c.followTime || '') + '</p></td>' +
+                    '<td class="py-4 px-4 text-center"><div class="flex items-center justify-center gap-2">' +
+                    '<button class="cust-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition" data-cid="' + c.id + '"><i class="ph ph-eye"></i></button>' +
+                    '<button class="cust-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative" data-cid="' + c.id + '"><i class="ph ph-dots-three"></i></button>' +
+                    '</div></td>' +
+                    '</tr>';
+            }).join('');
+
+            // 绑定按钮事件
+            tbody.querySelectorAll('.cust-view-btn').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    selectCustomer(btn.dataset.cid);
+                });
+            });
+            tbody.querySelectorAll('.cust-more-btn').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (currentDropdown) { closeMenu(); return; }
+                    showMenu(btn);
+                });
+            });
+            // 行点击也选中
+            tbody.querySelectorAll('tr[data-cid]').forEach(function (tr) {
+                tr.addEventListener('click', function () {
+                    selectCustomer(tr.dataset.cid);
+                });
+            });
+        }
+
+        // ========== 选中客户 -> 更新详情面板 ==========
+        function selectCustomer(id) {
+            selectedCustomerId = id;
+            var c = customerMap[id];
+            if (!c) return;
+
+            // 更新表格选中样式
+            document.querySelectorAll('#customer-tbody tr').forEach(function (tr) {
+                if (tr.dataset.cid === id) {
+                    tr.classList.add('bg-brand-50/30');
+                } else {
+                    tr.classList.remove('bg-brand-50/30');
+                }
+            });
+
+            updateDetailPanel(c);
+        }
+
+        function updateDetailPanel(c) {
+            if (!c) return;
             var set = function (id, text) {
                 var el = document.getElementById(id);
                 if (el) el.textContent = text;
             };
 
-            set('detail-name', data.name);
-            set('detail-phone', data.phone);
-            set('detail-source', data.source);
-            set('detail-addtime', data.addTime);
-            set('detail-amount', data.totalAmount);
-            set('detail-orders', data.realOrderCount);
-            set('detail-firstdeal', data.firstDeal);
-            set('detail-status', data.status);
-            set('detail-followstatus', data.followStatus);
-            set('detail-notes', data.notes);
-            set('detail-level-grid', data.level);
-            set('detail-level', data.level);
-            set('detail-type', data.type);
+            set('detail-name', c.name || '');
+            set('detail-phone', c.phone || '');
+            set('detail-source', c.source || '');
+            set('detail-addtime', c.addTime || '');
+            set('detail-amount', c.totalAmount || c.amount || '-');
+            set('detail-orders', (c.orderCount || 0) + ' 单');
+            set('detail-firstdeal', c.firstDeal || '—');
+            set('detail-status', c.status || '正常');
+            set('detail-followstatus', c.followStatus || '');
+            set('detail-notes', c.notes || '');
+            set('detail-level-grid', c.level || '');
+            set('detail-level', c.level || '');
+            set('detail-type', c.type || '');
 
-            // 头像
             var avatar = document.getElementById('detail-avatar');
-            if (avatar && data.avatar) avatar.src = data.avatar;
+            if (avatar && c.avatar) avatar.src = c.avatar;
 
             // 跟进状态颜色
             var fsEl = document.getElementById('detail-followstatus');
             if (fsEl) {
-                var colorCls = FOLLOW_STATUS_COLOR[data.followStatus] || 'text-gray-500';
+                var colorCls = FOLLOW_STATUS_COLOR[c.followStatus] || 'text-gray-500';
                 fsEl.className = 'text-sm font-medium ' + colorCls;
             }
-        }
 
-        // ========== 绑定查看按钮 ==========
-        function bindViewButtons() {
-            document.querySelectorAll('.cust-view-btn').forEach(function (btn) {
-                if (btn.dataset.bound) return;
-                btn.dataset.bound = 'true';
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var row = btn.closest('tr');
-                    if (!row) return;
-                    var data = extractRowData(row);
-                    updateDetailPanel(data);
-                });
-            });
+            // 状态颜色
+            var statusEl = document.getElementById('detail-status');
+            if (statusEl) {
+                statusEl.className = 'text-sm font-medium ' + (c.status === '已流失' ? 'text-gray-400' : 'text-green-500');
+            }
+
+            // 标签
+            var tagsEl = document.getElementById('detail-tags');
+            if (tagsEl) {
+                var tagsHtml = (c.tags || []).map(function (t) {
+                    return '<span class="px-2 py-1 text-xs text-brand-600 bg-brand-50 border border-brand-100 rounded cursor-pointer hover:bg-brand-100 transition-colors">' + escapeAttr(t) + '</span>';
+                }).join('');
+                tagsHtml += '<button class="px-2 py-1 text-xs text-gray-400 border border-dashed border-gray-300 rounded hover:text-gray-600 hover:border-gray-400 transition-colors"><i class="ph ph-plus"></i></button>';
+                tagsEl.innerHTML = tagsHtml;
+            }
+
+            // 显示抽屉
+            var drawer = document.getElementById('detail-drawer');
+            if (drawer) drawer.style.display = 'flex';
         }
 
         // ========== 更多按钮下拉菜单 ==========
         var currentDropdown = null;
 
-        function createDropdown(row) {
+        function createDropdown(cid) {
             var menu = document.createElement('div');
             menu.className = 'cust-action-menu';
             menu.innerHTML = [
@@ -869,24 +570,17 @@
                 '<button class="cust-action-item cust-action-delete" style="color:#ef4444;"><i class="ph ph-trash text-base"></i> 删除客户</button>'
             ].join('');
 
-            // 编辑
             menu.querySelector('.cust-action-edit').addEventListener('click', function () {
                 closeMenu();
-                var data = extractRowData(row);
-                openCustomerForm(data, row);
+                openCustomerForm(customerMap[cid], cid);
             });
-
-            // 查看详情
             menu.querySelector('.cust-action-view').addEventListener('click', function () {
                 closeMenu();
-                var data = extractRowData(row);
-                updateDetailPanel(data);
+                selectCustomer(cid);
             });
-
-            // 删除
             menu.querySelector('.cust-action-delete').addEventListener('click', function () {
                 closeMenu();
-                showDeleteConfirm(row);
+                showDeleteConfirm(cid);
             });
 
             return menu;
@@ -894,16 +588,14 @@
 
         function showMenu(btn) {
             closeMenu();
-            var row = btn.closest('tr');
-            var menu = createDropdown(row);
+            var cid = btn.dataset.cid;
+            var menu = createDropdown(cid);
             document.body.appendChild(menu);
             var rect = btn.getBoundingClientRect();
             menu.style.left = (rect.right - 144) + 'px';
             menu.style.top = (rect.bottom + 6) + 'px';
             currentDropdown = menu;
-            requestAnimationFrame(function () {
-                menu.classList.add('show');
-            });
+            requestAnimationFrame(function () { menu.classList.add('show'); });
         }
 
         function closeMenu() {
@@ -913,23 +605,6 @@
             }
         }
 
-        function bindMoreButtons() {
-            document.querySelectorAll('.cust-more-btn').forEach(function (btn) {
-                if (btn.dataset.bound) return;
-                btn.dataset.bound = 'true';
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (currentDropdown) {
-                        closeMenu();
-                        return;
-                    }
-                    showMenu(btn);
-                });
-            });
-        }
-
-        // 点击空白处关闭菜单
         document.addEventListener('click', function (e) {
             if (currentDropdown && !e.target.closest('.cust-action-menu') && !e.target.closest('.cust-more-btn')) {
                 closeMenu();
@@ -938,10 +613,10 @@
         document.addEventListener('scroll', closeMenu, true);
 
         // ========== 删除确认 ==========
-        function showDeleteConfirm(row) {
-            if (!row) return;
-            var nameEl = row.querySelector('td:first-child span.font-medium');
-            var name = nameEl ? nameEl.textContent.trim() : '该客户';
+        function showDeleteConfirm(cid) {
+            var c = customerMap[cid];
+            if (!c) return;
+            var name = c.name || '该客户';
 
             var modal = document.createElement('div');
             modal.id = 'cust-delete-modal';
@@ -955,7 +630,7 @@
                 '    </div>',
                 '    <div>',
                 '      <h3 class="font-bold text-gray-800 text-base mb-1">确认删除该客户？</h3>',
-                '      <p class="text-sm text-gray-500 leading-relaxed">客户 <span class="font-medium text-gray-700">' + name + '</span> 删除后不可恢复，确定要继续吗？</p>',
+                '      <p class="text-sm text-gray-500 leading-relaxed">客户 <span class="font-medium text-gray-700">' + escapeAttr(name) + '</span> 删除后不可恢复，确定要继续吗？</p>',
                 '    </div>',
                 '  </div>',
                 '  <div class="flex gap-3 justify-end">',
@@ -978,12 +653,26 @@
             });
 
             modal.querySelector('#cust-delete-confirm').addEventListener('click', function () {
-                row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                row.style.opacity = '0';
-                row.style.transform = 'translateX(-20px)';
-                setTimeout(function () { row.remove(); updateTotalCount(); }, 300);
+                fetch('/api/customers/' + cid, { method: 'DELETE' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (res.success) {
+                            showToast('客户已删除');
+                            if (selectedCustomerId === cid) {
+                                selectedCustomerId = null;
+                                var drawer = document.getElementById('detail-drawer');
+                                if (drawer) drawer.style.display = 'none';
+                            }
+                            loadCustomers();
+                        } else {
+                            showToast(res.error || '删除失败');
+                        }
+                    })
+                    .catch(function (err) {
+                        console.error('删除失败:', err);
+                        showToast('删除失败');
+                    });
                 closeModal();
-                showToast('客户已删除');
             });
 
             document.addEventListener('keydown', function esc(e) {
@@ -994,23 +683,12 @@
             });
         }
 
-        function updateTotalCount() {
-            var tbody = document.querySelector('table tbody');
-            if (!tbody) return;
-            var count = tbody.querySelectorAll('tr').length;
-            var totalEl = document.querySelector('.p-4.border-t .flex.items-center.justify-between > div:first-child');
-            if (totalEl) totalEl.textContent = '共 ' + count + ' 条';
-        }
-
         // ========== 新增/编辑客户表单 ==========
-        function openCustomerForm(data, row) {
-            // 移除已有模态框
+        function openCustomerForm(data, cid) {
             var existing = document.getElementById('cust-form-modal');
             if (existing) existing.remove();
 
-            editingRow = row || null;
             var isEdit = !!data;
-
             var tagsStr = (data && data.tags) ? data.tags.join('、') : '';
             var sourceVal = (data && data.source) ? data.source : '闲鱼';
             var levelVal = (data && data.level) ? data.level : 'B 普通客户';
@@ -1032,75 +710,21 @@
                 '    <button id="cust-form-close" class="text-gray-400 hover:text-gray-600 transition"><i class="ph ph-x text-lg"></i></button>',
                 '  </div>',
                 '  <div class="p-5 space-y-4">',
-                // 客户姓名 + 联系电话
                 '    <div class="grid grid-cols-2 gap-4">',
-                '      <div>',
-                '        <label class="cust-form-label">客户姓名 <span class="text-red-500">*</span></label>',
-                '        <input type="text" id="form-name" class="cust-form-input" value="' + escapeAttr(nameVal) + '" placeholder="如：张先生">',
-                '      </div>',
-                '      <div>',
-                '        <label class="cust-form-label">联系电话</label>',
-                '        <input type="text" id="form-phone" class="cust-form-input" value="' + escapeAttr(phoneVal) + '" placeholder="如：138****5678">',
-                '      </div>',
+                '      <div><label class="cust-form-label">客户姓名 <span class="text-red-500">*</span></label><input type="text" id="form-name" class="cust-form-input" value="' + escapeAttr(nameVal) + '" placeholder="如：张先生"></div>',
+                '      <div><label class="cust-form-label">联系电话</label><input type="text" id="form-phone" class="cust-form-input" value="' + escapeAttr(phoneVal) + '" placeholder="如：138****5678"></div>',
                 '    </div>',
-                // 客户来源 + 客户类型
                 '    <div class="grid grid-cols-2 gap-4">',
-                '      <div>',
-                '        <label class="cust-form-label">客户来源</label>',
-                '        <select id="form-source" class="cust-form-input">',
-                '          <option value="闲鱼">闲鱼</option>',
-                '          <option value="小红书">小红书</option>',
-                '          <option value="抖音">抖音</option>',
-                '          <option value="微信">微信</option>',
-                '          <option value="淘宝">淘宝</option>',
-                '          <option value="朋友推荐">朋友推荐</option>',
-                '        </select>',
-                '      </div>',
-                '      <div>',
-                '        <label class="cust-form-label">客户类型</label>',
-                '        <select id="form-type" class="cust-form-input">',
-                '          <option value="成交客户">成交客户</option>',
-                '          <option value="潜在客户">潜在客户</option>',
-                '          <option value="流失客户">流失客户</option>',
-                '          <option value="黑名单">黑名单</option>',
-                '        </select>',
-                '      </div>',
+                '      <div><label class="cust-form-label">客户来源</label><select id="form-source" class="cust-form-input"><option value="闲鱼">闲鱼</option><option value="小红书">小红书</option><option value="抖音">抖音</option><option value="微信">微信</option><option value="淘宝">淘宝</option><option value="朋友推荐">朋友推荐</option></select></div>',
+                '      <div><label class="cust-form-label">客户类型</label><select id="form-type" class="cust-form-input"><option value="成交客户">成交客户</option><option value="潜在客户">潜在客户</option><option value="流失客户">流失客户</option><option value="黑名单">黑名单</option></select></div>',
                 '    </div>',
-                // 客户等级 + 跟进状态
                 '    <div class="grid grid-cols-2 gap-4">',
-                '      <div>',
-                '        <label class="cust-form-label">客户等级</label>',
-                '        <select id="form-level" class="cust-form-input">',
-                '          <option value="A 高价值">A 高价值</option>',
-                '          <option value="B 普通客户">B 普通客户</option>',
-                '          <option value="C 潜在客户">C 潜在客户</option>',
-                '        </select>',
-                '      </div>',
-                '      <div>',
-                '        <label class="cust-form-label">跟进状态</label>',
-                '        <select id="form-follow" class="cust-form-input">',
-                '          <option value="跟进中">跟进中</option>',
-                '          <option value="已成交">已成交</option>',
-                '          <option value="待跟进">待跟进</option>',
-                '          <option value="已流失">已流失</option>',
-                '        </select>',
-                '      </div>',
+                '      <div><label class="cust-form-label">客户等级</label><select id="form-level" class="cust-form-input"><option value="A 高价值">A 高价值</option><option value="B 普通客户">B 普通客户</option><option value="C 潜在客户">C 潜在客户</option></select></div>',
+                '      <div><label class="cust-form-label">跟进状态</label><select id="form-follow" class="cust-form-input"><option value="跟进中">跟进中</option><option value="已成交">已成交</option><option value="待跟进">待跟进</option><option value="已流失">已流失</option></select></div>',
                 '    </div>',
-                // 需求描述
-                '    <div>',
-                '      <label class="cust-form-label">需求描述</label>',
-                '      <input type="text" id="form-desc" class="cust-form-input" value="' + escapeAttr(descVal) + '" placeholder="如：企业官网定制开发">',
-                '    </div>',
-                // 客户标签
-                '    <div>',
-                '      <label class="cust-form-label">客户标签（顿号分隔）</label>',
-                '      <input type="text" id="form-tags" class="cust-form-input" value="' + escapeAttr(tagsStr) + '" placeholder="如：爽快型、大厂员工、复购客户">',
-                '    </div>',
-                // 客户备注
-                '    <div>',
-                '      <label class="cust-form-label">客户备注</label>',
-                '      <textarea id="form-notes" rows="3" class="cust-form-input" placeholder="客户特点、沟通偏好等..." style="resize:none;">' + escapeHtml(notesVal) + '</textarea>',
-                '    </div>',
+                '    <div><label class="cust-form-label">需求描述</label><input type="text" id="form-desc" class="cust-form-input" value="' + escapeAttr(descVal) + '" placeholder="如：企业官网定制开发"></div>',
+                '    <div><label class="cust-form-label">客户标签（顿号分隔）</label><input type="text" id="form-tags" class="cust-form-input" value="' + escapeAttr(tagsStr) + '" placeholder="如：爽快型、大厂员工、复购客户"></div>',
+                '    <div><label class="cust-form-label">客户备注</label><textarea id="form-notes" rows="3" class="cust-form-input" placeholder="客户特点、沟通偏好等..." style="resize:none;">' + escapeHtml(notesVal) + '</textarea></div>',
                 '  </div>',
                 '  <div class="flex justify-end gap-3 p-5 border-t border-gray-100">',
                 '    <button id="cust-form-cancel" class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition">取消</button>',
@@ -1114,7 +738,6 @@
             // 设置 select 默认值
             setSelectValue('form-source', sourceVal);
             setSelectValue('form-type', typeVal);
-            // 等级匹配（支持「A 高价值客户」或「A 高价值」）
             var levelMatch = levelVal.charAt(0);
             var levelSelect = modal.querySelector('#form-level');
             if (levelSelect) {
@@ -1127,11 +750,9 @@
             }
             setSelectValue('form-follow', followVal);
 
-            // 关闭事件
             function closeModal() {
                 modal.remove();
                 document.body.style.overflow = '';
-                editingRow = null;
             }
 
             modal.querySelector('#cust-form-close').addEventListener('click', closeModal);
@@ -1145,26 +766,67 @@
                 var name = (modal.querySelector('#form-name').value || '').trim();
                 if (!name) { showToast('请输入客户姓名'); return; }
 
-                if (isEdit && editingRow) {
-                    // 更新行数据
-                    updateRowFromForm(editingRow, modal);
-                    showToast('客户信息已更新');
-                } else {
-                    // 新增行
-                    var newRow = createRowFromForm(modal);
-                    var tbody = document.querySelector('table tbody');
-                    if (tbody) {
-                        tbody.insertBefore(newRow, tbody.firstChild);
-                        updateTotalCount();
-                    }
-                    showToast('客户已添加');
+                var formData = {
+                    name: name,
+                    phone: (modal.querySelector('#form-phone').value || '').trim(),
+                    source: modal.querySelector('#form-source').value,
+                    type: modal.querySelector('#form-type').value,
+                    level: modal.querySelector('#form-level').value,
+                    followStatus: modal.querySelector('#form-follow').value,
+                    desc: (modal.querySelector('#form-desc').value || '').trim(),
+                    tags: (modal.querySelector('#form-tags').value || '').trim().split(/[、,，]/).map(function (t) { return t.trim(); }).filter(Boolean),
+                    notes: (modal.querySelector('#form-notes').value || '').trim()
+                };
 
-                    // 重新绑定按钮
-                    bindViewButtons();
-                    bindMoreButtons();
+                // 生成当前时间
+                var now = new Date();
+                var mm = String(now.getMonth() + 1).padStart(2, '0');
+                var dd = String(now.getDate()).padStart(2, '0');
+                var hh = String(now.getHours()).padStart(2, '0');
+                var mi = String(now.getMinutes()).padStart(2, '0');
+                formData.followTime = '今天 ' + hh + ':' + mi;
+
+                if (!isEdit) {
+                    // 新增默认值
+                    formData.amount = '-';
+                    formData.orderCount = 0;
+                    formData.addTime = now.getFullYear() + '-' + mm + '-' + dd + ' ' + hh + ':' + mi;
+                    formData.totalAmount = '-';
+                    formData.firstDeal = '—';
+                    formData.status = '正常';
+                    formData.avatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name.charAt(0)) + '&background=e0e7ff&color=4f46e5';
                 }
 
-                closeModal();
+                var apiUrl = '/api/customers';
+                var method = 'POST';
+                if (isEdit && cid) {
+                    apiUrl = '/api/customers/' + cid;
+                    method = 'PUT';
+                }
+
+                fetch(apiUrl, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                })
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                    if (res.success) {
+                        showToast(isEdit ? '客户信息已更新' : '客户已添加');
+                        closeModal();
+                        loadCustomers().then(function () {
+                            if (isEdit && cid) {
+                                selectCustomer(cid);
+                            }
+                        });
+                    } else {
+                        showToast(res.error || '保存失败');
+                    }
+                })
+                .catch(function (err) {
+                    console.error('保存失败:', err);
+                    showToast('保存失败');
+                });
             });
 
             document.addEventListener('keydown', function esc(e) {
@@ -1186,142 +848,6 @@
             }
         }
 
-        function escapeAttr(s) {
-            return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-        function escapeHtml(s) {
-            return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-
-        // 从表单更新已有行
-        function updateRowFromForm(row, modal) {
-            var name = modal.querySelector('#form-name').value.trim();
-            var phone = modal.querySelector('#form-phone').value.trim();
-            var source = modal.querySelector('#form-source').value;
-            var type = modal.querySelector('#form-type').value;
-            var level = modal.querySelector('#form-level').value;
-            var follow = modal.querySelector('#form-follow').value;
-            var desc = modal.querySelector('#form-desc').value.trim();
-            var tagsStr = modal.querySelector('#form-tags').value.trim();
-            var notes = modal.querySelector('#form-notes').value.trim();
-
-            var cells = row.querySelectorAll('td');
-
-            // 更新姓名
-            var nameEl = cells[0].querySelector('span.font-medium');
-            if (nameEl) nameEl.textContent = name;
-
-            // 更新头像
-            var img = cells[0].querySelector('img');
-            if (img) {
-                var initial = name.charAt(0) || '客';
-                img.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(initial) + '&background=bfdbfe&color=1d4ed8';
-            }
-
-            // 更新类型标签
-            var typeEl = cells[0].querySelector('span:nth-of-type(2)');
-            if (typeEl) typeEl.textContent = type;
-
-            // 更新需求描述
-            var descEl = cells[0].querySelector('p.text-xs');
-            if (descEl) descEl.textContent = desc;
-
-            // 更新电话
-            cells[1].innerHTML = '<div class="flex items-center gap-1.5"><span>' + escapeAttr(phone) + '</span><i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i></div>';
-
-            // 更新来源
-            var sourceCls = SOURCE_COLORS[source] || 'bg-gray-50 text-gray-500';
-            cells[2].innerHTML = '<span class="px-2 py-0.5 ' + sourceCls + ' border border-gray-100 rounded text-xs flex items-center inline-flex gap-1"><div class="w-1.5 h-1.5 rounded-full" style="background:currentColor"></div> ' + source + '</span>';
-
-            // 更新标签
-            var tags = tagsStr ? tagsStr.split(/[、,，]/).map(function (t) { return t.trim(); }).filter(Boolean) : [];
-            cells[5].innerHTML = tags.map(function (t) {
-                return '<span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">' + escapeAttr(t) + '</span>';
-            }).join('');
-
-            // 更新最近跟进时间
-            var now = new Date();
-            var mm = String(now.getMonth() + 1).padStart(2, '0');
-            var dd = String(now.getDate()).padStart(2, '0');
-            var hh = String(now.getHours()).padStart(2, '0');
-            var mi = String(now.getMinutes()).padStart(2, '0');
-            cells[6].innerHTML = '<p class="text-gray-800">今天 ' + hh + ':' + mi + '</p>';
-
-            // 更新扩展数据
-            CUST_EXTRA[name] = {
-                addTime: CUST_EXTRA[name] ? CUST_EXTRA[name].addTime : (now.getFullYear() + '-' + mm + '-' + dd + ' ' + hh + ':' + mi),
-                totalAmount: CUST_EXTRA[name] ? CUST_EXTRA[name].totalAmount : '-',
-                orderCount: CUST_EXTRA[name] ? CUST_EXTRA[name].orderCount : '0 单',
-                firstDeal: CUST_EXTRA[name] ? CUST_EXTRA[name].firstDeal : '—',
-                status: '正常',
-                level: level,
-                followStatus: follow,
-                notes: notes,
-                desc: desc
-            };
-
-            // 同步更新详情面板
-            var data = extractRowData(row);
-            updateDetailPanel(data);
-        }
-
-        // 从表单创建新行
-        function createRowFromForm(modal) {
-            var name = modal.querySelector('#form-name').value.trim();
-            var phone = modal.querySelector('#form-phone').value.trim();
-            var source = modal.querySelector('#form-source').value;
-            var type = modal.querySelector('#form-type').value;
-            var level = modal.querySelector('#form-level').value;
-            var follow = modal.querySelector('#form-follow').value;
-            var desc = modal.querySelector('#form-desc').value.trim();
-            var tagsStr = modal.querySelector('#form-tags').value.trim();
-            var notes = modal.querySelector('#form-notes').value.trim();
-
-            var initial = name.charAt(0) || '客';
-            var avatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(initial) + '&background=e0e7ff&color=4f46e5';
-
-            var sourceCls = SOURCE_COLORS[source] || 'bg-gray-50 text-gray-500';
-            var typeCls = type === '成交客户' ? 'bg-blue-50 text-blue-600 border-blue-100' : (type === '潜在客户' ? 'bg-orange-50 text-orange-500 border-orange-100' : (type === '流失客户' ? 'bg-gray-100 text-gray-500 border-gray-200' : 'bg-red-50 text-red-500 border-red-100'));
-
-            var tags = tagsStr ? tagsStr.split(/[、,，]/).map(function (t) { return t.trim(); }).filter(Boolean) : [];
-            var tagsHtml = tags.map(function (t) {
-                return '<span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">' + escapeAttr(t) + '</span>';
-            }).join('');
-
-            var now = new Date();
-            var mm = String(now.getMonth() + 1).padStart(2, '0');
-            var dd = String(now.getDate()).padStart(2, '0');
-            var hh = String(now.getHours()).padStart(2, '0');
-            var mi = String(now.getMinutes()).padStart(2, '0');
-
-            // 存入扩展数据
-            CUST_EXTRA[name] = {
-                addTime: now.getFullYear() + '-' + mm + '-' + dd + ' ' + hh + ':' + mi,
-                totalAmount: '-',
-                orderCount: '0 单',
-                firstDeal: '—',
-                status: '正常',
-                level: level,
-                followStatus: follow,
-                notes: notes,
-                desc: desc
-            };
-
-            var tr = document.createElement('tr');
-            tr.className = 'border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer';
-            tr.innerHTML = [
-                '<td class="py-4 px-2"><div class="flex items-center gap-2"><img src="' + avatar + '" class="w-8 h-8 rounded-full"><div><div class="flex items-center gap-2"><span class="font-medium text-gray-900">' + escapeAttr(name) + '</span><span class="px-1.5 py-0.5 rounded text-[10px] font-medium ' + typeCls + '">' + type + '</span></div><p class="text-xs text-gray-500 mt-0.5 truncate">' + escapeAttr(desc) + '</p></div></div></td>',
-                '<td class="py-4 px-2"><div class="flex items-center gap-1.5"><span>' + escapeAttr(phone) + '</span><i class="ph-fill ph-wechat-logo text-green-500 text-sm"></i></div></td>',
-                '<td class="py-4 px-2"><span class="px-2 py-0.5 ' + sourceCls + ' border border-gray-100 rounded text-xs flex items-center inline-flex gap-1"><div class="w-1.5 h-1.5 rounded-full" style="background:currentColor"></div> ' + source + '</span></td>',
-                '<td class="py-4 px-2 font-medium text-gray-400">-</td>',
-                '<td class="py-4 px-2 text-center text-gray-600">0</td>',
-                '<td class="py-4 px-2"><div class="flex gap-1 flex-wrap">' + tagsHtml + '</div></td>',
-                '<td class="py-4 px-2"><p class="text-gray-800">今天 ' + hh + ':' + mi + '</p></td>',
-                '<td class="py-4 px-4 text-center"><div class="flex items-center justify-center gap-2"><button class="cust-view-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition"><i class="ph ph-eye"></i></button><button class="cust-more-btn w-7 h-7 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition relative"><i class="ph ph-dots-three"></i></button></div></td>'
-            ].join('');
-            return tr;
-        }
-
         // ========== Toast ==========
         var toastTimer = null;
         function showToast(msg) {
@@ -1332,7 +858,7 @@
             var toast = document.createElement('div');
             toast.id = 'cust-action-toast';
             toast.style.cssText = 'position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%) translateY(2.5rem);background:#1e293b;color:#fff;padding:0.5rem 1rem;border-radius:0.5rem;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);display:flex;align-items:center;gap:0.5rem;font-size:0.875rem;opacity:0;transition:all 0.3s ease;pointer-events:none;z-index:90;';
-            toast.innerHTML = '<i class="ph-fill ph-check-circle" style="color:#4ade80"></i><span>' + msg + '</span>';
+            toast.innerHTML = '<i class="ph-fill ph-check-circle" style="color:#4ade80"></i><span>' + escapeAttr(msg) + '</span>';
             document.body.appendChild(toast);
 
             requestAnimationFrame(function () {
@@ -1347,54 +873,97 @@
             }, 2500);
         }
 
-        // ========== 绑定详情面板按钮 ==========
-        function bindDetailButtons() {
+        // ========== 绑定事件 ==========
+        function bindEvents() {
+            // 新增按钮
+            var addBtn = document.getElementById('add-customer-btn');
+            if (addBtn && !addBtn.dataset.bound) {
+                addBtn.dataset.bound = 'true';
+                addBtn.addEventListener('click', function () {
+                    openCustomerForm(null, null);
+                });
+            }
+
+            // 详情编辑按钮
             var editBtn = document.getElementById('detail-edit-btn');
             if (editBtn && !editBtn.dataset.bound) {
                 editBtn.dataset.bound = 'true';
                 editBtn.addEventListener('click', function () {
-                    // 从当前详情面板获取客户名，找到对应行
-                    var nameEl = document.getElementById('detail-name');
-                    var name = nameEl ? nameEl.textContent.trim() : '';
-                    var row = null;
-                    if (name) {
-                        document.querySelectorAll('table tbody tr').forEach(function (tr) {
-                            var n = tr.querySelector('td:first-child span.font-medium');
-                            if (n && n.textContent.trim() === name) row = tr;
-                        });
+                    if (selectedCustomerId) {
+                        openCustomerForm(customerMap[selectedCustomerId], selectedCustomerId);
                     }
-                    var data = row ? extractRowData(row) : null;
-                    openCustomerForm(data, row);
                 });
             }
 
+            // 详情关闭按钮
             var closeBtn = document.getElementById('detail-close-btn');
             if (closeBtn && !closeBtn.dataset.bound) {
                 closeBtn.dataset.bound = 'true';
                 closeBtn.addEventListener('click', function () {
-                    var drawer = document.querySelector('.fixed.right-0.w-\\[380px\\]');
+                    var drawer = document.getElementById('detail-drawer');
                     if (drawer) drawer.style.display = 'none';
                 });
             }
-        }
 
-        // ========== 绑定新增按钮 ==========
-        function bindAddButton() {
-            var btn = document.getElementById('add-customer-btn');
-            if (btn && !btn.dataset.bound) {
-                btn.dataset.bound = 'true';
-                btn.addEventListener('click', function () {
-                    openCustomerForm(null, null);
+            // 筛选按钮
+            var filterBtn = document.getElementById('filter-btn');
+            if (filterBtn && !filterBtn.dataset.bound) {
+                filterBtn.dataset.bound = 'true';
+                filterBtn.addEventListener('click', function () {
+                    currentFilter.keyword = (document.getElementById('filter-keyword').value || '').trim();
+                    currentFilter.source = document.getElementById('filter-source').value;
+                    currentFilter.level = document.getElementById('filter-level').value;
+                    currentFilter.type = document.getElementById('filter-type').value;
+                    loadCustomers();
                 });
             }
+
+            // 重置按钮
+            var resetBtn = document.getElementById('filter-reset-btn');
+            if (resetBtn && !resetBtn.dataset.bound) {
+                resetBtn.dataset.bound = 'true';
+                resetBtn.addEventListener('click', function () {
+                    document.getElementById('filter-keyword').value = '';
+                    document.getElementById('filter-source').value = '';
+                    document.getElementById('filter-level').value = '';
+                    document.getElementById('filter-type').value = '';
+                    currentFilter = { keyword: '', source: '', level: '', type: '' };
+                    loadCustomers();
+                });
+            }
+
+            // 搜索回车
+            var keywordInput = document.getElementById('filter-keyword');
+            if (keywordInput && !keywordInput.dataset.bound) {
+                keywordInput.dataset.bound = 'true';
+                keywordInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        currentFilter.keyword = keywordInput.value.trim();
+                        loadCustomers();
+                    }
+                });
+            }
+
+            // Tab 切换
+            document.querySelectorAll('.cust-tab').forEach(function (tab) {
+                if (tab.dataset.bound) return;
+                tab.dataset.bound = 'true';
+                tab.addEventListener('click', function () {
+                    document.querySelectorAll('.cust-tab').forEach(function (t) {
+                        t.className = 'cust-tab px-4 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium text-sm transition-colors mx-2';
+                    });
+                    tab.className = 'cust-tab px-4 py-3 border-b-2 border-brand-600 text-brand-600 font-medium text-sm mr-2';
+                    currentFilter.type = tab.dataset.type;
+                    document.getElementById('filter-type').value = tab.dataset.type;
+                    loadCustomers();
+                });
+            });
         }
 
         // ========== 初始化 ==========
         function init() {
-            bindViewButtons();
-            bindMoreButtons();
-            bindDetailButtons();
-            bindAddButton();
+            bindEvents();
+            loadCustomers();
         }
 
         if (document.readyState === 'loading') {
@@ -1406,11 +975,10 @@
         window.addEventListener('spa:ready', function (e) {
             var page = (e.detail && e.detail.page) || '';
             if (page && page.indexOf('customer') === -1) return;
-            if (!document.querySelector('.cust-more-btn')) return;
             init();
         });
 
-        // 暴露到 window，供顶部栏按钮 onclick 调用
+        // 暴露到 window
         window.openCustomerForm = openCustomerForm;
     })();
     </script>

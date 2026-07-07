@@ -11,6 +11,7 @@
  *   PUT    /api/reminders/:id       - 更新
  *   PUT    /api/reminders/:id/toggle - 切换完成状态
  *   DELETE /api/reminders/:id       - 删除
+ *   POST   /api/reminders/seed      - 灌入种子数据
  */
 'use strict';
 
@@ -21,7 +22,17 @@ var resp = require('../utils/response');
 
 var reminders = new Storage('reminders');
 
+// ========== 灌入种子数据 ==========
+
+router.post('/seed', resp.asyncHandler(function (req, res) {
+    var seedData = require('../data/seed-reminders');
+    reminders.clear();
+    var records = reminders.createMany(seedData);
+    return resp.success(res, { count: records.length });
+}));
+
 // ========== 按月查询日历 ==========
+
 router.get('/calendar/:year/:month', resp.asyncHandler(function (req, res) {
     var year = parseInt(req.params.year);
     var month = parseInt(req.params.month); // 1-12
@@ -49,6 +60,7 @@ router.get('/calendar/:year/:month', resp.asyncHandler(function (req, res) {
 }));
 
 // ========== 查询列表 ==========
+
 router.get('/', resp.asyncHandler(function (req, res) {
     var all = reminders.findAll();
     var date = req.query.date;
@@ -62,8 +74,8 @@ router.get('/', resp.asyncHandler(function (req, res) {
         all = all.filter(function (r) { return r.category === category; });
     }
     if (status) {
-        var isCompleted = status === 'completed';
-        all = all.filter(function (r) { return !!r.completed === isCompleted; });
+        var isDone = status === 'completed';
+        all = all.filter(function (r) { return !!r.done === isDone; });
     }
 
     // 按日期升序排列
@@ -75,6 +87,7 @@ router.get('/', resp.asyncHandler(function (req, res) {
 }));
 
 // ========== 查询单条 ==========
+
 router.get('/:id', resp.asyncHandler(function (req, res) {
     var record = reminders.findById(req.params.id);
     if (!record) return resp.notFound(res, '提醒不存在');
@@ -82,6 +95,7 @@ router.get('/:id', resp.asyncHandler(function (req, res) {
 }));
 
 // ========== 新建 ==========
+
 router.post('/', resp.asyncHandler(function (req, res) {
     var body = req.body || {};
 
@@ -90,19 +104,20 @@ router.post('/', resp.asyncHandler(function (req, res) {
 
     var record = reminders.create({
         title: body.title,
-        content: body.content || '',
+        desc: body.desc || '',
         date: body.date,
-        time: body.time || '',
+        time: body.time || '09:00',
         category: body.category || '其他',
-        priority: body.priority || 'normal', // low | normal | high
-        completed: body.completed || false,
-        repeat: body.repeat || 'none'        // none | daily | weekly | monthly
+        priority: body.priority || 'medium', // high | medium | low
+        done: body.done || false,
+        repeat: body.repeat || 'none'         // none | daily | weekly | monthly
     });
 
     return resp.success(res, record, 201);
 }));
 
 // ========== 更新 ==========
+
 router.put('/:id', resp.asyncHandler(function (req, res) {
     var updated = reminders.update(req.params.id, req.body || {});
     if (!updated) return resp.notFound(res, '提醒不存在');
@@ -110,14 +125,16 @@ router.put('/:id', resp.asyncHandler(function (req, res) {
 }));
 
 // ========== 切换完成状态 ==========
+
 router.put('/:id/toggle', resp.asyncHandler(function (req, res) {
     var record = reminders.findById(req.params.id);
     if (!record) return resp.notFound(res, '提醒不存在');
-    var updated = reminders.update(req.params.id, { completed: !record.completed });
+    var updated = reminders.update(req.params.id, { done: !record.done });
     return resp.success(res, updated);
 }));
 
 // ========== 删除 ==========
+
 router.delete('/:id', resp.asyncHandler(function (req, res) {
     var ok = reminders.remove(req.params.id);
     if (!ok) return resp.notFound(res, '提醒不存在');

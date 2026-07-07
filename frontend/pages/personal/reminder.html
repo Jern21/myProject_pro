@@ -137,10 +137,16 @@
         .filter-btn { color: #6b7280; background: transparent; }
         .filter-btn:hover { background: #f3f4f6; }
         .filter-btn.active { background: #eff6ff; color: #2563eb; }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
     <script src="../../js/sidebar.js"></script>
 <script src="../../js/header.js"></script>
-<script src="../../js/spa-router.js"></script>
+    <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
 </head>
@@ -469,47 +475,12 @@
     (function () {
         'use strict';
 
-        // ========== 数据存储 ==========
-        var STORAGE_KEY = 'reminder_data_v1';
-        var CONFIG_KEY = 'reminder_config_v1';
-        var CATEGORY_KEY = 'reminder_categories_v1';
-
-        var defaultCategories = [
-            { name: '工作待办', cls: 'cat-work', color: 'blue' },
-            { name: '订单截止', cls: 'cat-order', color: 'purple' },
-            { name: '会议日程', cls: 'cat-meeting', color: 'cyan' },
-            { name: '个人事务', cls: 'cat-personal', color: 'amber' },
-            { name: '项目里程碑', cls: 'cat-deadline', color: 'red' }
-        ];
-
-        var defaultReminders = [
-            { id: 1, title: '客户需求确认截止', desc: '张先生企业官网需求需在今日确认', date: todayStr(), time: '18:00', category: '订单截止', priority: 'high', repeat: 'none', done: false },
-            { id: 2, title: '后台管理系统上线', desc: '刘总项目需在7月6日前完成部署', date: addDaysStr(2), time: '10:00', category: '项目里程碑', priority: 'high', repeat: 'none', done: false },
-            { id: 3, title: '周报提交', desc: '每周五下午提交工作周报', date: addDaysStr(3), time: '17:00', category: '工作待办', priority: 'medium', repeat: 'weekly', done: false },
-            { id: 4, title: '闲鱼商品上新', desc: '上架3款新的设计服务商品', date: addDaysStr(5), time: '14:00', category: '工作待办', priority: 'medium', repeat: 'none', done: false },
-            { id: 5, title: '小程序验收会议', desc: '与赵先生线上会议确认验收细节', date: addDaysStr(7), time: '15:30', category: '会议日程', priority: 'medium', repeat: 'none', done: false },
-            { id: 6, title: '房租缴纳', desc: '每月10号前缴纳房租', date: addDaysStr(6), time: '09:00', category: '个人事务', priority: 'low', repeat: 'monthly', done: false },
-            { id: 7, title: '海报设计初稿交付', desc: '陈女士海报设计初稿需在7月2日交付', date: addDaysStr(-2), time: '12:00', category: '订单截止', priority: 'high', repeat: 'none', done: true }
-        ];
-
-        var defaultConfig = {
-            browser_notify: true,
-            overdue_highlight: true,
-            auto_archive: false,
-            advance_hours: 1
-        };
-
-        var reminders = [];
-        var categories = [];
-        var config = {};
-        var currentFilter = 'all';
-        var calYear, calMonth;
-        var editingId = null;
-        var deletingId = null;
-        var selectedRepeat = 'none';
-        var selectedCatColor = { color: 'blue', cls: 'cat-work' };
-
         // ========== 工具函数 ==========
+        function escapeHtml(s) {
+            return String(s || '').replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
         function todayStr() {
             var d = new Date();
             return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -547,15 +518,16 @@
         function repeatLabel(r) {
             return { none: '不重复', daily: '每天', weekly: '每周', monthly: '每月' }[r] || '不重复';
         }
-        function getCategoryCls(name) {
-            var cat = categories.find(function (c) { return c.name === name; });
-            return cat ? cat.cls : 'cat-work';
-        }
-        function nextId() {
-            return reminders.length ? Math.max.apply(null, reminders.map(function (r) { return r.id; })) + 1 : 1;
+        function calcNextRepeatDate(dateStr, repeat) {
+            var d = new Date(dateStr + 'T00:00:00');
+            if (repeat === 'daily') d.setDate(d.getDate() + 1);
+            else if (repeat === 'weekly') d.setDate(d.getDate() + 7);
+            else if (repeat === 'monthly') d.setMonth(d.getMonth() + 1);
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
         }
         function showToast(msg) {
             var t = document.getElementById('toast');
+            if (!t) return;
             t.textContent = msg;
             t.style.opacity = '1';
             t.style.transform = 'translateX(-50%) translateY(0)';
@@ -564,14 +536,38 @@
                 t.style.transform = 'translateX(-50%) translateY(10px)';
             }, 2200);
         }
+        function catColorBg(color) {
+            var map = {
+                blue: 'bg-blue-400', purple: 'bg-purple-400', cyan: 'bg-cyan-400',
+                amber: 'bg-amber-400', red: 'bg-red-400', green: 'bg-green-400',
+                pink: 'bg-pink-400', indigo: 'bg-indigo-400'
+            };
+            return map[color] || 'bg-gray-400';
+        }
 
-        // ========== 数据加载/保存 ==========
-        function loadData() {
-            try {
-                var raw = localStorage.getItem(STORAGE_KEY);
-                reminders = raw ? JSON.parse(raw) : defaultReminders.slice();
-            } catch (e) { reminders = defaultReminders.slice(); }
+        // ========== 分类 & 配置（保留 localStorage） ==========
+        var CATEGORY_KEY = 'reminder_categories_v1';
+        var CONFIG_KEY = 'reminder_config_v1';
 
+        var defaultCategories = [
+            { name: '工作待办', cls: 'cat-work', color: 'blue' },
+            { name: '订单截止', cls: 'cat-order', color: 'purple' },
+            { name: '会议日程', cls: 'cat-meeting', color: 'cyan' },
+            { name: '个人事务', cls: 'cat-personal', color: 'amber' },
+            { name: '项目里程碑', cls: 'cat-deadline', color: 'red' }
+        ];
+
+        var defaultConfig = {
+            browser_notify: true,
+            overdue_highlight: true,
+            auto_archive: false,
+            advance_hours: 1
+        };
+
+        var categories = [];
+        var config = {};
+
+        function loadLocalData() {
             try {
                 var craw = localStorage.getItem(CATEGORY_KEY);
                 categories = craw ? JSON.parse(craw) : defaultCategories.slice();
@@ -582,12 +578,71 @@
                 config = cfig ? JSON.parse(cfig) : Object.assign({}, defaultConfig);
             } catch (e) { config = Object.assign({}, defaultConfig); }
         }
-        function saveData() {
+
+        function saveLocalData() {
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(reminders));
                 localStorage.setItem(CATEGORY_KEY, JSON.stringify(categories));
                 localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
             } catch (e) {}
+        }
+
+        function getCategoryCls(name) {
+            var cat = categories.find(function (c) { return c.name === name; });
+            return cat ? cat.cls : 'cat-work';
+        }
+
+        // ========== 状态 ==========
+        var reminders = [];
+        var currentFilter = 'all';
+        var calYear, calMonth;
+        var editingId = null;
+        var deletingId = null;
+        var selectedRepeat = 'none';
+        var selectedCatColor = { color: 'blue', cls: 'cat-work' };
+        var eventsBound = false;
+
+        // ========== API 调用 ==========
+        function loadReminders() {
+            return fetch('/api/reminders')
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                    if (res.success) {
+                        reminders = res.data || [];
+                        renderList();
+                        renderCalendar();
+                        renderCategories();
+                    }
+                })
+                .catch(function (err) {
+                    console.error('加载提醒失败:', err);
+                    showToast('加载提醒数据失败');
+                });
+        }
+
+        function apiCreate(data) {
+            return fetch('/api/reminders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(function (r) { return r.json(); });
+        }
+
+        function apiUpdate(id, data) {
+            return fetch('/api/reminders/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(function (r) { return r.json(); });
+        }
+
+        function apiDelete(id) {
+            return fetch('/api/reminders/' + id, { method: 'DELETE' })
+                .then(function (r) { return r.json(); });
+        }
+
+        function apiToggle(id) {
+            return fetch('/api/reminders/' + id + '/toggle', { method: 'PUT' })
+                .then(function (r) { return r.json(); });
         }
 
         // ========== 渲染提醒列表 ==========
@@ -603,7 +658,7 @@
             // 排序：未完成在前，按日期升序
             list.sort(function (a, b) {
                 if (a.done !== b.done) return a.done ? 1 : -1;
-                return a.date.localeCompare(b.date);
+                return (a.date || '').localeCompare(b.date || '');
             });
             return list;
         }
@@ -642,13 +697,13 @@
                 + '</button>'
                 + '<div class="flex-1 min-w-0">'
                 + '<div class="flex items-center gap-2 mb-1 flex-wrap">'
-                + '<span class="text-[10px] ' + catCls + ' px-1.5 py-0.5 rounded font-medium">' + r.category + '</span>'
+                + '<span class="text-[10px] ' + catCls + ' px-1.5 py-0.5 rounded font-medium">' + escapeHtml(r.category) + '</span>'
                 + '<span class="text-[10px] ' + priCls + ' border px-1.5 py-0.5 rounded">优先级 ' + priorityLabel(r.priority) + '</span>'
                 + badge
                 + repeatBadge
                 + '</div>'
-                + '<h4 class="reminder-title font-medium text-gray-800 text-sm">' + r.title + '</h4>'
-                + (r.desc ? '<p class="text-xs text-gray-500 mt-1 line-clamp-2">' + r.desc + '</p>' : '')
+                + '<h4 class="reminder-title font-medium text-gray-800 text-sm">' + escapeHtml(r.title) + '</h4>'
+                + (r.desc ? '<p class="text-xs text-gray-500 mt-1 line-clamp-2">' + escapeHtml(r.desc) + '</p>' : '')
                 + '<div class="flex items-center gap-3 mt-2 text-[10px] text-gray-400">'
                 + '<span class="flex items-center gap-1"><i class="ph ph-calendar"></i>' + formatDate(r.date) + '</span>'
                 + '<span class="flex items-center gap-1"><i class="ph ph-clock"></i>' + (r.time || '09:00') + '</span>'
@@ -665,6 +720,7 @@
         function renderList() {
             var container = document.getElementById('reminder-list');
             var empty = document.getElementById('empty-state');
+            if (!container) return;
             var list = getFilteredReminders();
 
             if (list.length === 0) {
@@ -751,11 +807,11 @@
                 return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group">'
                     + '<div class="flex items-center gap-2">'
                     + '<span class="w-3 h-3 rounded ' + catColorBg(cat.color) + '"></span>'
-                    + '<span class="text-sm text-gray-700">' + cat.name + '</span>'
+                    + '<span class="text-sm text-gray-700">' + escapeHtml(cat.name) + '</span>'
                     + '</div>'
                     + '<div class="flex items-center gap-2">'
                     + '<span class="text-[10px] text-gray-400">' + count + '项</span>'
-                    + '<button class="del-cat-btn w-6 h-6 rounded flex items-center justify-center text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all" data-name="' + cat.name + '"><i class="ph ph-trash text-xs"></i></button>'
+                    + '<button class="del-cat-btn w-6 h-6 rounded flex items-center justify-center text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all" data-name="' + escapeHtml(cat.name) + '"><i class="ph ph-trash text-xs"></i></button>'
                     + '</div>'
                     + '</div>';
             }).join('');
@@ -764,18 +820,9 @@
             var select = document.getElementById('form-category');
             if (select) {
                 select.innerHTML = categories.map(function (c) {
-                    return '<option value="' + c.name + '">' + c.name + '</option>';
+                    return '<option value="' + escapeHtml(c.name) + '">' + escapeHtml(c.name) + '</option>';
                 }).join('');
             }
-        }
-
-        function catColorBg(color) {
-            var map = {
-                blue: 'bg-blue-400', purple: 'bg-purple-400', cyan: 'bg-cyan-400',
-                amber: 'bg-amber-400', red: 'bg-red-400', green: 'bg-green-400',
-                pink: 'bg-pink-400', indigo: 'bg-indigo-400'
-            };
-            return map[color] || 'bg-gray-400';
         }
 
         // ========== 模态框：新建/编辑 ==========
@@ -794,12 +841,12 @@
                 var r = reminders.find(function (x) { return x.id === id; });
                 if (!r) return;
                 title.textContent = '编辑提醒';
-                formTitle.value = r.title;
+                formTitle.value = r.title || '';
                 formDesc.value = r.desc || '';
-                formDate.value = r.date;
+                formDate.value = r.date || todayStr();
                 formTime.value = r.time || '09:00';
                 formCat.value = r.category;
-                formPri.value = r.priority;
+                formPri.value = r.priority || 'medium';
                 selectedRepeat = r.repeat || 'none';
             } else {
                 title.textContent = '新建提醒';
@@ -825,10 +872,13 @@
 
             modal.classList.remove('hidden');
         }
+
         function closeModal() {
-            document.getElementById('reminder-modal').classList.add('hidden');
+            var modal = document.getElementById('reminder-modal');
+            if (modal) modal.classList.add('hidden');
             editingId = null;
         }
+
         function saveReminder() {
             var title = document.getElementById('form-title').value.trim();
             var date = document.getElementById('form-date').value;
@@ -847,24 +897,35 @@
             };
 
             if (editingId) {
+                // 编辑：保留 done 状态
                 var r = reminders.find(function (x) { return x.id === editingId; });
-                if (r) {
-                    data.done = r.done;
-                    data.id = r.id;
-                    var idx = reminders.indexOf(r);
-                    reminders[idx] = data;
-                }
-                showToast('提醒已更新');
+                if (r) data.done = r.done;
+                apiUpdate(editingId, data).then(function (res) {
+                    if (res.success) {
+                        showToast('提醒已更新');
+                        closeModal();
+                        loadReminders();
+                    } else {
+                        showToast(res.error || '更新失败');
+                    }
+                }).catch(function (err) {
+                    console.error('更新失败:', err);
+                    showToast('更新失败');
+                });
             } else {
-                data.id = nextId();
-                reminders.unshift(data);
-                showToast('提醒已创建');
+                apiCreate(data).then(function (res) {
+                    if (res.success) {
+                        showToast('提醒已创建');
+                        closeModal();
+                        loadReminders();
+                    } else {
+                        showToast(res.error || '创建失败');
+                    }
+                }).catch(function (err) {
+                    console.error('创建失败:', err);
+                    showToast('创建失败');
+                });
             }
-
-            saveData();
-            renderList();
-            renderCalendar();
-            closeModal();
         }
 
         // ========== 删除 ==========
@@ -872,64 +933,76 @@
             deletingId = id;
             var r = reminders.find(function (x) { return x.id === id; });
             var text = document.getElementById('delete-text');
-            if (r) text.textContent = '确定要删除「' + r.title + '」吗？删除后无法恢复。';
-            document.getElementById('delete-modal').classList.remove('hidden');
+            if (r && text) text.textContent = '确定要删除「' + r.title + '」吗？删除后无法恢复。';
+            var modal = document.getElementById('delete-modal');
+            if (modal) modal.classList.remove('hidden');
         }
+
         function confirmDelete() {
-            if (deletingId) {
-                reminders = reminders.filter(function (r) { return r.id !== deletingId; });
-                saveData();
-                renderList();
-                renderCalendar();
-                renderCategories();
-                showToast('提醒已删除');
-            }
-            document.getElementById('delete-modal').classList.add('hidden');
+            if (!deletingId) return;
+            apiDelete(deletingId).then(function (res) {
+                if (res.success) {
+                    showToast('提醒已删除');
+                    loadReminders();
+                } else {
+                    showToast(res.error || '删除失败');
+                }
+            }).catch(function (err) {
+                console.error('删除失败:', err);
+                showToast('删除失败');
+            });
+            var modal = document.getElementById('delete-modal');
+            if (modal) modal.classList.add('hidden');
             deletingId = null;
         }
 
         // ========== 完成/取消完成 ==========
         function toggleDone(id) {
             var r = reminders.find(function (x) { return x.id === id; });
-            if (r) {
-                r.done = !r.done;
-                // 如果是重复提醒且完成，生成下一次
-                if (r.done && r.repeat !== 'none') {
-                    var nextDate = calcNextRepeatDate(r.date, r.repeat);
-                    reminders.push({
-                        id: nextId(),
-                        title: r.title,
-                        desc: r.desc,
-                        date: nextDate,
-                        time: r.time,
-                        category: r.category,
-                        priority: r.priority,
-                        repeat: r.repeat,
-                        done: false
-                    });
+            if (!r) return;
+
+            apiToggle(id).then(function (res) {
+                if (res.success) {
+                    var updated = res.data;
+                    // 如果是重复提醒且刚完成，创建下一次
+                    if (updated.done && r.repeat !== 'none') {
+                        var nextDate = calcNextRepeatDate(r.date, r.repeat);
+                        apiCreate({
+                            title: r.title,
+                            desc: r.desc,
+                            date: nextDate,
+                            time: r.time,
+                            category: r.category,
+                            priority: r.priority,
+                            repeat: r.repeat,
+                            done: false
+                        }).then(function () {
+                            showToast('已完成，已生成下一次提醒');
+                            loadReminders();
+                        });
+                    } else {
+                        showToast(updated.done ? '已完成' : '已恢复');
+                        loadReminders();
+                    }
+                } else {
+                    showToast(res.error || '操作失败');
                 }
-                saveData();
-                renderList();
-                renderCalendar();
-                renderCategories();
-                showToast(r.done ? '已完成' : '已恢复');
-            }
-        }
-        function calcNextRepeatDate(dateStr, repeat) {
-            var d = new Date(dateStr + 'T00:00:00');
-            if (repeat === 'daily') d.setDate(d.getDate() + 1);
-            else if (repeat === 'weekly') d.setDate(d.getDate() + 7);
-            else if (repeat === 'monthly') d.setMonth(d.getMonth() + 1);
-            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            }).catch(function (err) {
+                console.error('操作失败:', err);
+                showToast('操作失败');
+            });
         }
 
         // ========== 分类管理 ==========
         function openCategoryModal() {
-            document.getElementById('cat-form-name').value = '';
+            var input = document.getElementById('cat-form-name');
+            if (input) input.value = '';
             selectedCatColor = { color: 'blue', cls: 'cat-work' };
             updateColorPicker();
-            document.getElementById('category-modal').classList.remove('hidden');
+            var modal = document.getElementById('category-modal');
+            if (modal) modal.classList.remove('hidden');
         }
+
         function updateColorPicker() {
             document.querySelectorAll('.cat-color-btn').forEach(function (btn) {
                 if (btn.dataset.color === selectedCatColor.color) {
@@ -941,6 +1014,7 @@
                 }
             });
         }
+
         function ringColorClass(color) {
             var map = {
                 blue: 'ring-blue-400', purple: 'ring-purple-400', cyan: 'ring-cyan-400',
@@ -949,6 +1023,7 @@
             };
             return map[color] || 'ring-gray-400';
         }
+
         function saveCategory() {
             var name = document.getElementById('cat-form-name').value.trim();
             if (!name) { showToast('请输入分类名称'); return; }
@@ -960,11 +1035,13 @@
                 cls: selectedCatColor.cls,
                 color: selectedCatColor.color
             });
-            saveData();
+            saveLocalData();
             renderCategories();
-            document.getElementById('category-modal').classList.add('hidden');
+            var modal = document.getElementById('category-modal');
+            if (modal) modal.classList.add('hidden');
             showToast('分类已添加');
         }
+
         function deleteCategory(name) {
             var count = reminders.filter(function (r) { return r.category === name; }).length;
             if (count > 0) {
@@ -972,7 +1049,7 @@
                 return;
             }
             categories = categories.filter(function (c) { return c.name !== name; });
-            saveData();
+            saveLocalData();
             renderCategories();
             showToast('分类已删除');
         }
@@ -980,7 +1057,7 @@
         // ========== 配置开关 ==========
         function toggleConfig(key) {
             config[key] = !config[key];
-            saveData();
+            saveLocalData();
             var el = document.querySelector('[data-config="' + key + '"]');
             if (el) {
                 if (config[key]) {
@@ -992,6 +1069,7 @@
                 }
             }
         }
+
         function applyConfig() {
             Object.keys(config).forEach(function (key) {
                 var el = document.querySelector('[data-config="' + key + '"]');
@@ -1005,7 +1083,6 @@
         }
 
         // ========== 事件绑定 ==========
-        // 安全绑定：元素不存在时跳过，避免 SPA 切换时报错中断脚本
         function on(id, evt, handler) {
             var el = document.getElementById(id);
             if (el) el.addEventListener(evt, handler);
@@ -1013,6 +1090,9 @@
         }
 
         function bindEvents() {
+            if (eventsBound) return;
+            eventsBound = true;
+
             // 筛选按钮
             document.querySelectorAll('.filter-btn').forEach(function (btn) {
                 btn.addEventListener('click', function () {
@@ -1053,7 +1133,7 @@
             if (list) list.addEventListener('click', function (e) {
                 var card = e.target.closest('.reminder-card');
                 if (!card) return;
-                var id = parseInt(card.dataset.id);
+                var id = card.dataset.id;
 
                 if (e.target.closest('.toggle-done-btn')) {
                     toggleDone(id);
@@ -1087,13 +1167,12 @@
                 renderCalendar();
             });
 
-            // 日历点击：点击某天筛选当天
+            // 日历点击：点击某天滚动到对应提醒
             on('cal-grid', 'click', function (e) {
                 var cell = e.target.closest('.cal-day');
                 if (!cell || cell.classList.contains('other-month')) return;
                 var date = cell.dataset.date;
                 if (date) {
-                    // 切换到 today 筛选，临时改为按日期筛选
                     currentFilter = 'all';
                     document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
                     var allBtn = document.querySelector('.filter-btn[data-filter="all"]');
@@ -1102,7 +1181,7 @@
                     // 滚动到对应提醒
                     var cards = document.querySelectorAll('.reminder-card');
                     for (var i = 0; i < cards.length; i++) {
-                        var r = reminders.find(function (x) { return x.id === parseInt(cards[i].dataset.id); });
+                        var r = reminders.find(function (x) { return x.id === cards[i].dataset.id; });
                         if (r && r.date === date) {
                             cards[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
                             cards[i].style.transition = 'background 0.5s ease';
@@ -1158,7 +1237,7 @@
             if (adv) {
                 adv.addEventListener('change', function () {
                     config.advance_hours = parseInt(adv.value);
-                    saveData();
+                    saveLocalData();
                 });
             }
         }
@@ -1169,22 +1248,22 @@
             calYear = now.getFullYear();
             calMonth = now.getMonth();
 
-            loadData();
+            loadLocalData();
             applyConfig();
             renderCategories();
-            renderList();
-            renderCalendar();
             bindEvents();
+            loadReminders();
         }
 
-        // SPA 切换时重新初始化（仅当前页面为提醒页时执行，防止监听器累积）
+        // SPA 切换时重新加载数据
         window.addEventListener('spa:ready', function (e) {
             var page = (e.detail && e.detail.page) || '';
             if (page && page.indexOf('reminder') === -1) return;
-            // 仅渲染数据，不重复绑定事件（bindEvents 内部有 __reminderBound 防重）
-            renderList();
-            renderCalendar();
+            // 重新加载数据（事件已绑定，不重复绑定）
+            loadLocalData();
+            applyConfig();
             renderCategories();
+            loadReminders();
         });
 
         if (document.readyState === 'loading') {

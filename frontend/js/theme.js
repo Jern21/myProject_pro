@@ -19,6 +19,34 @@
 
     var STORAGE_KEY = 'app-theme';
     var THEMES = ['pure-white', 'aurora', 'glow-digital', 'glow-digital-dark'];
+    var themeTransitionTimer = null;
+    var pendingBlobTheme = null;
+    var blobReadyBound = false;
+
+    var THEME_TRANSITION_CSS = [
+        'html.theme-color-transition,',
+        'html.theme-color-transition body,',
+        'html.theme-color-transition body::before,',
+        'html.theme-color-transition body::after,',
+        'html.theme-color-transition *,',
+        'html.theme-color-transition *::before,',
+        'html.theme-color-transition *::after {',
+        '  transition-property: background-color, border-color, color, fill, stroke, box-shadow, opacity, filter, backdrop-filter, -webkit-backdrop-filter;',
+        '  transition-duration: 320ms;',
+        '  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);',
+        '}',
+        '@media (prefers-reduced-motion: reduce) {',
+        '  html.theme-color-transition,',
+        '  html.theme-color-transition body,',
+        '  html.theme-color-transition body::before,',
+        '  html.theme-color-transition body::after,',
+        '  html.theme-color-transition *,',
+        '  html.theme-color-transition *::before,',
+        '  html.theme-color-transition *::after {',
+        '    transition-duration: 1ms;',
+        '  }',
+        '}'
+    ].join('\n');
 
     var AURORA_CSS = [
         '/* ========== 梦幻极光主题 ========== */',
@@ -343,19 +371,32 @@
         }
     }
 
-    /** 应用主题 */
-    function applyTheme(theme) {
-        if (THEMES.indexOf(theme) === -1) theme = 'pure-white';
+    function beginThemeTransition() {
         var html = document.documentElement;
-        if (theme === 'aurora') {
-            html.setAttribute('data-theme', 'aurora');
-        } else if (theme === 'glow-digital') {
-            html.setAttribute('data-theme', 'glow-digital');
-        } else if (theme === 'glow-digital-dark') {
-            html.setAttribute('data-theme', 'glow-digital-dark');
-        } else {
-            html.removeAttribute('data-theme');
+        clearTimeout(themeTransitionTimer);
+        html.classList.add('theme-color-transition');
+        // 先让浏览器吃到 transition 规则，再切换 data-theme。
+        void html.offsetHeight;
+        themeTransitionTimer = setTimeout(function () {
+            html.classList.remove('theme-color-transition');
+        }, 420);
+    }
+
+    function syncThemeBlobs(theme) {
+        if (!document.body) {
+            pendingBlobTheme = theme;
+            if (!blobReadyBound) {
+                blobReadyBound = true;
+                document.addEventListener('DOMContentLoaded', function () {
+                    blobReadyBound = false;
+                    syncThemeBlobs(pendingBlobTheme || getTheme());
+                }, { once: true });
+            }
+            return;
         }
+
+        pendingBlobTheme = null;
+
         // 管理微光数字(亮)的紫色光晕 div
         var blobLight = document.getElementById('gd-glow-blob-purple');
         if (theme === 'glow-digital') {
@@ -367,6 +408,7 @@
         } else {
             if (blobLight) blobLight.remove();
         }
+
         // 管理微光数字(暗)的紫色光晕 div
         var blobDark = document.getElementById('gdd-glow-blob-purple');
         if (theme === 'glow-digital-dark') {
@@ -378,9 +420,41 @@
         } else {
             if (blobDark) blobDark.remove();
         }
+    }
+
+    /** 应用主题 */
+    function applyTheme(theme, options) {
+        if (THEMES.indexOf(theme) === -1) theme = 'pure-white';
+        var html = document.documentElement;
+        var previousTheme = html.getAttribute('data-theme') || 'pure-white';
+        var shouldAnimate = !options || !options.skipTransition;
+        if (shouldAnimate && previousTheme !== theme) {
+            beginThemeTransition();
+        }
+
+        if (theme === 'aurora') {
+            html.setAttribute('data-theme', 'aurora');
+        } else if (theme === 'glow-digital') {
+            html.setAttribute('data-theme', 'glow-digital');
+        } else if (theme === 'glow-digital-dark') {
+            html.setAttribute('data-theme', 'glow-digital-dark');
+        } else {
+            html.removeAttribute('data-theme');
+        }
+
+        syncThemeBlobs(theme);
         try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
         // 通知其他监听者
         window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: theme } }));
+    }
+
+    /** 注入主题过渡 CSS（仅一次） */
+    function injectThemeTransitionCSS() {
+        if (document.getElementById('theme-transition-css')) return;
+        var style = document.createElement('style');
+        style.id = 'theme-transition-css';
+        style.textContent = THEME_TRANSITION_CSS;
+        document.head.appendChild(style);
     }
 
     /** 注入极光主题 CSS（仅一次） */
@@ -412,10 +486,11 @@
 
     /** 初始化 */
     function init() {
+        injectThemeTransitionCSS();
         injectAuroraCSS();
         injectGlowDigitalCSS();
         injectGlowDigitalDarkCSS();
-        applyTheme(getTheme());
+        applyTheme(getTheme(), { skipTransition: true });
     }
 
     // 暴露 API

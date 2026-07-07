@@ -68,6 +68,18 @@ table tbody > tr:hover > td {
     background-image: linear-gradient(var(--table-row-hover-tint), var(--table-row-hover-tint)) !important;
 }
 
+.striped-table-rows > *:nth-child(odd) {
+    background-image: linear-gradient(var(--table-row-odd-tint), var(--table-row-odd-tint)) !important;
+}
+
+.striped-table-rows > *:nth-child(even) {
+    background-image: linear-gradient(var(--table-row-even-tint), var(--table-row-even-tint)) !important;
+}
+
+.striped-table-rows > *:hover {
+    background-image: linear-gradient(var(--table-row-hover-tint), var(--table-row-hover-tint)) !important;
+}
+
 /* ========== 通用组件类 ========== */
 .card {
     background-color: #fff;

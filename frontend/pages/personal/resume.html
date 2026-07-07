@@ -129,11 +129,17 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
+                            <button onclick="openEditModal()" class="px-3 py-1.5 border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 rounded-lg text-xs font-medium flex items-center gap-1.5" title="编辑岗位信息">
+                                <i class="ph ph-pencil-simple"></i> 编辑
+                            </button>
                             <button onclick="uploadPdfForCurrentJob()" class="px-3 py-1.5 border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 rounded-lg text-xs font-medium flex items-center gap-1.5">
                                 <i class="ph ph-upload-simple"></i> 重新上传
                             </button>
                             <button onclick="downloadCurrentPdf()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5">
                                 <i class="ph ph-download-simple"></i> 下载
+                            </button>
+                            <button onclick="deleteCurrentJob()" class="px-3 py-1.5 border border-red-200 text-red-600 bg-white hover:bg-red-50 rounded-lg text-xs font-medium flex items-center gap-1.5" title="删除简历">
+                                <i class="ph ph-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -195,53 +201,84 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Job Modal -->
+<div id="edit-job-modal" class="fixed inset-0 z-[9999] hidden">
+    <div class="absolute inset-0 bg-black/50" onclick="closeEditModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">编辑岗位信息</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-600 mb-1.5">岗位名称 <span class="text-red-500">*</span></label>
+                <input type="text" id="edit-job-title" placeholder="如：高级前端工程师"
+                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1.5">公司名称</label>
+                <input type="text" id="edit-job-company" placeholder="如：字节跳动"
+                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-500">
+            </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+            <button onclick="closeEditModal()" class="flex-1 px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50">取消</button>
+            <button onclick="saveEditJob()" class="flex-1 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700">保存</button>
+        </div>
+    </div>
+</div>
 </div>
 
 </main>
 
 <script>
 // ==================== Data ====================
-// Sample data - in real app, this would come from backend/localStorage
-var jobs = [
-    {
-        id: 1,
-        title: '高级前端工程师',
-        company: '字节跳动',
-        createdAt: '2025-07-05',
-        pdfData: null, // Will store PDF bytes
-        pdfName: '简历_字节跳动_前端.pdf',
-        pageCount: 2
-    },
-    {
-        id: 2,
-        title: '全栈开发工程师',
-        company: '阿里巴巴',
-        createdAt: '2025-07-03',
-        pdfData: null,
-        pdfName: '简历_阿里_全栈.pdf',
-        pageCount: 3
-    },
-    {
-        id: 3,
-        title: '前端架构师',
-        company: '腾讯',
-        createdAt: '2025-06-28',
-        pdfData: null,
-        pdfName: '简历_腾讯_架构.pdf',
-        pageCount: 2
-    }
-];
-
+var jobs = [];
 var currentJobId = null;
 var currentPdfDoc = null;
 var currentScale = 1.2;
 var renderedPages = [];
 
+// ==================== API ====================
+function loadJobs() {
+    return fetch('/api/resume')
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+            if (res.success) {
+                jobs = res.data || [];
+                renderJobList();
+                // 如果当前有选中的简历，刷新显示
+                if (currentJobId) {
+                    var job = jobs.find(function (j) { return j.id === currentJobId; });
+                    if (job) {
+                        updateToolbar(job);
+                    } else {
+                        currentJobId = null;
+                        showEmptyState();
+                    }
+                }
+            }
+        })
+        .catch(function (err) {
+            console.error('加载简历列表失败:', err);
+        });
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    return dateStr.split('T')[0];
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
 // ==================== Initialization ====================
 // SPA 导航时 DOMContentLoaded 已触发，必须同时监听 spa:ready
 function initResumePage() {
     initWorker();
-    renderJobList();
+    loadJobs();
     setupEventListeners();
 }
 document.addEventListener('DOMContentLoaded', initResumePage);
@@ -259,103 +296,108 @@ function initWorker() {
 
 // ==================== Job List ====================
 function renderJobList() {
-    const listEl = document.getElementById('job-list');
-    const searchTerm = document.getElementById('job-search').value.toLowerCase();
-    
-    const filteredJobs = jobs.filter(job => 
-        job.title.toLowerCase().includes(searchTerm) || 
-        job.company.toLowerCase().includes(searchTerm)
-    );
-    
+    var listEl = document.getElementById('job-list');
+    var searchTerm = (document.getElementById('job-search').value || '').toLowerCase();
+
+    var filteredJobs = jobs.filter(function (job) {
+        return (job.title && job.title.toLowerCase().indexOf(searchTerm) !== -1) ||
+               (job.company && job.company.toLowerCase().indexOf(searchTerm) !== -1);
+    });
+
     document.getElementById('job-count').textContent = jobs.length;
-    
+
     if (filteredJobs.length === 0) {
-        listEl.innerHTML = `
-            <div class="text-center py-8 text-gray-400">
-                <i class="ph ph-magnifying-glass text-3xl mb-2"></i>
-                <p class="text-sm">未找到匹配的岗位</p>
-            </div>
-        `;
+        listEl.innerHTML =
+            '<div class="text-center py-8 text-gray-400">' +
+            '<i class="ph ph-magnifying-glass text-3xl mb-2"></i>' +
+            '<p class="text-sm">未找到匹配的岗位</p>' +
+            '</div>';
         return;
     }
-    
-    listEl.innerHTML = filteredJobs.map(job => `
-        <div class="job-card p-3 rounded-lg border border-gray-100 bg-white hover:border-gray-300 cursor-pointer transition-all ${job.id === currentJobId ? 'active' : ''}" 
-             onclick="selectJob(${job.id})">
-            <div class="flex items-start justify-between mb-2">
-                <div>
-                    <h4 class="font-medium text-gray-800 text-sm">${job.title}</h4>
-                    <p class="text-xs text-gray-500 mt-0.5">${job.company || '未填写公司'}</p>
-                </div>
-                ${job.pdfData ? '<i class="ph-fill ph-file-pdf text-red-500 text-lg"></i>' : '<i class="ph ph-file text-gray-300 text-lg"></i>'}
-            </div>
-            <div class="flex items-center justify-between text-[11px] text-gray-400">
-                <span>${job.createdAt}</span>
-                ${job.pdfData ? `<span>${job.pageCount} 页</span>` : '<span class="text-orange-500">待上传</span>'}
-            </div>
-        </div>
-    `).join('');
+
+    listEl.innerHTML = filteredJobs.map(function (job) {
+        var hasPdf = job.pdfUrl && job.pdfUrl.length > 0;
+        return '<div class="job-card p-3 rounded-lg border border-gray-100 bg-white hover:border-gray-300 cursor-pointer transition-all ' + (job.id === currentJobId ? 'active' : '') + '" ' +
+             'onclick="selectJob(\'' + job.id + '\')">' +
+            '<div class="flex items-start justify-between mb-2">' +
+                '<div>' +
+                    '<h4 class="font-medium text-gray-800 text-sm">' + escapeHtml(job.title) + '</h4>' +
+                    '<p class="text-xs text-gray-500 mt-0.5">' + escapeHtml(job.company || '未填写公司') + '</p>' +
+                '</div>' +
+                (hasPdf ? '<i class="ph-fill ph-file-pdf text-red-500 text-lg"></i>' : '<i class="ph ph-file text-gray-300 text-lg"></i>') +
+            '</div>' +
+            '<div class="flex items-center justify-between text-[11px] text-gray-400">' +
+                '<span>' + formatDate(job.createdAt) + '</span>' +
+                (hasPdf ? '<span>' + (job.pageCount || 0) + ' 页</span>' : '<span class="text-orange-500">待上传</span>') +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+
+function showEmptyState() {
+    document.getElementById('pdf-toolbar').classList.add('hidden');
+    document.getElementById('empty-state').classList.remove('hidden');
+    document.getElementById('pdf-container-wrapper').classList.add('hidden');
+}
+
+function updateToolbar(job) {
+    document.getElementById('current-job-name').textContent = job.title;
+    document.getElementById('current-job-company').textContent = job.company || '';
+    document.getElementById('pdf-toolbar').classList.remove('hidden');
+    document.getElementById('empty-state').classList.add('hidden');
+    document.getElementById('pdf-container-wrapper').classList.remove('hidden');
 }
 
 function selectJob(jobId) {
     currentJobId = jobId;
     renderJobList();
-    
-    const job = jobs.find(j => j.id === jobId);
+
+    var job = jobs.find(function (j) { return j.id === jobId; });
     if (!job) return;
-    
-    // Update toolbar
-    document.getElementById('current-job-name').textContent = job.title;
-    document.getElementById('current-job-company').textContent = job.company || '';
-    
-    // Show toolbar, hide empty state
-    document.getElementById('pdf-toolbar').classList.remove('hidden');
-    document.getElementById('empty-state').classList.add('hidden');
-    document.getElementById('pdf-container-wrapper').classList.remove('hidden');
-    
-    // Load PDF
-    if (job.pdfData) {
-        loadPdf(job.pdfData);
+
+    updateToolbar(job);
+
+    // Load PDF from backend URL
+    if (job.pdfUrl) {
+        loadPdfFromUrl(job.pdfUrl);
     } else {
         showNoPdfState();
     }
 }
 
 function showNoPdfState() {
-    document.getElementById('pdf-container').innerHTML = `
-        <div class="bg-white rounded-lg shadow-sm p-12 text-center max-w-md">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-orange-50 flex items-center justify-center">
-                <i class="ph ph-upload-simple text-2xl text-orange-500"></i>
-            </div>
-            <h4 class="font-medium text-gray-700 mb-2">尚未上传简历</h4>
-            <p class="text-sm text-gray-400 mb-4">请上传为该岗位定制的 PDF 简历</p>
-            <button onclick="uploadPdfForCurrentJob()" class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm hover:bg-brand-700">
-                上传简历 PDF
-            </button>
-        </div>
-    `;
+    document.getElementById('pdf-container').innerHTML =
+        '<div class="bg-white rounded-lg shadow-sm p-12 text-center max-w-md">' +
+        '<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-orange-50 flex items-center justify-center">' +
+        '<i class="ph ph-upload-simple text-2xl text-orange-500"></i>' +
+        '</div>' +
+        '<h4 class="font-medium text-gray-700 mb-2">尚未上传简历</h4>' +
+        '<p class="text-sm text-gray-400 mb-4">请上传为该岗位定制的 PDF 简历</p>' +
+        '<button onclick="uploadPdfForCurrentJob()" class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm hover:bg-brand-700">' +
+        '上传简历 PDF' +
+        '</button>' +
+        '</div>';
 }
 
 // ==================== PDF Rendering ====================
-function loadPdf(pdfData) {
-    if (!pdfData) return;
-    
-    // 复制 ArrayBuffer，避免被 Worker 分离后无法再次使用
-    const pdfDataCopy = pdfData.slice ? pdfData.slice() : new Uint8Array(pdfData);
-    
-    const loadingTask = pdfjsLib.getDocument({ data: pdfDataCopy });
-    loadingTask.promise.then(function(pdf) {
+function loadPdfFromUrl(url) {
+    if (!url) return;
+
+    // 加 cache-busting 参数，避免替换 PDF 后仍显示旧文件
+    var fullUrl = url + (url.indexOf('?') === -1 ? '?' : '&') + 't=' + Date.now();
+
+    var loadingTask = pdfjsLib.getDocument({ url: fullUrl });
+    loadingTask.promise.then(function (pdf) {
         currentPdfDoc = pdf;
         document.getElementById('total-pages').textContent = pdf.numPages;
         renderAllPages();
-    }).catch(function(error) {
+    }).catch(function (error) {
         console.error('Error loading PDF:', error);
-        document.getElementById('pdf-container').innerHTML = `
-            <div class="bg-white rounded-lg shadow-sm p-8 text-center">
-                <i class="ph ph-warning text-3xl text-red-500 mb-2"></i>
-                <p class="text-gray-600">PDF 加载失败</p>
-            </div>
-        `;
+        document.getElementById('pdf-container').innerHTML =
+            '<div class="bg-white rounded-lg shadow-sm p-8 text-center">' +
+            '<i class="ph ph-warning text-3xl text-red-500 mb-2"></i>' +
+            '<p class="text-gray-600">PDF 加载失败</p>' +
+            '</div>';
     });
 }
 
@@ -455,76 +497,108 @@ function closeNewJobModal() {
 }
 
 function saveNewJob() {
-    const title = document.getElementById('new-job-title').value.trim();
-    const company = document.getElementById('new-job-company').value.trim();
-    const fileInput = document.getElementById('new-job-pdf');
-    
+    var title = document.getElementById('new-job-title').value.trim();
+    var company = document.getElementById('new-job-company').value.trim();
+    var fileInput = document.getElementById('new-job-pdf');
+
     if (!title) {
         alert('请填写岗位名称');
         return;
     }
-    
-    const newJob = {
-        id: Date.now(),
-        title: title,
-        company: company,
-        createdAt: new Date().toISOString().split('T')[0],
-        pdfData: null,
-        pdfName: '',
-        pageCount: 0
-    };
-    
-    // Handle PDF upload if present
-    if (fileInput.files && fileInput.files[0]) {
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const pdfBytes = new Uint8Array(e.target.result);
-            newJob.pdfData = pdfBytes;
-            newJob.pdfName = file.name;
-            
-            // Get page count - 使用复制的数据避免 ArrayBuffer 被分离
-            const pdfDataCopy = pdfBytes.slice();
-            pdfjsLib.getDocument({ data: pdfDataCopy }).promise.then(function(pdf) {
-                newJob.pageCount = pdf.numPages;
-                jobs.unshift(newJob);
-                renderJobList();
-                selectJob(newJob.id);
-                closeNewJobModal();
+
+    // 先创建简历记录
+    fetch('/api/resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title, company: company })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+        if (!res.success) {
+            alert(res.error || '创建失败');
+            return null;
+        }
+        var newRecord = res.data;
+
+        // 如果选择了 PDF 文件，上传到后端
+        if (fileInput.files && fileInput.files[0]) {
+            var file = fileInput.files[0];
+
+            // 先用 PDF.js 获取页数
+            return new Promise(function (resolve) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var pdfBytes = new Uint8Array(e.target.result);
+                    var pdfDataCopy = pdfBytes.slice();
+                    pdfjsLib.getDocument({ data: pdfDataCopy }).promise.then(function (pdf) {
+                        var pageCount = pdf.numPages;
+
+                        var formData = new FormData();
+                        formData.append('file', file);
+                        formData.append('pageCount', pageCount);
+
+                        fetch('/api/resume/' + newRecord.id + '/pdf', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(function (r2) { return r2.json(); })
+                        .then(function () { resolve(); });
+                    }).catch(function () {
+                        // 获取页数失败也继续上传
+                        var formData = new FormData();
+                        formData.append('file', file);
+                        fetch('/api/resume/' + newRecord.id + '/pdf', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(function (r2) { return r2.json(); })
+                        .then(function () { resolve(); });
+                    });
+                };
+                reader.readAsArrayBuffer(file);
             });
-        };
-        reader.readAsArrayBuffer(file);
-    } else {
-        jobs.unshift(newJob);
-        renderJobList();
-        selectJob(newJob.id);
+        }
+        return Promise.resolve();
+    })
+    .then(function () {
         closeNewJobModal();
-    }
+        return loadJobs();
+    })
+    .then(function () {
+        // 选中新创建的简历（排在最前面）
+        if (jobs.length > 0) {
+            selectJob(jobs[0].id);
+        }
+    })
+    .catch(function (err) {
+        console.error('创建简历失败:', err);
+        alert('创建简历失败: ' + (err.message || err));
+    });
 }
 
 function uploadPdfForCurrentJob() {
-    const input = document.createElement('input');
+    if (!currentJobId) return;
+
+    var input = document.createElement('input');
     input.type = 'file';
     input.accept = 'application/pdf';
-    input.onchange = function(e) {
+    input.onchange = function (e) {
         if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const job = jobs.find(j => j.id === currentJobId);
-                if (job) {
-                    const pdfBytes = new Uint8Array(evt.target.result);
-                    job.pdfData = pdfBytes;
-                    job.pdfName = file.name;
-                    
-                    // 使用复制的数据获取页数，避免 ArrayBuffer 被分离
-                    const pdfDataCopy = pdfBytes.slice();
-                    pdfjsLib.getDocument({ data: pdfDataCopy }).promise.then(function(pdf) {
-                        job.pageCount = pdf.numPages;
-                        renderJobList();
-                        loadPdf(job.pdfData);
-                    });
-                }
+            var file = e.target.files[0];
+
+            // 先用 PDF.js 获取页数，再上传到后端
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                var pdfBytes = new Uint8Array(evt.target.result);
+                var pdfDataCopy = pdfBytes.slice();
+
+                pdfjsLib.getDocument({ data: pdfDataCopy }).promise.then(function (pdf) {
+                    var pageCount = pdf.numPages;
+                    uploadPdfToBackend(file, pageCount);
+                }).catch(function () {
+                    // 获取页数失败也继续上传
+                    uploadPdfToBackend(file, 0);
+                });
             };
             reader.readAsArrayBuffer(file);
         }
@@ -532,22 +606,129 @@ function uploadPdfForCurrentJob() {
     input.click();
 }
 
+function uploadPdfToBackend(file, pageCount) {
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('pageCount', pageCount);
+
+    fetch('/api/resume/' + currentJobId + '/pdf', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+        if (!res.success) {
+            alert(res.error || '上传失败');
+            return;
+        }
+        return loadJobs();
+    })
+    .then(function () {
+        // 重新加载 PDF 视图
+        var job = jobs.find(function (j) { return j.id === currentJobId; });
+        if (job && job.pdfUrl) {
+            loadPdfFromUrl(job.pdfUrl);
+        }
+    })
+    .catch(function (err) {
+        console.error('上传失败:', err);
+        alert('上传失败: ' + (err.message || err));
+    });
+}
+
 function downloadCurrentPdf() {
-    const job = jobs.find(j => j.id === currentJobId);
-    if (!job || !job.pdfData) {
+    var job = jobs.find(function (j) { return j.id === currentJobId; });
+    if (!job || !job.pdfUrl) {
         alert('没有可下载的 PDF');
         return;
     }
-    
-    const blob = new Blob([job.pdfData], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
+
+    var a = document.createElement('a');
+    a.href = job.pdfUrl;
     a.download = job.pdfName || 'resume.pdf';
     document.body.appendChild(a);
     a.click();
     a.remove();
-    URL.revokeObjectURL(url);
+}
+
+// ==================== Edit Job ====================
+function openEditModal() {
+    if (!currentJobId) return;
+    var job = jobs.find(function (j) { return j.id === currentJobId; });
+    if (!job) return;
+
+    document.getElementById('edit-job-title').value = job.title || '';
+    document.getElementById('edit-job-company').value = job.company || '';
+    document.getElementById('edit-job-modal').classList.remove('hidden');
+    document.getElementById('edit-job-title').focus();
+}
+
+function closeEditModal() {
+    document.getElementById('edit-job-modal').classList.add('hidden');
+}
+
+function saveEditJob() {
+    if (!currentJobId) return;
+
+    var title = document.getElementById('edit-job-title').value.trim();
+    var company = document.getElementById('edit-job-company').value.trim();
+
+    if (!title) {
+        alert('请填写岗位名称');
+        return;
+    }
+
+    fetch('/api/resume/' + currentJobId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title, company: company })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+        if (!res.success) {
+            alert(res.error || '保存失败');
+            return;
+        }
+        closeEditModal();
+        return loadJobs();
+    })
+    .then(function () {
+        // 刷新工具栏显示
+        var job = jobs.find(function (j) { return j.id === currentJobId; });
+        if (job) {
+            updateToolbar(job);
+        }
+    })
+    .catch(function (err) {
+        console.error('保存失败:', err);
+        alert('保存失败: ' + (err.message || err));
+    });
+}
+
+// ==================== Delete Job ====================
+function deleteCurrentJob() {
+    if (!currentJobId) return;
+    var job = jobs.find(function (j) { return j.id === currentJobId; });
+    if (!job) return;
+
+    if (!confirm('确定要删除「' + job.title + '」的简历吗？此操作不可撤销。')) return;
+
+    fetch('/api/resume/' + currentJobId, { method: 'DELETE' })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+        if (!res.success) {
+            alert(res.error || '删除失败');
+            return;
+        }
+        currentJobId = null;
+        currentPdfDoc = null;
+        showEmptyState();
+        return loadJobs();
+    })
+    .catch(function (err) {
+        console.error('删除失败:', err);
+        alert('删除失败: ' + (err.message || err));
+    });
 }
 
 // ==================== Event Listeners ====================
@@ -608,6 +789,7 @@ function updateSelectedFilename(filename) {
 // Handle SPA navigation cleanup
 window.addEventListener('spa:cleanup-forms', function() {
     closeNewJobModal();
+    closeEditModal();
 });
 
 // 显式暴露到 window，确保 inline onclick 处理器能访问
@@ -617,6 +799,10 @@ window.saveNewJob = saveNewJob;
 window.selectJob = selectJob;
 window.uploadPdfForCurrentJob = uploadPdfForCurrentJob;
 window.downloadCurrentPdf = downloadCurrentPdf;
+window.openEditModal = openEditModal;
+window.closeEditModal = closeEditModal;
+window.saveEditJob = saveEditJob;
+window.deleteCurrentJob = deleteCurrentJob;
 window.zoomIn = zoomIn;
 window.zoomOut = zoomOut;
 window.fitToWidth = fitToWidth;

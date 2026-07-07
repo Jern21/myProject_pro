@@ -20,6 +20,15 @@ var resp = require('../utils/response');
 
 var memos = new Storage('memos');
 
+// ========== 灌入种子数据 ==========
+
+router.post('/seed', resp.asyncHandler(function (req, res) {
+    var seedData = require('../data/seed-memos');
+    memos.clear();
+    var records = memos.createMany(seedData);
+    return resp.success(res, { count: records.length });
+}));
+
 // ========== 查询列表 ==========
 router.get('/', resp.asyncHandler(function (req, res) {
     var all = memos.findAll();
