@@ -57,11 +57,13 @@ function formatDateTime(d) {
 /** 按 customerId 或客户昵称/姓名匹配订单 */
 function matchOrders(customer, allOrders) {
     var name = (customer.name || '').trim();
+    var phone = (customer.phone || '').trim();
     return (allOrders || []).filter(function (o) {
         if (o.customerId && o.customerId === customer.id) return true;
         var nick = (o.customerNick || '').trim();
         var cname = (o.customerName || '').trim();
-        return !!(name && (nick === name || cname === name));
+        var ophone = (o.customerPhone || '').trim();
+        return !!((name && (nick === name || cname === name)) || (phone && ophone && phone === ophone));
     }).sort(function (a, b) {
         return String(b.orderDate || b.createdAt || '').localeCompare(String(a.orderDate || a.createdAt || ''));
     });
@@ -163,19 +165,16 @@ router.get('/:id/detail', resp.asyncHandler(function (req, res) {
     var enriched = enrichCustomer(record, allOrders);
 
     var orderList = related.map(function (o) {
-        return {
-            id: o.id,
-            orderNo: o.orderNo || '',
+        return Object.assign({}, o, {
+            customerId: o.customerId || '',
             projectName: o.projectName || o.title || '',
-            projectType: o.projectType || '',
-            orderDate: o.orderDate || '',
-            orderStatus: o.orderStatus || '',
-            paymentStatus: o.paymentStatus || '',
-            paymentRatio: o.paymentRatio || 0,
             amount: parseFloat(o.amount) || 0,
+            cost: parseFloat(o.cost) || 0,
+            hours: parseFloat(o.hours) || 0,
+            paymentRatio: o.paymentRatio || 0,
             paidAmount: Math.round(paidAmount(o)),
-            finalDate: o.finalDate || ''
-        };
+            uploadedFiles: o.uploadedFiles || {}
+        });
     });
 
     var followLogs = (enriched.followLogs || []).slice().sort(function (a, b) {

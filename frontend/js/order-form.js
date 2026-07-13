@@ -38,6 +38,7 @@
     var isOpen = false;
     var editMode = false;
     var editId = null; // 编辑模式下的订单 ID
+    var selectedCustomerId = '';
     var uploadedFiles = {}; // { screenshot: {name,size,type,url}, showcase: {...}, quote: {...}, taskBook: {...}, paymentRecord: {...} }
 
     // ========== 工具函数 ==========
@@ -531,6 +532,7 @@
     function collectData() {
         var form = document.getElementById('order-form');
         return {
+            customerId: selectedCustomerId || '',
             customerNick: form.customerNick.value.trim(),
             customerName: form.customerName.value.trim(),
             customerPhone: form.customerPhone.value.trim(),
@@ -564,28 +566,41 @@
 
     // ========== 填充数据（编辑模式） ==========
 
-    function fillData(data) {
+    function fillData(data, opts) {
         var form = document.getElementById('order-form');
         if (!form || !data) return;
-        form.customerNick.value = data.customerNick || '';
-        form.customerName.value = data.customerName || '';
-        form.customerPhone.value = data.customerPhone || '';
-        form.customerSource.value = data.customerSource || '闲鱼';
-        form.projectType.value = data.projectType || '网站开发';
-        form.projectName.value = data.projectName || '';
-        form.projectDesc.value = data.projectDesc || '';
-        form.amount.value = data.amount || '';
-        form.cost.value = data.cost || '';
-        form.hours.value = data.hours || '';
-        form.orderDate.value = data.orderDate || '';
-        form.confirmDate.value = data.confirmDate || '';
-        form.draftDate.value = data.draftDate || '';
-        form.finalDate.value = data.finalDate || '';
-        form.orderStatus.value = data.orderStatus || 'pending';
-        form.paymentStatus.value = data.paymentStatus || '未付款';
-        form.payDate.value = data.payDate || '';
-        form.gitUrl.value = data.gitUrl || '';
-        form.quoteRef.value = data.quoteRef || '';
+        opts = opts || {};
+        var preserveDefaults = !!opts.preserveDefaults;
+        selectedCustomerId = data.customerId || '';
+
+        function setValue(name, value, fallback) {
+            if (!form[name]) return;
+            if (value !== undefined && value !== null) {
+                form[name].value = value;
+            } else if (!preserveDefaults) {
+                form[name].value = fallback || '';
+            }
+        }
+
+        setValue('customerNick', data.customerNick, '');
+        setValue('customerName', data.customerName, '');
+        setValue('customerPhone', data.customerPhone, '');
+        setValue('customerSource', data.customerSource, '闲鱼');
+        setValue('projectType', data.projectType, '网站开发');
+        setValue('projectName', data.projectName, '');
+        setValue('projectDesc', data.projectDesc, '');
+        setValue('amount', data.amount, '');
+        setValue('cost', data.cost, '');
+        setValue('hours', data.hours, '');
+        setValue('orderDate', data.orderDate, '');
+        setValue('confirmDate', data.confirmDate, '');
+        setValue('draftDate', data.draftDate, '');
+        setValue('finalDate', data.finalDate, '');
+        setValue('orderStatus', data.orderStatus, 'pending');
+        setValue('paymentStatus', data.paymentStatus, '未付款');
+        setValue('payDate', data.payDate, '');
+        setValue('gitUrl', data.gitUrl, '');
+        setValue('quoteRef', data.quoteRef, '');
 
         // 付款比例
         if (form.paymentRatio && data.paymentRatio) form.paymentRatio.value = data.paymentRatio;
@@ -728,20 +743,23 @@
 
     // ========== 打开 / 关闭 ==========
 
-    function openOrderForm(data) {
+    function openOrderForm(data, options) {
         if (isOpen) {
             console.log('[OrderForm] 表单已打开，跳过');
             return;
         }
+        options = options || {};
+        var createMode = options.mode === 'create' || options.create === true || (data && data.__mode === 'create');
 
         // 构建 DOM
         document.body.insertAdjacentHTML('beforeend', buildDrawerHTML());
         drawer = document.getElementById('order-form-drawer');
         overlay = document.getElementById('order-form-overlay');
         selectedTags = [];
+        selectedCustomerId = '';
         uploadedFiles = {};
-        editMode = !!data;
-        editId = data && data.id ? data.id : null;
+        editMode = !!(data && data.id && !createMode);
+        editId = editMode && data && data.id ? data.id : null;
 
         // 标题
         document.getElementById('order-form-title').textContent = editMode ? '编辑我的订单' : '新建我的订单';
@@ -753,7 +771,7 @@
         bindEvents();
 
         // 编辑模式填充数据
-        if (editMode) fillData(data);
+        if (data) fillData(data, { preserveDefaults: !editMode });
 
         // 动画打开
         requestAnimationFrame(function () {
@@ -904,6 +922,7 @@
     function selectCustomer(customer) {
         // 填充表单
         var form = document.getElementById('order-form');
+        selectedCustomerId = customer.id || '';
         if (form) {
             form.customerNick.value = customer.name || '';
             form.customerName.value = customer.name || '';

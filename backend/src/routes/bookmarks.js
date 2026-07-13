@@ -199,6 +199,8 @@ router.post('/', resp.asyncHandler(function (req, res) {
         category: data.category || 'other',
         description: data.description || '',
         favicon: data.favicon || '',
+        customIcon: data.customIcon || null,
+        useTextIcon: data.useTextIcon || false,
         clickCount: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -207,7 +209,7 @@ router.post('/', resp.asyncHandler(function (req, res) {
     bookmarks.push(newBookmark);
     saveBookmarks(bookmarks);
 
-    return resp.success(res, newBookmark, '收藏创建成功');
+    return resp.success(res, newBookmark);
 }));
 
 // ========== 更新收藏 ==========
@@ -228,11 +230,13 @@ router.put('/:id', resp.asyncHandler(function (req, res) {
         category: data.category || bookmarks[index].category,
         description: data.description !== undefined ? data.description : bookmarks[index].description,
         favicon: data.favicon !== undefined ? data.favicon : bookmarks[index].favicon,
+        customIcon: data.customIcon !== undefined ? data.customIcon : bookmarks[index].customIcon,
+        useTextIcon: data.useTextIcon !== undefined ? data.useTextIcon : bookmarks[index].useTextIcon,
         updatedAt: new Date().toISOString()
     };
 
     saveBookmarks(bookmarks);
-    return resp.success(res, bookmarks[index], '收藏更新成功');
+    return resp.success(res, bookmarks[index]);
 }));
 
 // ========== 删除收藏 ==========
@@ -248,7 +252,7 @@ router.delete('/:id', resp.asyncHandler(function (req, res) {
     bookmarks.splice(index, 1);
     saveBookmarks(bookmarks);
 
-    return resp.success(res, null, '收藏删除成功');
+    return resp.success(res, null);
 }));
 
 // ========== 增加点击次数 ==========

@@ -144,6 +144,7 @@ router.get('/', resp.asyncHandler(function (req, res) {
     var customerSource = req.query.customerSource;
     var paymentStatus = req.query.paymentStatus;
     var customerTag = req.query.customerTag;
+    var customerId = req.query.customerId;
     var keyword = req.query.keyword;
     var overdue = req.query.overdue;
     var dueToday = req.query.dueToday;
@@ -176,6 +177,10 @@ router.get('/', resp.asyncHandler(function (req, res) {
         filtered = filtered.filter(function (o) {
             return Array.isArray(o.customerTags) && o.customerTags.indexOf(customerTag) !== -1;
         });
+    }
+    // 客户详情关联筛选
+    if (customerId) {
+        filtered = filtered.filter(function (o) { return o.customerId === customerId; });
     }
     // 时间范围筛选
     if (dateFrom) {
@@ -261,6 +266,7 @@ router.post('/', resp.asyncHandler(function (req, res) {
         // 订单编号（自动生成）
         orderNo: body.orderNo || generateOrderNo(),
         // 客户信息
+        customerId: body.customerId || '',
         customerNick: body.customerNick,
         customerName: body.customerName || '',
         customerPhone: body.customerPhone || '',

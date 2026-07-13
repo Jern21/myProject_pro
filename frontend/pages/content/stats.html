@@ -42,7 +42,7 @@
                         </div>
                         <p class="text-xs text-gray-400 mb-1">订单总数</p>
                         <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-order-count">-</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-order-growth">-</span>%</p>
+                        <p class="text-[10px] text-gray-400 flex items-center"><i class="ph ph-minus mr-0.5"></i> <span id="stat-order-growth">--</span></p>
                     </div>
                     <!-- Metric 2: 成交总额 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
@@ -51,7 +51,7 @@
                         </div>
                         <p class="text-xs text-gray-400 mb-1">成交总额</p>
                         <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-revenue">-</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-revenue-growth">-</span>%</p>
+                        <p class="text-[10px] text-gray-400 flex items-center"><i class="ph ph-minus mr-0.5"></i> <span id="stat-revenue-growth">--</span></p>
                     </div>
                     <!-- Metric 3: 平均客单价 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
@@ -60,7 +60,7 @@
                         </div>
                         <p class="text-xs text-gray-400 mb-1">平均客单价</p>
                         <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-avg-order">-</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-avg-growth">-</span>%</p>
+                        <p class="text-[10px] text-gray-400 flex items-center"><i class="ph ph-minus mr-0.5"></i> <span id="stat-avg-growth">--</span></p>
                     </div>
                     <!-- Metric 4: 成交客户数 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
@@ -69,7 +69,7 @@
                         </div>
                         <p class="text-xs text-gray-400 mb-1">成交客户数</p>
                         <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-customers">-</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-customer-growth">-</span>%</p>
+                        <p class="text-[10px] text-gray-400 flex items-center"><i class="ph ph-minus mr-0.5"></i> <span id="stat-customer-growth">--</span></p>
                     </div>
                     <!-- Metric 5: 复购率 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
@@ -78,7 +78,7 @@
                         </div>
                         <p class="text-xs text-gray-400 mb-1">复购率</p>
                         <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-repeat-rate">-</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-repeat-growth">-</span>%</p>
+                        <p class="text-[10px] text-gray-400 flex items-center"><i class="ph ph-minus mr-0.5"></i> <span id="stat-repeat-growth">--</span></p>
                     </div>
                     <!-- Metric 6: 好评率 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
@@ -87,7 +87,7 @@
                         </div>
                         <p class="text-xs text-gray-400 mb-1">好评率</p>
                         <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-good-rate">-</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-good-growth">-</span>%</p>
+                        <p class="text-[10px] text-gray-400 flex items-center"><i class="ph ph-minus mr-0.5"></i> <span id="stat-good-growth">--</span></p>
                     </div>
                 </div>
 
@@ -98,7 +98,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <div>
                                 <h3 class="font-semibold text-gray-800 text-base">收入趋势</h3>
-                                <p class="text-xs text-gray-400 mt-0.5">近6个月月度收入变化</p>
+                                <p class="text-xs text-gray-400 mt-0.5" id="revenueTrendSubtitle">全量收入趋势</p>
                             </div>
                             <div class="flex gap-2">
                                 <button class="px-3 py-1 text-xs border border-brand-200 text-brand-600 bg-brand-50 rounded-lg font-medium">月度</button>
@@ -188,7 +188,7 @@
                         <table class="w-full text-left border-collapse min-w-[800px]">
                             <thead>
                                 <tr class="bg-gray-50/50 text-gray-500 text-xs border-b border-gray-100">
-                                    <th class="py-3 px-4 font-medium">月份</th>
+                                    <th class="py-3 px-4 font-medium">周期</th>
                                     <th class="py-3 px-2 font-medium text-center">订单数</th>
                                     <th class="py-3 px-2 font-medium text-center">成交金额</th>
                                     <th class="py-3 px-2 font-medium text-center">新增客户</th>
@@ -211,14 +211,75 @@
 </main>
 
     <script>
+        var statsRange = window.statsRange || 'all';
+        window.statsRange = statsRange;
+
+        function buildStatsUrl(path, params) {
+            statsRange = window.statsRange || statsRange || 'all';
+            var query = new URLSearchParams(params || {});
+            query.set('range', statsRange);
+            return path + '?' + query.toString();
+        }
+
+        function setGrowth(id, value, hasComparison) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            var row = el.parentElement;
+            var icon = row ? row.querySelector('i') : null;
+
+            if (!hasComparison || value === null || value === undefined) {
+                el.textContent = '--';
+                if (icon) icon.className = 'ph ph-minus mr-0.5';
+                if (row) row.className = 'text-[10px] text-gray-400 flex items-center';
+                return;
+            }
+
+            var num = Number(value) || 0;
+            el.textContent = Math.abs(num) + '%';
+            if (num > 0) {
+                if (icon) icon.className = 'ph ph-arrow-up mr-0.5';
+                if (row) row.className = 'text-[10px] text-green-500 flex items-center';
+            } else if (num < 0) {
+                if (icon) icon.className = 'ph ph-arrow-down mr-0.5';
+                if (row) row.className = 'text-[10px] text-red-500 flex items-center';
+            } else {
+                if (icon) icon.className = 'ph ph-minus mr-0.5';
+                if (row) row.className = 'text-[10px] text-gray-400 flex items-center';
+            }
+        }
+
+        function updateStatsRangeUI() {
+            var revenueSubtitle = document.getElementById('revenueTrendSubtitle');
+            if (revenueSubtitle) {
+                var subtitleMap = {
+                    all: '全量收入趋势',
+                    year: '本年收入趋势',
+                    month: '本月收入趋势'
+                };
+                revenueSubtitle.textContent = subtitleMap[statsRange] || subtitleMap.all;
+            }
+
+            document.querySelectorAll('.stats-range-btn').forEach(function(btn) {
+                var active = btn.getAttribute('data-range') === statsRange;
+                btn.className = active
+                    ? 'stats-range-btn px-3 py-1.5 bg-white shadow-sm rounded-md text-brand-600 text-xs font-medium transition-colors'
+                    : 'stats-range-btn px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium transition-colors';
+            });
+        }
+
+        function syncStatsRangeFromHeader() {
+            statsRange = window.statsRange || statsRange || 'all';
+            updateStatsRangeUI();
+        }
+
         // ========== 加载顶部指标数据 ==========
         function loadStatsMetrics() {
             // 检查是否在统计页
             var checkEl = document.getElementById('stat-order-count');
             if (!checkEl) return;
 
-            // 加载月度概览数据
-            fetch('/api/stats/monthly-overview')
+            // 加载当前范围概览数据
+            fetch(buildStatsUrl('/api/stats/monthly-overview'))
                 .then(function(r) { return r.json(); })
                 .then(function(res) {
                     if (!res.success || !res.data) return;
@@ -229,65 +290,78 @@
                     if (orderCountEl) orderCountEl.textContent = (data.orderCount || 0).toLocaleString('zh-CN');
 
                     // 订单增长
-                    var orderGrowthEl = document.getElementById('stat-order-growth');
-                    if (orderGrowthEl) orderGrowthEl.textContent = data.revenueGrowth || 0;
+                    setGrowth('stat-order-growth', data.orderCountGrowth, data.hasComparison);
 
                     // 成交总额
                     var revenueEl = document.getElementById('stat-revenue');
                     if (revenueEl) revenueEl.textContent = '¥' + (data.revenue || 0).toLocaleString('zh-CN');
 
                     // 收入增长
-                    var revenueGrowthEl = document.getElementById('stat-revenue-growth');
-                    if (revenueGrowthEl) revenueGrowthEl.textContent = data.revenueGrowth || 0;
+                    setGrowth('stat-revenue-growth', data.revenueGrowth, data.hasComparison);
 
                     // 平均客单价
                     var avgOrderEl = document.getElementById('stat-avg-order');
                     if (avgOrderEl) avgOrderEl.textContent = '¥' + (data.avgOrderValue || 0).toLocaleString('zh-CN');
 
-                    // 客单价增长（用收入增长率代替）
-                    var avgGrowthEl = document.getElementById('stat-avg-growth');
-                    if (avgGrowthEl) avgGrowthEl.textContent = data.revenueGrowth || 0;
+                    // 客单价增长
+                    setGrowth('stat-avg-growth', data.avgOrderValueGrowth, data.hasComparison);
 
                     // 成交客户数
                     var customersEl = document.getElementById('stat-customers');
-                    if (customersEl) customersEl.textContent = (data.totalCustomers || 0).toLocaleString('zh-CN');
+                    if (customersEl) customersEl.textContent = (data.customerCount || data.totalCustomers || 0).toLocaleString('zh-CN');
 
                     // 客户增长
-                    var customerGrowthEl = document.getElementById('stat-customer-growth');
-                    if (customerGrowthEl) customerGrowthEl.textContent = data.customerGrowth || 0;
+                    setGrowth('stat-customer-growth', data.customerGrowth, data.hasComparison);
 
                     // 复购率
                     var repeatRateEl = document.getElementById('stat-repeat-rate');
                     if (repeatRateEl) repeatRateEl.textContent = (data.repeatRate || 0) + '%';
 
                     // 复购率增长
-                    var repeatGrowthEl = document.getElementById('stat-repeat-growth');
-                    if (repeatGrowthEl) repeatGrowthEl.textContent = data.repeatRateGrowth || 0;
+                    setGrowth('stat-repeat-growth', data.repeatRateGrowth, data.hasComparison);
 
                     // 好评率
                     var goodRateEl = document.getElementById('stat-good-rate');
                     if (goodRateEl) goodRateEl.textContent = (data.goodRate || 0) + '%';
 
                     // 好评率增长
-                    var goodGrowthEl = document.getElementById('stat-good-growth');
-                    if (goodGrowthEl) goodGrowthEl.textContent = data.goodRateGrowth || 0;
+                    setGrowth('stat-good-growth', data.goodRateGrowth, data.hasComparison);
                 })
                 .catch(function(err) {
                     console.error('加载统计数据失败:', err);
                 });
         }
 
+        function initStatsSummary() {
+            syncStatsRangeFromHeader();
+            loadStatsMetrics();
+        }
+
+        if (window.__statsRangeChangeHandler) {
+            window.removeEventListener('stats:range-change', window.__statsRangeChangeHandler);
+        }
+        window.__statsRangeChangeHandler = function(e) {
+            statsRange = (e.detail && e.detail.range) || window.statsRange || 'all';
+            window.statsRange = statsRange;
+            updateStatsRangeUI();
+            loadStatsMetrics();
+            if (typeof echarts !== 'undefined') {
+                loadAllChartData();
+            }
+        };
+        window.addEventListener('stats:range-change', window.__statsRangeChangeHandler);
+
         // 页面加载时执行
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadStatsMetrics);
+            document.addEventListener('DOMContentLoaded', initStatsSummary);
         } else {
-            loadStatsMetrics();
+            initStatsSummary();
         }
         // SPA 切换后重新加载
         window.addEventListener('spa:ready', function(e) {
             var page = (e.detail && e.detail.page) || '';
             if (page && page.indexOf('stats') === -1) return;
-            loadStatsMetrics();
+            initStatsSummary();
         });
 
         // 图表实例缓存
@@ -300,6 +374,8 @@
         function bindOrdersTypeButtons() {
             var buttons = document.querySelectorAll('.orders-type-btn');
             buttons.forEach(function(btn) {
+                if (btn.dataset.bound === 'true') return;
+                btn.dataset.bound = 'true';
                 btn.addEventListener('click', function() {
                     var type = btn.getAttribute('data-type');
                     if (type === ordersTrendType) return;
@@ -368,7 +444,7 @@
             var dom = document.getElementById('revenueChart');
             if (!dom) return;
 
-            fetch('/api/stats/revenue')
+            fetch(buildStatsUrl('/api/stats/revenue'))
                 .then(function(r) { return r.json(); })
                 .then(function(res) {
                     if (!res.success || !res.data) return;
@@ -456,7 +532,7 @@
             var dom = document.getElementById('platformChart');
             if (!dom) return;
 
-            fetch('/api/stats/platform')
+            fetch(buildStatsUrl('/api/stats/platform'))
                 .then(function(r) { return r.json(); })
                 .then(function(res) {
                     if (!res.success || !res.data) return;
@@ -511,7 +587,7 @@
             var dom = document.getElementById('projectTypeChart');
             if (!dom) return;
 
-            fetch('/api/stats/project-type')
+            fetch(buildStatsUrl('/api/stats/project-type'))
                 .then(function(r) { return r.json(); })
                 .then(function(res) {
                     if (!res.success || !res.data) return;
@@ -566,7 +642,7 @@
             var dom = document.getElementById('ordersTrendChart');
             if (!dom) return;
 
-            fetch('/api/stats/orders-monthly?type=' + ordersTrendType)
+            fetch(buildStatsUrl('/api/stats/orders-monthly', { type: ordersTrendType }))
                 .then(function(r) { return r.json(); })
                 .then(function(res) {
                     if (!res.success || !res.data || !res.data.data) return;
@@ -637,7 +713,7 @@
             var dom = document.getElementById('customerLevelChart');
             if (!dom) return;
 
-            fetch('/api/stats/customer-level')
+            fetch(buildStatsUrl('/api/stats/customer-level'))
                 .then(function(r) { return r.json(); })
                 .then(function(res) {
                     if (!res.success || !res.data) return;
@@ -696,7 +772,7 @@
             var dom = document.getElementById('funnelChart');
             if (!dom) return;
 
-            fetch('/api/stats/funnel')
+            fetch(buildStatsUrl('/api/stats/funnel'))
                 .then(function(r) { return r.json(); })
                 .then(function(res) {
                     if (!res.success || !res.data) return;
@@ -749,7 +825,7 @@
             var tbody = document.getElementById('monthly-detail-tbody');
             if (!tbody) return;
 
-            fetch('/api/stats/monthly-detail')
+            fetch(buildStatsUrl('/api/stats/monthly-detail'))
                 .then(function(r) { return r.json(); })
                 .then(function(res) {
                     if (!res.success || !res.data) {

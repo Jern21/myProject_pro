@@ -145,6 +145,34 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">描述</label>
                             <textarea id="bookmark-desc" rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-brand-500 resize-none" placeholder="添加网站描述..."></textarea>
                         </div>
+
+                        <!-- 网站图标上传 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">网站图标</label>
+                            <div class="flex items-center gap-4">
+                                <div id="bookmark-icon-preview" class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
+                                    <i class="ph ph-image text-xl text-gray-400"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <input type="file" id="bookmark-icon-upload" accept="image/*" class="hidden" onchange="handleBookmarkIconUpload(event)">
+                                    <button type="button" onclick="document.getElementById('bookmark-icon-upload').click()" class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        上传图标
+                                    </button>
+                                    <p class="text-xs text-gray-400 mt-1">支持 JPG、PNG、SVG 格式，建议 64x64 像素</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 使用网站名称首字作为图标 -->
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="use-bookmark-text-icon" class="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500" onchange="toggleBookmarkTextIcon()">
+                            <label for="use-bookmark-text-icon" class="text-sm text-gray-700">使用网站名称首字作为图标</label>
+                        </div>
+                        <div id="bookmark-text-icon-preview" class="hidden">
+                            <div class="w-12 h-12 rounded-lg bg-brand-500 text-white flex items-center justify-center text-xl font-bold" id="bookmark-text-icon-display">
+                                网
+                            </div>
+                        </div>
                     </form>
                 </div>
 
@@ -174,6 +202,10 @@
             community: { icon: 'ph-users', color: 'category-community' },
             other: { icon: 'ph-dots-three', color: 'category-other' }
         };
+
+        // 当前上传的图标
+        var currentBookmarkIcon = null;
+        var useBookmarkTextIcon = false;
 
         // ========== API 请求 ==========
         async function loadBookmarks() {
@@ -242,13 +274,25 @@
             grid.innerHTML = filtered.map(function(bm) {
                 var config = categoryConfig[bm.category] || categoryConfig.other || { name: '其他', color: 'category-other' };
 
-                // 获取网站 favicon
-                var faviconUrl = bm.favicon || ('https://www.google.com/s2/favicons?domain=' + encodeURIComponent(bm.url) + '&sz=64');
+                // 构建图标 HTML
+                var iconHtml = '';
+                if (bm.useTextIcon) {
+                    // 使用文字图标
+                    var text = bm.title.charAt(0).toUpperCase();
+                    iconHtml = '<div class="w-10 h-10 rounded-lg bg-brand-500 text-white flex items-center justify-center text-lg font-bold flex-shrink-0">' + text + '</div>';
+                } else if (bm.customIcon) {
+                    // 使用上传的图标
+                    iconHtml = '<div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0"><img src="' + bm.customIcon + '" class="w-full h-full object-contain"></div>';
+                } else {
+                    // 获取网站 favicon
+                    var faviconUrl = bm.favicon || ('https://www.google.com/s2/favicons?domain=' + encodeURIComponent(bm.url) + '&sz=64');
+                    iconHtml = '<img src="' + faviconUrl + '" alt="" class="w-10 h-10 rounded-lg bg-gray-50 object-contain flex-shrink-0" onerror="if(!this.dataset.fallback){this.dataset.fallback=\'1\';this.src=\'' + PAGE_BASE + 'assets/svg/网站.svg\';}">';
+                }
 
                 return `
                     <div class="bookmark-card group">
                         <div class="flex items-start gap-3 mb-3">
-                            <img src="${faviconUrl}" alt="" class="w-10 h-10 rounded-lg bg-gray-50 object-contain" onerror="this.src='${PAGE_BASE}assets/svg/网站.svg'">
+                            ${iconHtml}
                             <div class="flex-1 min-w-0">
                                 <h4 class="font-semibold text-gray-800 truncate">${escapeHtml(bm.title)}</h4>
                                 <span class="category-badge ${config.color}">${config.name}</span>
@@ -279,8 +323,13 @@
         // ========== 表单操作 ==========
         function openBookmarkForm(id) {
             currentEditingId = id || null;
+            currentBookmarkIcon = null;
+            useBookmarkTextIcon = false;
             document.getElementById('drawer-title').textContent = id ? '编辑收藏' : '添加收藏';
             document.getElementById('bookmark-form').reset();
+            document.getElementById('bookmark-text-icon-preview').classList.add('hidden');
+            document.getElementById('use-bookmark-text-icon').checked = false;
+            document.getElementById('bookmark-icon-preview').innerHTML = '<i class="ph ph-image text-xl text-gray-400"></i>';
 
             if (id) {
                 var bm = bookmarks.find(function(b) { return b.id === id; });
@@ -290,7 +339,16 @@
                     document.getElementById('bookmark-url').value = bm.url;
                     document.getElementById('bookmark-category').value = bm.category;
                     document.getElementById('bookmark-tags').value = bm.tags || '';
-                    document.getElementById('bookmark-desc').value = bm.desc || '';
+                    document.getElementById('bookmark-desc').value = bm.description || '';
+                    // 加载图标
+                    if (bm.useTextIcon) {
+                        useBookmarkTextIcon = true;
+                        document.getElementById('use-bookmark-text-icon').checked = true;
+                        toggleBookmarkTextIcon();
+                    } else if (bm.customIcon) {
+                        currentBookmarkIcon = bm.customIcon;
+                        document.getElementById('bookmark-icon-preview').innerHTML = '<img src="' + currentBookmarkIcon + '" class="w-full h-full object-contain">';
+                    }
                 }
             }
 
@@ -298,6 +356,29 @@
             setTimeout(function() {
                 document.getElementById('bookmark-drawer-panel').classList.remove('translate-x-full');
             }, 10);
+        }
+
+        // ========== Toast 提示（订单管理同款）==========
+        var toastTimer = null;
+        function showToast(msg) {
+            var existing = document.getElementById('bookmark-action-toast');
+            if (existing) existing.remove();
+            if (toastTimer) clearTimeout(toastTimer);
+
+            var toast = document.createElement('div');
+            toast.id = 'bookmark-action-toast';
+            toast.className = 'fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-[90]';
+            toast.innerHTML = '<i class="ph-fill ph-check-circle text-green-400"></i><span>' + msg + '</span>';
+            document.body.appendChild(toast);
+
+            requestAnimationFrame(function () {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            });
+
+            toastTimer = setTimeout(function () {
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(function () { toast.remove(); }, 300);
+            }, 2500);
         }
 
         function closeBookmarkForm() {
@@ -313,15 +394,15 @@
             var category = document.getElementById('bookmark-category').value;
 
             if (!title) {
-                alert('请输入网站名称');
+                ui.toast.error('请输入网站名称');
                 return;
             }
             if (!url) {
-                alert('请输入网址');
+                ui.toast.error('请输入网址');
                 return;
             }
             if (!category) {
-                alert('请选择分类');
+                ui.toast.error('请选择分类');
                 return;
             }
 
@@ -334,7 +415,9 @@
                 title: title,
                 url: url,
                 category: category,
-                description: document.getElementById('bookmark-desc').value.trim()
+                description: document.getElementById('bookmark-desc').value.trim(),
+                customIcon: currentBookmarkIcon,
+                useTextIcon: useBookmarkTextIcon
             };
 
             try {
@@ -347,14 +430,15 @@
                 });
                 var result = await response.json();
                 if (result.success) {
+                    showToast('保存成功');
                     await loadBookmarks();
                     closeBookmarkForm();
                 } else {
-                    alert(result.message || '保存失败');
+                    ui.toast.error(result.message || '保存失败');
                 }
             } catch (e) {
                 console.error('保存收藏失败:', e);
-                alert('保存失败，请重试');
+                ui.toast.error('保存失败，请重试');
             }
         }
 
@@ -362,20 +446,22 @@
             openBookmarkForm(id);
         }
 
-        async function deleteBookmark(id) {
-            if (!confirm('确定删除这个收藏吗？')) return;
-            try {
-                var response = await fetch('/api/bookmarks/' + id, { method: 'DELETE' });
-                var result = await response.json();
-                if (result.success) {
-                    await loadBookmarks();
-                } else {
-                    alert(result.message || '删除失败');
+        function deleteBookmark(id) {
+            ui.confirm('确定删除这个收藏吗？删除后无法恢复。', async function() {
+                try {
+                    var response = await fetch('/api/bookmarks/' + id, { method: 'DELETE' });
+                    var result = await response.json();
+                    if (result.success) {
+                        showToast('删除成功');
+                        await loadBookmarks();
+                    } else {
+                        ui.toast.error(result.message || '删除失败');
+                    }
+                } catch (e) {
+                    console.error('删除收藏失败:', e);
+                    ui.toast.error('删除失败，请重试');
                 }
-            } catch (e) {
-                console.error('删除收藏失败:', e);
-                alert('删除失败，请重试');
-            }
+            });
         }
 
         async function recordClick(id) {
@@ -384,6 +470,69 @@
             } catch (e) {
                 console.error('记录点击失败:', e);
             }
+        }
+
+        // 处理图标上传
+        async function handleBookmarkIconUpload(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+
+            // 使用 FormData 上传文件
+            var formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                var response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                var result = await response.json();
+
+                if (result.success) {
+                    currentBookmarkIcon = result.data.url;
+                    var preview = document.getElementById('bookmark-icon-preview');
+                    preview.innerHTML = '<img src="' + currentBookmarkIcon + '" class="w-full h-full object-contain">';
+                    // 取消文字图标选项
+                    document.getElementById('use-bookmark-text-icon').checked = false;
+                    useBookmarkTextIcon = false;
+                    document.getElementById('bookmark-text-icon-preview').classList.add('hidden');
+                } else {
+                    ui.toast.error('图标上传失败: ' + (result.error || '未知错误'));
+                }
+            } catch (e) {
+                console.error('上传图标失败:', e);
+                ui.toast.error('图标上传失败，请重试');
+            }
+        }
+
+        // 切换文字图标
+        function toggleBookmarkTextIcon() {
+            useBookmarkTextIcon = document.getElementById('use-bookmark-text-icon').checked;
+            var textPreview = document.getElementById('bookmark-text-icon-preview');
+            var iconPreview = document.getElementById('bookmark-icon-preview');
+
+            if (useBookmarkTextIcon) {
+                // 获取网站名称首字
+                var title = document.getElementById('bookmark-title').value;
+                var text = title ? title.charAt(0).toUpperCase() : '网';
+
+                document.getElementById('bookmark-text-icon-display').textContent = text;
+                textPreview.classList.remove('hidden');
+
+                // 清空上传的图标
+                currentBookmarkIcon = null;
+                iconPreview.innerHTML = '<i class="ph ph-image text-xl text-gray-400"></i>';
+            } else {
+                textPreview.classList.add('hidden');
+            }
+        }
+
+        // 更新文字图标预览
+        function updateBookmarkTextIconPreview() {
+            if (!useBookmarkTextIcon) return;
+            var title = document.getElementById('bookmark-title').value;
+            var text = title ? title.charAt(0).toUpperCase() : '网';
+            document.getElementById('bookmark-text-icon-display').textContent = text;
         }
 
         // ========== 工具函数 ==========
@@ -397,6 +546,7 @@
         // ========== 事件绑定 ==========
         document.getElementById('filter-category').addEventListener('change', renderBookmarks);
         document.getElementById('search-input').addEventListener('input', renderBookmarks);
+        document.getElementById('bookmark-title').addEventListener('input', updateBookmarkTextIconPreview);
 
         // ========== 初始化 ==========
         async function init() {

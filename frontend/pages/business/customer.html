@@ -67,7 +67,7 @@
     <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
-<script src="../../js/order-form.js"></script>
+<script src="../../js/order-form.js?v=customer-link-20260713"></script>
 </head>
 <body class="flex h-screen overflow-hidden text-sm bg-gray-50 text-gray-700">
 
@@ -298,9 +298,9 @@
                             <i class="ph ph-chat-teardrop-text text-lg group-hover:text-blue-500"></i>
                             <span class="text-[10px]">发消息</span>
                         </button>
-                        <button class="flex-1 py-2 flex flex-col items-center justify-center gap-1 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-orange-600 hover:border-orange-200 transition-colors group">
+                        <button type="button" id="quick-order-btn" class="flex-1 py-2 flex flex-col items-center justify-center gap-1 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-orange-600 hover:border-orange-200 transition-colors group">
                             <i class="ph ph-bag text-lg group-hover:text-orange-500"></i>
-                            <span class="text-[10px]">新建订单</span>
+                            <span class="text-[10px]">关联订单</span>
                         </button>
                         <button class="flex-1 py-2 flex flex-col items-center justify-center gap-1 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-purple-600 hover:border-purple-200 transition-colors group">
                             <i class="ph ph-file-text text-lg group-hover:text-purple-500"></i>
@@ -351,6 +351,7 @@
         var detailOrders = [];
         var detailFollows = [];
         var currentDetailTab = 'basic';
+        var orderSavedListenerBound = false;
 
         // 分页配置
         var pagination = { page: 1, pageSize: 20 };
@@ -442,10 +443,20 @@
                         customerMap = {};
                         customerCache.forEach(function (c) { customerMap[c.id] = c; });
                         renderTable();
+                        renderPagination();
                         renderSummary();
-                        // 默认选中第一个客户（与订单页逻辑一致）
+                        // 默认选中第一个客户；刷新后优先保留当前客户
                         if (customerCache.length > 0) {
-                            selectCustomer(customerCache[0].id);
+                            var nextId = selectedCustomerId && customerMap[selectedCustomerId]
+                                ? selectedCustomerId
+                                : customerCache[0].id;
+                            selectCustomer(nextId);
+                        } else {
+                            selectedCustomerId = null;
+                            detailOrders = [];
+                            detailFollows = [];
+                            renderOrdersList([]);
+                            renderFollowList([]);
                         }
                     }
                 })
@@ -725,8 +736,61 @@
                     '<span class="text-gray-500">' + escapeAttr(o.paymentStatus || '') +
                     (o.paymentStatus === '部分付款' && o.paymentRatio ? ' ' + o.paymentRatio + '%' : '') + '</span>' +
                     '<span class="font-semibold text-gray-800">' + formatMoneyNum(o.paidAmount) +
-                    '<span class="text-gray-400 font-normal text-[10px] ml-1">/ ' + formatMoneyNum(o.amount) + '</span></span></div></div>';
+                    '<span class="text-gray-400 font-normal text-[10px] ml-1">/ ' + formatMoneyNum(o.amount) + '</span></span></div>' +
+                    '<div class="mt-2 flex justify-end">' +
+                    '<button type="button" class="cust-order-open-btn px-2.5 py-1 text-[11px] rounded-md border border-brand-100 text-brand-600 bg-white hover:bg-brand-50 transition" data-order-id="' + escapeAttr(o.id || '') + '">查看 / 编辑订单</button>' +
+                    '</div></div>';
             }).join('');
+            box.querySelectorAll('.cust-order-open-btn').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openRelatedOrder(btn.getAttribute('data-order-id'));
+                });
+            });
+        }
+
+        function openRelatedOrder(orderId) {
+            if (!orderId) return;
+            if (typeof window.openOrderForm !== 'function') {
+                showToast('订单表单组件未加载');
+                return;
+            }
+            fetch('/api/orders/' + encodeURIComponent(orderId))
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                    if (!res.success || !res.data) {
+                        showToast(res.error || '订单不存在');
+                        return;
+                    }
+                    window.openOrderForm(res.data);
+                })
+                .catch(function (err) {
+                    console.error('打开关联订单失败:', err);
+                    showToast('打开订单失败');
+                });
+        }
+
+        function openNewOrderForSelectedCustomer() {
+            if (!selectedCustomerId) {
+                showToast('请先选择客户');
+                return;
+            }
+            if (typeof window.openOrderForm !== 'function') {
+                showToast('订单表单组件未加载');
+                return;
+            }
+            var c = customerMap[selectedCustomerId];
+            if (!c) return;
+            window.openOrderForm({
+                customerId: c.id,
+                customerNick: c.name || '',
+                customerName: c.name || '',
+                customerPhone: c.phone || '',
+                customerSource: c.source || '闲鱼',
+                customerTags: Array.isArray(c.tags) ? c.tags.slice() : [],
+                projectDesc: c.desc || ''
+            }, { mode: 'create' });
         }
 
         // ========== 选中客户 -> 更新详情面板 ==========
@@ -1237,6 +1301,72 @@
                 });
             }
 
+            // 详情 Tab 切换
+            document.querySelectorAll('.detail-tab').forEach(function (tab) {
+                if (tab.dataset.bound) return;
+                tab.dataset.bound = 'true';
+                tab.addEventListener('click', function () {
+                    switchDetailTab(tab.dataset.tab || 'basic');
+                });
+            });
+
+            // 保存跟进
+            var followSubmitBtn = document.getElementById('follow-submit-btn');
+            if (followSubmitBtn && !followSubmitBtn.dataset.bound) {
+                followSubmitBtn.dataset.bound = 'true';
+                followSubmitBtn.addEventListener('click', submitFollow);
+            }
+
+            var followInput = document.getElementById('follow-input');
+            if (followInput && !followInput.dataset.bound) {
+                followInput.dataset.bound = 'true';
+                followInput.addEventListener('keydown', function (e) {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                        submitFollow();
+                    }
+                });
+            }
+
+            // 保存备注
+            var notesSaveBtn = document.getElementById('notes-save-btn');
+            if (notesSaveBtn && !notesSaveBtn.dataset.bound) {
+                notesSaveBtn.dataset.bound = 'true';
+                notesSaveBtn.addEventListener('click', saveNotes);
+            }
+
+            // 快捷写跟进
+            var quickFollowBtn = document.getElementById('quick-follow-btn');
+            if (quickFollowBtn && !quickFollowBtn.dataset.bound) {
+                quickFollowBtn.dataset.bound = 'true';
+                quickFollowBtn.addEventListener('click', function () {
+                    switchDetailTab('follow');
+                    var input = document.getElementById('follow-input');
+                    if (input) input.focus();
+                });
+            }
+
+            // 从客户直接新建关联订单
+            var quickOrderBtn = document.getElementById('quick-order-btn');
+            if (quickOrderBtn && !quickOrderBtn.dataset.bound) {
+                quickOrderBtn.dataset.bound = 'true';
+                quickOrderBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openNewOrderForSelectedCustomer();
+                });
+            }
+
+            if (!orderSavedListenerBound) {
+                orderSavedListenerBound = true;
+                window.addEventListener('order-form:saved', function () {
+                    if (!document.getElementById('customer-tbody')) return;
+                    var keepId = selectedCustomerId;
+                    loadCustomers().then(function () {
+                        if (keepId && customerMap[keepId]) selectCustomer(keepId);
+                    });
+                });
+            }
+
             // 筛选按钮
             var filterBtn = document.getElementById('filter-btn');
             if (filterBtn && !filterBtn.dataset.bound) {
@@ -1299,6 +1429,7 @@
         // ========== 初始化 ==========
         function init() {
             bindEvents();
+            switchDetailTab(currentDetailTab);
             loadCustomers();
         }
 

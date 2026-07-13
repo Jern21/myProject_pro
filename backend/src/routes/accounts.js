@@ -160,6 +160,9 @@ router.post('/', resp.asyncHandler(function (req, res) {
         email: data.email || '',
         password: data.password || '',
         remark: data.remark || '',
+        icon: data.icon || null,
+        useTextIcon: data.useTextIcon || false,
+        customPlatform: data.customPlatform || null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
@@ -167,7 +170,7 @@ router.post('/', resp.asyncHandler(function (req, res) {
     accounts.push(newAccount);
     saveAccounts(accounts);
 
-    return resp.success(res, newAccount, '账号创建成功');
+    return resp.success(res, newAccount);
 }));
 
 // ========== 更新账号 ==========
@@ -188,11 +191,14 @@ router.put('/:id', resp.asyncHandler(function (req, res) {
         email: data.email !== undefined ? data.email : accounts[index].email,
         password: data.password !== undefined ? data.password : accounts[index].password,
         remark: data.remark !== undefined ? data.remark : accounts[index].remark,
+        icon: data.icon !== undefined ? data.icon : accounts[index].icon,
+        useTextIcon: data.useTextIcon !== undefined ? data.useTextIcon : accounts[index].useTextIcon,
+        customPlatform: data.customPlatform !== undefined ? data.customPlatform : accounts[index].customPlatform,
         updatedAt: new Date().toISOString()
     };
 
     saveAccounts(accounts);
-    return resp.success(res, accounts[index], '账号更新成功');
+    return resp.success(res, accounts[index]);
 }));
 
 // ========== 删除账号 ==========
@@ -208,7 +214,7 @@ router.delete('/:id', resp.asyncHandler(function (req, res) {
     accounts.splice(index, 1);
     saveAccounts(accounts);
 
-    return resp.success(res, null, '账号删除成功');
+    return resp.success(res, null);
 }));
 
 module.exports = router;

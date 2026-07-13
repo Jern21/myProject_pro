@@ -38,7 +38,7 @@
         },
         'orders.html': {
             title: '我的订单',
-            subtitle: '共 128 条记录',
+            subtitle: '管理我的订单',
             search: '搜索订单号、客户、项目名称...',
             action: { label: '新建接单', icon: 'ph ph-plus' }
         },
@@ -49,7 +49,7 @@
         },
         'customer.html': {
             title: '客户管理',
-            subtitle: '共 86 位客户',
+            subtitle: '管理我的客户',
             search: '搜索客户名称、联系方式、标签...',
             action: { label: '新增客户', icon: 'ph ph-plus', onclick: 'openCustomerForm(null,null)' }
         },
@@ -94,11 +94,9 @@
             title: '数据统计',
             subtitle: '多维度数据分析，辅助业务决策',
             controls: [
-                { label: '本周', active: false },
-                { label: '本月', active: true },
-                { label: '本季', active: false },
-                { label: '本年', active: false },
-                { label: '自定义', active: false, icon: 'ph ph-calendar-blank' }
+                { label: '全量汇总', range: 'all' },
+                { label: '本年', range: 'year' },
+                { label: '本月', range: 'month' }
             ],
             action: { label: '导出报表', icon: 'ph ph-export', variant: 'secondary' }
         },
@@ -210,14 +208,49 @@
         return [
             '<div class="flex items-center gap-1 bg-gray-50 p-1 rounded-lg">',
             controls.map(function (control) {
-                var className = control.active
-                    ? 'px-3 py-1.5 bg-white shadow-sm rounded-md text-gray-800 text-xs font-medium transition-colors'
+                var isStatsRange = !!control.range;
+                var active = isStatsRange
+                    ? ((window.statsRange || 'all') === control.range)
+                    : !!control.active;
+                var className = active
+                    ? 'px-3 py-1.5 bg-white shadow-sm rounded-md text-brand-600 text-xs font-medium transition-colors'
                     : 'px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium transition-colors';
                 var icon = control.icon ? '<i class="' + escapeHtml(control.icon) + '"></i> ' : '';
-                return '<button class="' + className + (control.icon ? ' flex items-center gap-1' : '') + '">' + icon + escapeHtml(control.label) + '</button>';
+                var attrs = isStatsRange
+                    ? ' type="button" class="stats-range-btn ' + className + (control.icon ? ' flex items-center gap-1' : '') + '" data-range="' + escapeHtml(control.range) + '"'
+                    : ' type="button" class="' + className + (control.icon ? ' flex items-center gap-1' : '') + '"';
+                return '<button' + attrs + '>' + icon + escapeHtml(control.label) + '</button>';
             }).join(''),
             '</div>'
         ].join('');
+    }
+
+    function syncStatsRangeButtons(root) {
+        var scope = root || document;
+        var range = window.statsRange || 'all';
+        scope.querySelectorAll('.stats-range-btn').forEach(function (btn) {
+            var active = btn.getAttribute('data-range') === range;
+            btn.className = active
+                ? 'stats-range-btn px-3 py-1.5 bg-white shadow-sm rounded-md text-brand-600 text-xs font-medium transition-colors'
+                : 'stats-range-btn px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium transition-colors';
+        });
+    }
+
+    function bindStatsRangeButtons(root) {
+        var scope = root || document;
+        scope.querySelectorAll('.stats-range-btn').forEach(function (btn) {
+            if (btn.dataset.bound === 'true') return;
+            btn.dataset.bound = 'true';
+            btn.addEventListener('click', function () {
+                var range = btn.getAttribute('data-range') || 'all';
+                if (range === (window.statsRange || 'all')) return;
+                window.statsRange = range;
+                syncStatsRangeButtons(document);
+                window.dispatchEvent(new CustomEvent('stats:range-change', {
+                    detail: { range: range }
+                }));
+            });
+        });
     }
 
     function renderButton(action, defaultVariant) {
@@ -352,6 +385,8 @@
 
         if (header) {
             header.innerHTML = headerHtml;
+            bindStatsRangeButtons(header);
+            syncStatsRangeButtons(header);
             return header;
         }
 
@@ -364,7 +399,10 @@
             '</header>'
         ].join(''));
 
-        return document.getElementById('app-header');
+        header = document.getElementById('app-header');
+        bindStatsRangeButtons(header);
+        syncStatsRangeButtons(header);
+        return header;
     }
 
     document.addEventListener('DOMContentLoaded', function () {

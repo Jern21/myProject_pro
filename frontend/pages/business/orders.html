@@ -56,7 +56,7 @@
     <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
-<script src="../../js/order-form.js"></script>
+<script src="../../js/order-form.js?v=customer-link-20260713"></script>
 <!-- html2canvas：本地引入，用于导出报价单 PNG -->
 <script src="../../assets/html2canvas.min.js"></script>
 </head>
@@ -714,10 +714,10 @@ function fileLabel(key) {
                         if (tbody) tbody.innerHTML = '<tr><td colspan="9" class="py-10 text-center text-red-400">加载失败：' + escapeHtml(res.error || '') + '</td></tr>';
                         return;
                     }
-                    state.orders = res.data.list || [];
-                    state.total = res.data.total || 0;
-                    renderTable(state.orders);
-                    renderPagination();
+                state.orders = res.data.list || [];
+                state.total = res.data.total || 0;
+                renderTable(state.orders);
+                renderPagination();
 
                     // 默认选中第一条数据并显示详情
                     if (state.orders.length > 0) {

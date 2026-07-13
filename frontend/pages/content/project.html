@@ -19,6 +19,29 @@
     <script src="../../js/spa-router.js"></script>
 <script src="../../js/avatar.js"></script>
 <script src="../../js/platform-icons.js"></script>
+<style>
+    .project-kanban-board.hidden {
+        display: none !important;
+    }
+
+    .project-kanban-board:not(.hidden) {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.75rem;
+        align-items: stretch;
+        overflow-x: visible;
+        padding-bottom: 1.5rem;
+    }
+
+    .project-kanban-board > div {
+        width: auto !important;
+        min-width: 0;
+        max-height: none !important;
+        height: calc(100vh - 20px);
+        min-height: 560px;
+        flex-shrink: 1;
+    }
+</style>
 </head>
 <body class="flex h-screen overflow-hidden text-sm font-sans">
 
@@ -120,7 +143,7 @@
                 </div>
 
                 <!-- Kanban Board -->
-                <div id="kanban-view" class="flex gap-4 overflow-x-auto pb-4">
+                <div id="kanban-view" class="project-kanban-board">
 
                     <!-- Column 1: 待确认需求 -->
                     <div class="flex-shrink-0 w-72 bg-gray-50 rounded-xl border border-gray-100 flex flex-col max-h-[calc(100vh-260px)]">
@@ -791,7 +814,7 @@
                     </div>
 
                     <!-- Personal Kanban Board -->
-                    <div id="p-kanban-view" class="flex gap-4 overflow-x-auto pb-4">
+                    <div id="p-kanban-view" class="project-kanban-board">
                         <!-- Column 1: 待确认需求 -->
                         <div class="flex-shrink-0 w-72 bg-gray-50 rounded-xl border border-gray-100 flex flex-col max-h-[calc(100vh-260px)]">
                             <div class="p-4 border-b border-gray-100 flex items-center justify-between">

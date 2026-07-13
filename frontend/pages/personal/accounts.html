@@ -133,6 +133,34 @@
                             <input type="text" id="custom-platform" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-brand-500" placeholder="请输入平台名称">
                         </div>
 
+                        <!-- 平台图标上传 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">平台图标</label>
+                            <div class="flex items-center gap-4">
+                                <div id="icon-preview" class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
+                                    <i class="ph ph-image text-xl text-gray-400"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <input type="file" id="account-icon-upload" accept="image/*" class="hidden" onchange="handleIconUpload(event)">
+                                    <button type="button" onclick="document.getElementById('account-icon-upload').click()" class="px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        上传图标
+                                    </button>
+                                    <p class="text-xs text-gray-400 mt-1">支持 JPG、PNG、SVG 格式，建议 64x64 像素</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 使用自定义名称作为图标 -->
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="use-text-icon" class="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500" onchange="toggleTextIcon()">
+                            <label for="use-text-icon" class="text-sm text-gray-700">使用平台名称首字作为图标</label>
+                        </div>
+                        <div id="text-icon-preview" class="hidden">
+                            <div class="w-12 h-12 rounded-lg bg-brand-500 text-white flex items-center justify-center text-xl font-bold" id="text-icon-display">
+                                平
+                            </div>
+                        </div>
+
                         <!-- 账号/用户名 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">账号/用户名 <span class="text-red-500">*</span></label>
@@ -200,6 +228,10 @@
             other: { icon: 'ph-globe', color: 'platform-other' }
         };
 
+        // 当前上传的图标
+        var currentIconData = null;
+        var useTextIcon = false;
+
         // ========== API 请求 ==========
         async function loadAccounts() {
             try {
@@ -266,21 +298,41 @@
             emptyState.classList.add('hidden');
             grid.innerHTML = filtered.map(function(acc) {
                 var config = platformConfig[acc.platform] || platformConfig.other || { icon: 'ph-globe', color: 'platform-other', name: '其他' };
-                var platformName = config.name || '其他';
+                var platformName = acc.customPlatform || config.name || '其他';
+
+                // 构建图标 HTML
+                var iconHtml = '';
+                if (acc.useTextIcon) {
+                    // 使用文字图标
+                    var text = platformName.charAt(0).toUpperCase();
+                    iconHtml = '<div class="w-10 h-10 rounded-lg bg-brand-500 text-white flex items-center justify-center text-lg font-bold">' + text + '</div>';
+                } else if (acc.icon) {
+                    // 使用上传的图标
+                    iconHtml = '<div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden"><img src="' + acc.icon + '" class="w-full h-full object-contain"></div>';
+                } else {
+                    // 使用默认图标
+                    iconHtml = '<div class="w-10 h-10 rounded-lg ' + config.color + ' flex items-center justify-center"><i class="ph ' + config.icon + ' text-xl"></i></div>';
+                }
 
                 return `
-                    <div class="account-card group" onclick="editAccount('${acc.id}')">
+                    <div class="account-card group" onclick="viewAccount('${acc.id}')">
                         <div class="flex items-start justify-between mb-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg ${config.color} flex items-center justify-center">
-                                    <i class="ph ${config.icon} text-xl"></i>
-                                </div>
+                                ${iconHtml}
                                 <div>
                                     <h4 class="font-semibold text-gray-800">${escapeHtml(platformName)}</h4>
                                     <p class="text-xs text-gray-400">${escapeHtml(acc.accountName)}</p>
                                 </div>
                             </div>
-                            <span class="platform-badge ${config.color}">${escapeHtml(platformName)}</span>
+                            <div class="flex items-center gap-1">
+                                <span class="platform-badge ${config.color}">${escapeHtml(platformName)}</span>
+                                <button onclick="event.stopPropagation(); editAccount('${acc.id}')" class="p-1.5 text-gray-400 hover:text-brand-500 hover:bg-brand-50 rounded transition-colors opacity-0 group-hover:opacity-100">
+                                    <i class="ph ph-pencil"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); deleteAccount('${acc.id}')" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors opacity-0 group-hover:opacity-100">
+                                    <i class="ph ph-trash"></i>
+                                </button>
+                            </div>
                         </div>
                         ${acc.email ? `<p class="text-sm text-gray-500 mb-2"><i class="ph ph-envelope mr-1"></i>${escapeHtml(acc.email)}</p>` : ''}
                         ${acc.remark ? `<p class="text-xs text-gray-400 mt-2 line-clamp-2">${escapeHtml(acc.remark)}</p>` : ''}
@@ -292,23 +344,37 @@
         // ========== 表单操作 ==========
         function openAccountForm(id) {
             currentEditingId = id || null;
+            currentIconData = null;
+            useTextIcon = false;
             document.getElementById('drawer-title').textContent = id ? '编辑账号' : '添加账号';
             document.getElementById('account-form').reset();
             document.getElementById('custom-platform-wrapper').classList.add('hidden');
+            document.getElementById('text-icon-preview').classList.add('hidden');
+            document.getElementById('use-text-icon').checked = false;
+            document.getElementById('icon-preview').innerHTML = '<i class="ph ph-image text-xl text-gray-400"></i>';
 
             if (id) {
                 var acc = accounts.find(function(a) { return a.id === id; });
                 if (acc) {
                     document.getElementById('account-id').value = acc.id;
                     document.getElementById('account-platform').value = acc.platform;
-                    document.getElementById('account-username').value = acc.username;
+                    document.getElementById('account-username').value = acc.accountName;
                     document.getElementById('account-email').value = acc.email || '';
                     document.getElementById('account-password').value = acc.password || '';
                     document.getElementById('account-url').value = acc.url || '';
-                    document.getElementById('account-notes').value = acc.notes || '';
+                    document.getElementById('account-notes').value = acc.remark || '';
                     if (acc.platform === 'other') {
                         document.getElementById('custom-platform').value = acc.customPlatform || '';
                         document.getElementById('custom-platform-wrapper').classList.remove('hidden');
+                    }
+                    // 加载图标
+                    if (acc.useTextIcon) {
+                        useTextIcon = true;
+                        document.getElementById('use-text-icon').checked = true;
+                        toggleTextIcon();
+                    } else if (acc.icon) {
+                        currentIconData = acc.icon;
+                        document.getElementById('icon-preview').innerHTML = '<img src="' + currentIconData + '" class="w-full h-full object-contain">';
                     }
                 }
             }
@@ -317,6 +383,119 @@
             setTimeout(function() {
                 document.getElementById('account-drawer-panel').classList.remove('translate-x-full');
             }, 10);
+        }
+
+        // ========== Toast 提示（订单管理同款）==========
+        var toastTimer = null;
+        function showToast(msg) {
+            var existing = document.getElementById('account-action-toast');
+            if (existing) existing.remove();
+            if (toastTimer) clearTimeout(toastTimer);
+
+            var toast = document.createElement('div');
+            toast.id = 'account-action-toast';
+            toast.className = 'fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-[90]';
+            toast.innerHTML = '<i class="ph-fill ph-check-circle text-green-400"></i><span>' + msg + '</span>';
+            document.body.appendChild(toast);
+
+            requestAnimationFrame(function () {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            });
+
+            toastTimer = setTimeout(function () {
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(function () { toast.remove(); }, 300);
+            }, 2500);
+        }
+
+        // 复制文本到剪贴板
+        function copyText(text, successMsg) {
+            if (!text) { showToast('暂无可复制内容'); return; }
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function () { showToast(successMsg); }).catch(function () { fallbackCopy(text, successMsg); });
+                return;
+            }
+            fallbackCopy(text, successMsg);
+        }
+
+        function fallbackCopy(text, successMsg) {
+            var input = document.createElement('textarea');
+            input.value = text;
+            input.className = 'fixed -left-[9999px] top-0';
+            document.body.appendChild(input);
+            input.focus();
+            input.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg);
+            } catch (e) {
+                showToast('复制失败');
+            }
+            document.body.removeChild(input);
+        }
+
+        // 查看账号详情
+        function viewAccount(id) {
+            var acc = accounts.find(function(a) { return a.id === id; });
+            if (!acc) return;
+
+            var config = platformConfig[acc.platform] || platformConfig.other || { icon: 'ph-globe', color: 'platform-other', name: '其他' };
+            var platformName = acc.customPlatform || config.name || '其他';
+
+            // 构建图标 HTML
+            var iconHtml = '';
+            if (acc.useTextIcon) {
+                var text = platformName.charAt(0).toUpperCase();
+                iconHtml = '<div class="w-16 h-16 rounded-xl bg-brand-500 text-white flex items-center justify-center text-2xl font-bold">' + text + '</div>';
+            } else if (acc.icon) {
+                iconHtml = '<div class="w-16 h-16 rounded-xl bg-gray-50 flex items-center justify-center overflow-hidden"><img src="' + acc.icon + '" class="w-full h-full object-contain"></div>';
+            } else {
+                iconHtml = '<div class="w-16 h-16 rounded-xl ' + config.color + ' flex items-center justify-center"><i class="ph ' + config.icon + ' text-3xl"></i></div>';
+            }
+
+            // 创建详情弹窗
+            var overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center';
+            overlay.innerHTML =
+                '<div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform scale-95 opacity-0 transition-all duration-200">' +
+                '  <div class="p-6">' +
+                '    <div class="flex items-center gap-4 mb-6">' +
+                '      ' + iconHtml +
+                '      <div>' +
+                '        <h3 class="text-lg font-bold text-gray-800">' + escapeHtml(platformName) + '</h3>' +
+                '        <span class="platform-badge ' + config.color + '">' + escapeHtml(platformName) + '</span>' +
+                '      </div>' +
+                '    </div>' +
+                '    <div class="space-y-4">' +
+                '      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">' +
+                '        <div><p class="text-xs text-gray-400 mb-1">账号/用户名</p><p class="text-sm font-medium text-gray-800">' + escapeHtml(acc.accountName) + '</p></div>' +
+                '        <button onclick="copyText(\'' + escapeHtml(acc.accountName).replace(/'/g, "\\'") + '\', \'账号已复制\')" class="p-2 text-gray-400 hover:text-brand-500 hover:bg-white rounded-lg transition-colors"><i class="ph ph-copy"></i></button>' +
+                '      </div>' +
+                (acc.email ? '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div><p class="text-xs text-gray-400 mb-1">邮箱</p><p class="text-sm font-medium text-gray-800">' + escapeHtml(acc.email) + '</p></div><button onclick="copyText(\'' + escapeHtml(acc.email).replace(/'/g, "\\'") + '\', \'邮箱已复制\')" class="p-2 text-gray-400 hover:text-brand-500 hover:bg-white rounded-lg transition-colors"><i class="ph ph-copy"></i></button></div>' : '') +
+                (acc.password ? '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div><p class="text-xs text-gray-400 mb-1">密码</p><p class="text-sm font-medium text-gray-800 font-mono">' + escapeHtml(acc.password) + '</p></div><button onclick="copyText(\'' + escapeHtml(acc.password).replace(/'/g, "\\'") + '\', \'密码已复制\')" class="p-2 text-gray-400 hover:text-brand-500 hover:bg-white rounded-lg transition-colors"><i class="ph ph-copy"></i></button></div>' : '') +
+                (acc.url ? '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div><p class="text-xs text-gray-400 mb-1">网址</p><p class="text-sm font-medium text-brand-500 truncate max-w-[200px]">' + escapeHtml(acc.url) + '</p></div><button onclick="copyText(\'' + escapeHtml(acc.url).replace(/'/g, "\\'") + '\', \'网址已复制\')" class="p-2 text-gray-400 hover:text-brand-500 hover:bg-white rounded-lg transition-colors"><i class="ph ph-copy"></i></button></div>' : '') +
+                (acc.remark ? '<div class="p-3 bg-gray-50 rounded-lg"><p class="text-xs text-gray-400 mb-1">备注</p><p class="text-sm text-gray-800">' + escapeHtml(acc.remark) + '</p></div>' : '') +
+                '    </div>' +
+                '  </div>' +
+                '  <div class="flex gap-3 p-4 border-t border-gray-100">' +
+                '    <button onclick="this.closest(\'.fixed\').remove()" class="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">关闭</button>' +
+                '    <button onclick="this.closest(\'.fixed\').remove(); editAccount(\'' + acc.id + '\')" class="flex-1 px-4 py-2.5 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors flex items-center justify-center gap-2"><i class="ph ph-pencil"></i>编辑</button>' +
+                '    <button onclick="this.closest(\'.fixed\').remove(); deleteAccount(\'' + acc.id + '\')" class="px-4 py-2.5 border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-colors"><i class="ph ph-trash"></i></button>' +
+                '  </div>' +
+                '</div>';
+
+            document.body.appendChild(overlay);
+
+            // 动画进入
+            requestAnimationFrame(function () {
+                overlay.querySelector('div').classList.remove('scale-95', 'opacity-0');
+                overlay.querySelector('div').classList.add('scale-100', 'opacity-100');
+            });
+
+            // 点击遮罩关闭
+            overlay.onclick = function (e) {
+                if (e.target === overlay) overlay.remove();
+            };
         }
 
         function closeAccountForm() {
@@ -349,7 +528,10 @@
                 accountName: username,
                 email: document.getElementById('account-email').value.trim(),
                 password: document.getElementById('account-password').value,
-                remark: document.getElementById('account-notes').value.trim()
+                remark: document.getElementById('account-notes').value.trim(),
+                icon: currentIconData,
+                useTextIcon: useTextIcon,
+                customPlatform: platform === 'other' ? document.getElementById('custom-platform').value.trim() : null
             };
 
             try {
@@ -362,14 +544,15 @@
                 });
                 var result = await response.json();
                 if (result.success) {
+                    showToast('保存成功');
                     await loadAccounts();
                     closeAccountForm();
                 } else {
-                    alert(result.message || '保存失败');
+                    ui.toast.error(result.message || '保存失败');
                 }
             } catch (e) {
                 console.error('保存账号失败:', e);
-                alert('保存失败，请重试');
+                ui.toast.error('保存失败，请重试');
             }
         }
 
@@ -377,20 +560,22 @@
             openAccountForm(id);
         }
 
-        async function deleteAccount(id) {
-            if (!confirm('确定删除这个账号吗？')) return;
-            try {
-                var response = await fetch('/api/accounts/' + id, { method: 'DELETE' });
-                var result = await response.json();
-                if (result.success) {
-                    await loadAccounts();
-                } else {
-                    alert(result.message || '删除失败');
+        function deleteAccount(id) {
+            ui.confirm('确定删除这个账号吗？删除后无法恢复。', async function() {
+                try {
+                    var response = await fetch('/api/accounts/' + id, { method: 'DELETE' });
+                    var result = await response.json();
+                    if (result.success) {
+                        showToast('删除成功');
+                        await loadAccounts();
+                    } else {
+                        ui.toast.error(result.message || '删除失败');
+                    }
+                } catch (e) {
+                    console.error('删除账号失败:', e);
+                    ui.toast.error('删除失败，请重试');
                 }
-            } catch (e) {
-                console.error('删除账号失败:', e);
-                alert('删除失败，请重试');
-            }
+            });
         }
 
         function togglePasswordVisibility() {
@@ -405,6 +590,93 @@
                 eye.classList.remove('ph-eye-slash');
                 eye.classList.add('ph-eye');
             }
+        }
+
+        // 处理图标上传
+        async function handleIconUpload(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+
+            // 使用 FormData 上传文件
+            var formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                var response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                var result = await response.json();
+
+                if (result.success) {
+                    currentIconData = result.data.url;
+                    var preview = document.getElementById('icon-preview');
+                    preview.innerHTML = '<img src="' + currentIconData + '" class="w-full h-full object-contain">';
+                    // 取消文字图标选项
+                    document.getElementById('use-text-icon').checked = false;
+                    useTextIcon = false;
+                    document.getElementById('text-icon-preview').classList.add('hidden');
+                } else {
+                    alert('图标上传失败: ' + (result.error || '未知错误'));
+                }
+            } catch (e) {
+                console.error('上传图标失败:', e);
+                alert('图标上传失败，请重试');
+            }
+        }
+
+        // 切换文字图标
+        function toggleTextIcon() {
+            useTextIcon = document.getElementById('use-text-icon').checked;
+            var textPreview = document.getElementById('text-icon-preview');
+            var iconPreview = document.getElementById('icon-preview');
+
+            if (useTextIcon) {
+                // 获取平台名称首字
+                var platform = document.getElementById('account-platform').value;
+                var customName = document.getElementById('custom-platform').value;
+                var text = '';
+
+                if (platform === 'other' && customName) {
+                    text = customName.charAt(0).toUpperCase();
+                } else if (platform) {
+                    var platformNames = {
+                        github: 'G', gitee: 'G', coding: 'C', leetcode: 'L',
+                        juejin: '掘', csdn: 'C', zhihu: '知', other: '其'
+                    };
+                    text = platformNames[platform] || '平';
+                } else {
+                    text = '平';
+                }
+
+                document.getElementById('text-icon-display').textContent = text;
+                textPreview.classList.remove('hidden');
+
+                // 清空上传的图标
+                currentIconData = null;
+                iconPreview.innerHTML = '<i class="ph ph-image text-xl text-gray-400"></i>';
+            } else {
+                textPreview.classList.add('hidden');
+            }
+        }
+
+        // 更新文字图标预览
+        function updateTextIconPreview() {
+            if (!useTextIcon) return;
+            var platform = document.getElementById('account-platform').value;
+            var customName = document.getElementById('custom-platform').value;
+            var text = '';
+
+            if (platform === 'other' && customName) {
+                text = customName.charAt(0).toUpperCase();
+            } else if (platform) {
+                var platformNames = {
+                    github: 'G', gitee: 'G', coding: 'C', leetcode: 'L',
+                    juejin: '掘', csdn: 'C', zhihu: '知', other: '其'
+                };
+                text = platformNames[platform] || '平';
+            }
+            document.getElementById('text-icon-display').textContent = text;
         }
 
         // ========== 工具函数 ==========
@@ -422,7 +694,10 @@
             } else {
                 document.getElementById('custom-platform-wrapper').classList.add('hidden');
             }
+            updateTextIconPreview();
         });
+
+        document.getElementById('custom-platform').addEventListener('input', updateTextIconPreview);
 
         document.getElementById('filter-platform').addEventListener('change', renderAccounts);
         document.getElementById('search-input').addEventListener('input', renderAccounts);

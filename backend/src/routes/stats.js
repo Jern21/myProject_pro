@@ -116,6 +116,74 @@ function repeatRateOf(list) {
     return Math.round(repeat / keys.length * 100);
 }
 
+function normalizeStatsRange(req, defaultRange) {
+    var range = ((req.query && (req.query.range || req.query.period)) || defaultRange || 'all').toLowerCase();
+    if (['all', 'month', 'year'].indexOf(range) === -1) range = defaultRange || 'all';
+    return range;
+}
+
+function createRangeMeta(range) {
+    var today = new Date();
+    var thisMonth = localDateStr(today).substring(0, 7);
+    var lastMonth = localDateStr(new Date(today.getFullYear(), today.getMonth() - 1, 1)).substring(0, 7);
+    var thisYear = String(today.getFullYear());
+    var lastYear = String(today.getFullYear() - 1);
+    var labelMap = { all: '全量汇总', month: thisMonth, year: thisYear };
+    return {
+        range: range,
+        label: labelMap[range] || labelMap.all,
+        thisMonth: thisMonth,
+        lastMonth: lastMonth,
+        thisYear: thisYear,
+        lastYear: lastYear
+    };
+}
+
+function matchRangeDate(dateStr, meta, previous) {
+    if (!dateStr) return false;
+    if (meta.range === 'all') return !previous;
+    if (meta.range === 'month') return String(dateStr).startsWith(previous ? meta.lastMonth : meta.thisMonth);
+    if (meta.range === 'year') return String(dateStr).startsWith(previous ? meta.lastYear : meta.thisYear);
+    return false;
+}
+
+function recordDate(record, fields) {
+    for (var i = 0; i < fields.length; i++) {
+        if (record && record[fields[i]]) return record[fields[i]];
+    }
+    return '';
+}
+
+function filterOrdersByRange(allOrders, meta, previous) {
+    if (meta.range === 'all') return previous ? [] : allOrders.slice();
+    return allOrders.filter(function (o) {
+        return matchRangeDate(o.orderDate, meta, previous);
+    });
+}
+
+function filterCustomersByRange(allCustomers, meta, previous) {
+    if (meta.range === 'all') return previous ? [] : allCustomers.slice();
+    return allCustomers.filter(function (c) {
+        return matchRangeDate(recordDate(c, ['addTime', 'createdAt']), meta, previous);
+    });
+}
+
+function filterPostsByRange(allPosts, meta, previous) {
+    if (meta.range === 'all') return previous ? [] : allPosts.slice();
+    return allPosts.filter(function (p) {
+        return matchRangeDate(recordDate(p, ['publishTime', 'createdAt', 'updatedAt']), meta, previous);
+    });
+}
+
+function uniqueOrderCustomerCount(list) {
+    var seen = {};
+    list.forEach(function (o) {
+        var key = o.customerId || o.customerNick || o.customerName || o.customerPhone;
+        if (key) seen[key] = true;
+    });
+    return Object.keys(seen).length;
+}
+
 // ========== 首页顶部指标（含真实环比） ==========
 router.get('/home-metrics', resp.asyncHandler(function (req, res) {
     var allOrders = orders.findAll();
@@ -221,18 +289,12 @@ router.get('/dashboard', resp.asyncHandler(function (req, res) {
 router.get('/monthly-overview', resp.asyncHandler(function (req, res) {
     var allOrders = orders.findAll();
     var allCustomers = customers.findAll();
-    var today = new Date();
-    var thisMonth = localDateStr(today).substring(0, 7);
-    var lastMonth = localDateStr(new Date(today.getFullYear(), today.getMonth() - 1, 1)).substring(0, 7);
-    var thisYear = String(today.getFullYear());
-    var lastYear = String(today.getFullYear() - 1);
+    var range = normalizeStatsRange(req, 'all');
+    var meta = createRangeMeta(range);
+    var hasComparison = range !== 'all';
 
-    var monthOrders = allOrders.filter(function (o) {
-        return o.orderDate && o.orderDate.startsWith(thisMonth);
-    });
-    var lastMonthOrders = allOrders.filter(function (o) {
-        return o.orderDate && o.orderDate.startsWith(lastMonth);
-    });
+    var monthOrders = filterOrdersByRange(allOrders, meta, false);
+    var lastMonthOrders = filterOrdersByRange(allOrders, meta, true);
     var monthPaid = monthOrders.filter(hasPayment);
     var lastMonthPaid = lastMonthOrders.filter(hasPayment);
 
@@ -241,63 +303,60 @@ router.get('/monthly-overview', resp.asyncHandler(function (req, res) {
     var monthCost = sumPaidCost(monthPaid);
     var monthProfit = monthRevenue - monthCost;
 
-    var revenueGrowth = calcGrowth(monthRevenue, lastMonthRevenue);
-    var orderCountGrowth = calcGrowth(monthOrders.length, lastMonthOrders.length);
+    var revenueGrowth = hasComparison ? calcGrowth(monthRevenue, lastMonthRevenue) : null;
+    var orderCountGrowth = hasComparison ? calcGrowth(monthOrders.length, lastMonthOrders.length) : null;
 
     var avgOrderValue = monthPaid.length > 0
         ? Math.round(monthRevenue / monthPaid.length)
         : 0;
+    var lastAvgOrderValue = lastMonthPaid.length > 0
+        ? Math.round(lastMonthRevenue / lastMonthPaid.length)
+        : 0;
+    var avgOrderValueGrowth = hasComparison ? calcGrowth(avgOrderValue, lastAvgOrderValue) : null;
 
-    var monthNewCustomers = allCustomers.filter(function (c) {
-        return c.createdAt && c.createdAt.startsWith(thisMonth);
-    }).length;
-    var lastMonthNewCustomers = allCustomers.filter(function (c) {
-        return c.createdAt && c.createdAt.startsWith(lastMonth);
-    }).length;
+    var currentCustomers = filterCustomersByRange(allCustomers, meta, false);
+    var monthNewCustomers = currentCustomers.length;
 
-    var yearPaid = allOrders.filter(function (o) {
-        return hasPayment(o) && o.orderDate && o.orderDate.startsWith(thisYear);
-    });
-    var lastYearPaid = allOrders.filter(function (o) {
-        return hasPayment(o) && o.orderDate && o.orderDate.startsWith(lastYear);
-    });
+    var yearMeta = createRangeMeta('year');
+    var yearPaid = filterOrdersByRange(allOrders, yearMeta, false).filter(hasPayment);
+    var lastYearPaid = filterOrdersByRange(allOrders, yearMeta, true).filter(hasPayment);
     var yearRevenue = sumPaidAmount(yearPaid);
     var lastYearRevenue = sumPaidAmount(lastYearPaid);
     var yearGrowth = calcGrowth(yearRevenue, lastYearRevenue);
 
-    var totalCustomers = allCustomers.length;
-    var customerGrowth = calcGrowth(monthNewCustomers, lastMonthNewCustomers);
+    var customerCount = uniqueOrderCustomerCount(monthPaid);
+    var lastCustomerCount = uniqueOrderCustomerCount(lastMonthPaid);
+    var customerGrowth = hasComparison ? calcGrowth(customerCount, lastCustomerCount) : null;
 
-    // 好评率：本月有评价订单 vs 上月
-    var goodRate = goodRateOf(monthOrders.length ? monthOrders : allOrders);
+    // 好评率：按当前统计范围
+    var goodRate = goodRateOf(monthOrders);
     var lastMonthGoodRate = goodRateOf(lastMonthOrders);
-    var goodRateGrowth = calcGrowth(goodRate, lastMonthGoodRate);
+    var goodRateGrowth = hasComparison ? calcGrowth(goodRate, lastMonthGoodRate) : null;
 
-    // 复购率：截至本月末 vs 截至上月末
-    var ordersUntilThisMonth = allOrders.filter(function (o) {
-        return o.orderDate && o.orderDate.substring(0, 7) <= thisMonth;
-    });
-    var ordersUntilLastMonth = allOrders.filter(function (o) {
-        return o.orderDate && o.orderDate.substring(0, 7) <= lastMonth;
-    });
-    var repeatRate = repeatRateOf(ordersUntilThisMonth);
-    var lastMonthRepeatRate = repeatRateOf(ordersUntilLastMonth);
-    var repeatRateGrowth = calcGrowth(repeatRate, lastMonthRepeatRate);
+    // 复购率：按当前统计范围
+    var repeatRate = repeatRateOf(monthOrders);
+    var lastMonthRepeatRate = repeatRateOf(lastMonthOrders);
+    var repeatRateGrowth = hasComparison ? calcGrowth(repeatRate, lastMonthRepeatRate) : null;
 
     return resp.success(res, {
-        month: thisMonth,
+        range: range,
+        label: meta.label,
+        hasComparison: hasComparison,
+        month: meta.label,
         orderCount: monthOrders.length,
         orderCountGrowth: orderCountGrowth,
         revenue: monthRevenue,
         cost: monthCost,
         profit: monthProfit,
         avgOrderValue: avgOrderValue,
+        avgOrderValueGrowth: avgOrderValueGrowth,
         newCustomers: monthNewCustomers,
         revenueGrowth: revenueGrowth,
         lastMonthRevenue: lastMonthRevenue,
         yearRevenue: yearRevenue,
         yearGrowth: yearGrowth,
-        totalCustomers: totalCustomers,
+        customerCount: customerCount,
+        totalCustomers: customerCount,
         customerGrowth: customerGrowth,
         goodRate: goodRate,
         goodRateGrowth: goodRateGrowth,
@@ -308,7 +367,9 @@ router.get('/monthly-overview', resp.asyncHandler(function (req, res) {
 
 // ========== 收入趋势（按月） ==========
 router.get('/revenue', resp.asyncHandler(function (req, res) {
-    var allOrders = orders.findAll();
+    var range = normalizeStatsRange(req, 'all');
+    var meta = createRangeMeta(range);
+    var allOrders = filterOrdersByRange(orders.findAll(), meta, false);
     var months = {};
 
     allOrders.forEach(function (o) {
@@ -364,7 +425,9 @@ router.get('/revenue/daily', resp.asyncHandler(function (req, res) {
 
 // ========== 平台分布（客源平台分布）==========
 router.get('/platform', resp.asyncHandler(function (req, res) {
-    var allCustomers = customers.findAll();
+    var range = normalizeStatsRange(req, 'all');
+    var meta = createRangeMeta(range);
+    var allCustomers = filterCustomersByRange(customers.findAll(), meta, false);
     var sourceMap = {};
 
     // 统计各来源平台的客户数量
@@ -386,7 +449,9 @@ router.get('/platform', resp.asyncHandler(function (req, res) {
 
 // ========== 项目类型分布 ==========
 router.get('/project-type', resp.asyncHandler(function (req, res) {
-    var allOrders = orders.findAll();
+    var range = normalizeStatsRange(req, 'all');
+    var meta = createRangeMeta(range);
+    var allOrders = filterOrdersByRange(orders.findAll(), meta, false);
     var types = {};
 
     allOrders.forEach(function (o) {
@@ -405,16 +470,10 @@ router.get('/project-type', resp.asyncHandler(function (req, res) {
 
 // ========== 订单量统计（支持总/年度/月度切换）==========
 router.get('/orders-monthly', resp.asyncHandler(function (req, res) {
-    var allOrders = orders.findAll();
+    var range = normalizeStatsRange(req, 'all');
+    var meta = createRangeMeta(range);
+    var allOrders = filterOrdersByRange(orders.findAll(), meta, false);
     var type = req.query.type || 'total'; // total, annual, monthly
-
-    // 按状态分类订单
-    var completedOrders = allOrders.filter(function (o) {
-        return o.orderStatus === 'completed' || o.orderStatus === 'processing' || o.orderStatus === 'acceptance';
-    });
-    var cancelledOrders = allOrders.filter(function (o) {
-        return o.orderStatus === 'closed';
-    });
 
     if (type === 'total') {
         // 总订单量 - 按项目类型统计
@@ -489,7 +548,9 @@ router.get('/orders-monthly', resp.asyncHandler(function (req, res) {
 
 // ========== 客户等级分布 ==========
 router.get('/customer-level', resp.asyncHandler(function (req, res) {
-    var allCustomers = customers.findAll();
+    var range = normalizeStatsRange(req, 'all');
+    var meta = createRangeMeta(range);
+    var allCustomers = filterCustomersByRange(customers.findAll(), meta, false);
 
     // 等级映射：将后端存储的格式映射为前端显示的格式
     var levelMap = {
@@ -534,9 +595,11 @@ router.get('/customer-level', resp.asyncHandler(function (req, res) {
 
 // ========== 转化漏斗 ==========
 router.get('/funnel', resp.asyncHandler(function (req, res) {
-    var allPosts = posts.findAll();
-    var allOrders = orders.findAll();
-    var allCustomers = customers.findAll();
+    var range = normalizeStatsRange(req, 'all');
+    var meta = createRangeMeta(range);
+    var allPosts = filterPostsByRange(posts.findAll(), meta, false);
+    var allOrders = filterOrdersByRange(orders.findAll(), meta, false);
+    var allCustomers = filterCustomersByRange(customers.findAll(), meta, false);
 
     var totalViews = 0;
     var totalInquiries = 0;
@@ -626,90 +689,87 @@ router.get('/todos', resp.asyncHandler(function (req, res) {
 
 // ========== 月度明细数据（用于统计页表格）==========
 router.get('/monthly-detail', resp.asyncHandler(function (req, res) {
-    var allOrders = orders.findAll();
-    var allCustomers = customers.findAll();
+    var range = normalizeStatsRange(req, 'all');
+    var meta = createRangeMeta(range);
+    var allOrders = filterOrdersByRange(orders.findAll(), meta, false);
+    var allCustomers = filterCustomersByRange(customers.findAll(), meta, false);
+    var periodStats = {};
 
-    // 按月份聚合数据
-    var monthStats = {};
+    function periodKey(dateStr) {
+        if (!dateStr) return '';
+        return range === 'month' ? String(dateStr).substring(0, 10) : String(dateStr).substring(0, 7);
+    }
 
-    // 初始化最近6个月
+    function ensurePeriod(key) {
+        if (!key) return null;
+        if (!periodStats[key]) {
+            periodStats[key] = {
+                period: key,
+                orderCount: 0,
+                paidCount: 0,
+                revenue: 0,
+                newCustomers: 0,
+                orders: []
+            };
+        }
+        return periodStats[key];
+    }
+
     var today = new Date();
-    for (var i = 5; i >= 0; i--) {
-        var d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-        var monthKey = d.toISOString().substring(0, 7);
-        monthStats[monthKey] = {
-            month: monthKey,
-            orderCount: 0,
-            paidCount: 0,
-            revenue: 0,
-            newCustomers: 0,
-            totalOrders: 0 // 用于计算环比
-        };
+    if (range === 'month') {
+        for (var day = 1; day <= today.getDate(); day++) {
+            ensurePeriod(meta.thisMonth + '-' + String(day).padStart(2, '0'));
+        }
+    } else if (range === 'year') {
+        for (var monthIndex = 0; monthIndex <= today.getMonth(); monthIndex++) {
+            ensurePeriod(meta.thisYear + '-' + String(monthIndex + 1).padStart(2, '0'));
+        }
     }
 
     // 统计订单数据（成交额按付款状态折算）
     allOrders.forEach(function (o) {
-        if (o.orderDate) {
-            var month = o.orderDate.substring(0, 7);
-            if (monthStats[month]) {
-                monthStats[month].orderCount++;
-                var rev = paidAmount(o);
-                if (rev > 0) {
-                    monthStats[month].revenue += rev;
-                    monthStats[month].paidCount = (monthStats[month].paidCount || 0) + 1;
-                }
+        var stat = ensurePeriod(periodKey(o.orderDate));
+        if (stat) {
+            stat.orderCount++;
+            stat.orders.push(o);
+            var rev = paidAmount(o);
+            if (rev > 0) {
+                stat.revenue += rev;
+                stat.paidCount++;
             }
         }
     });
 
     // 统计新增客户
     allCustomers.forEach(function (c) {
-        if (c.createdAt) {
-            var month = c.createdAt.substring(0, 7);
-            if (monthStats[month]) {
-                monthStats[month].newCustomers++;
-            }
+        var stat = ensurePeriod(periodKey(recordDate(c, ['addTime', 'createdAt'])));
+        if (stat) {
+            stat.newCustomers++;
         }
     });
-
-    // 计算复购率（有2次及以上订单的客户占比）
-    var customerOrderCounts = {};
-    allOrders.forEach(function (o) {
-        if (o.customerId) {
-            customerOrderCounts[o.customerId] = (customerOrderCounts[o.customerId] || 0) + 1;
-        }
-    });
-    var repeatCustomers = Object.values(customerOrderCounts).filter(function (count) { return count >= 2; }).length;
-    var totalOrderingCustomers = Object.keys(customerOrderCounts).length;
-    var repeatRate = totalOrderingCustomers > 0 ? Math.round(repeatCustomers / totalOrderingCustomers * 100) : 0;
-
-    // 好评率（基于有评价的订单）
-    var ratedOrders = allOrders.filter(function (o) { return o.rating && o.rating > 0; });
-    var goodRatingCount = ratedOrders.filter(function (o) { return o.rating >= 4; }).length;
-    var goodRate = ratedOrders.length > 0 ? Math.round(goodRatingCount / ratedOrders.length * 100) : 98;
 
     // 转换为数组并计算派生指标
-    var result = Object.keys(monthStats).sort().reverse().map(function (month, index, arr) {
-        var stat = monthStats[month];
+    var result = Object.keys(periodStats).sort().reverse().map(function (period, index, arr) {
+        var stat = periodStats[period];
         var paidCount = stat.paidCount || 0;
         var avgOrderValue = paidCount > 0 ? Math.round(stat.revenue / paidCount) : 0;
 
-        // 计算环比（与上月比较）
-        var prevMonth = arr[index + 1];
+        // 计算环比（与上一周期比较）
+        var prevPeriod = arr[index + 1];
         var growth = 0;
-        if (prevMonth && monthStats[prevMonth]) {
-            var prevRevenue = monthStats[prevMonth].revenue;
+        if (prevPeriod && periodStats[prevPeriod]) {
+            var prevRevenue = periodStats[prevPeriod].revenue;
             growth = prevRevenue > 0 ? Math.round((stat.revenue - prevRevenue) / prevRevenue * 100) : 0;
         }
 
         return {
-            month: month,
+            month: period,
             orderCount: stat.orderCount,
             revenue: stat.revenue,
             newCustomers: stat.newCustomers,
             avgOrderValue: avgOrderValue,
-            repeatRate: repeatRate,
-            goodRate: goodRate,
+            repeatRate: repeatRateOf(stat.orders),
+            goodRate: goodRateOf(stat.orders),
             growth: growth
         };
     });
