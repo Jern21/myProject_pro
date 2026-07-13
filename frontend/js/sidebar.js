@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initSidebar() {
     // 防重复插入保护：SPA 切换时不会二次执行
     if (document.querySelector('#sidebar-nav')) return;
 
@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'canvas.html': 'pages/content/canvas.html',
         'stats.html': 'pages/content/stats.html',
         'project.html': 'pages/content/project.html',
+        'accounts.html': 'pages/personal/accounts.html',
+        'bookmarks.html': 'pages/personal/bookmarks.html',
         'resume.html': 'pages/personal/resume.html',
         'memo.html': 'pages/personal/memo.html',
         'reminder.html': 'pages/personal/reminder.html',
@@ -83,6 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </a>
                 <a href="${PB}${ROUTES['project.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="project.html">
                     <i class="ph ph-kanban text-lg mr-3 icon-base text-gray-500"></i>项目管理
+                </a>
+                <a href="${PB}${ROUTES['accounts.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="accounts.html">
+                    <i class="ph ph-key text-lg mr-3 icon-base text-gray-500"></i>账号管理
+                </a>
+                <a href="${PB}${ROUTES['bookmarks.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="bookmarks.html">
+                    <i class="ph ph-bookmark-simple text-lg mr-3 icon-base text-gray-500"></i>网址收藏
                 </a>
                 <a href="${PB}${ROUTES['resume.html']}" class="nav-link flex items-center px-4 py-2.5 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer text-sm font-medium" data-page="resume.html">
                     <i class="ph ph-file-text text-lg mr-3 icon-base text-gray-500"></i>简历管理
@@ -164,7 +172,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========== 柴犬桌宠 ==========
     initShibaPet();
-});
+}
+
+// 页面加载时初始化（支持普通页面加载和 SPA 切换）
+document.addEventListener('DOMContentLoaded', initSidebar);
+window.addEventListener('spa:ready', initSidebar);
 
 // ========== 柴犬桌宠逻辑 ==========
 

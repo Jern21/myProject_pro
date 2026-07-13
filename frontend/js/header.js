@@ -1,79 +1,96 @@
 (function () {
     'use strict';
 
+    // ========== 平台 SVG 图标路径映射 ==========
+    var PLATFORM_ICONS = {
+        xianyu: { file: '闲鱼.svg', name: '闲鱼' },
+        xiaohongshu: { file: '小红书.svg', name: '小红书' },
+        douyin: { file: '抖音.svg', name: '抖音' }
+    };
+
+    function getIconUrl(file) {
+        var base = window.ROOT_URL || window.PAGE_BASE || '';
+        return base + 'assets/svg/' + file;
+    }
+
+    // ========== 统一页面配置 ==========
+    // 所有页面共用同一套模板，通过可选字段控制内容显示：
+    //   icon:     'platform:xianyu' → 渲染对应平台 SVG 图标（仅平台页面）
+    //   search:   搜索框 placeholder（不设则不显示搜索框）
+    //   controls: 时间筛选等切换按钮组
+    //   secondaryAction: 次要按钮（如"从模板创建"）
+    //   action:   主功能按钮（如"新建订单"），固定在铃铛左侧
     var HEADER_CONFIG = {
         'index.html': {
-            type: 'standard',
             title: '欢迎回来，JERN 👋',
-            subtitle: '今天是 2025年7月3日 星期四',
+            subtitle: function() {
+                var now = new Date();
+                var weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+                var year = now.getFullYear();
+                var month = now.getMonth() + 1;
+                var date = now.getDate();
+                var weekday = weekdays[now.getDay()];
+                return '今天是 ' + year + '年' + month + '月' + date + '日 ' + weekday;
+            },
             search: '搜索订单、客户、海报等...',
-            action: { label: '新建订单', icon: 'ph ph-plus', variant: 'primary' },
+            action: { label: '新建订单', icon: 'ph ph-plus' },
             titleClass: 'text-2xl'
         },
         'orders.html': {
-            type: 'standard',
             title: '我的订单',
             subtitle: '共 128 条记录',
             search: '搜索订单号、客户、项目名称...',
-            action: { label: '新建接单', icon: 'ph ph-plus', variant: 'primary' }
+            action: { label: '新建接单', icon: 'ph ph-plus' }
         },
         'quote.html': {
-            type: 'standard',
             title: '生成报价单',
             subtitle: '规范化开发报价，支持一键生成文本或导出PDF',
             action: { label: '保存为模板', icon: 'ph ph-floppy-disk', variant: 'secondary' }
         },
         'customer.html': {
-            type: 'standard',
             title: '客户管理',
             subtitle: '共 86 位客户',
             search: '搜索客户名称、联系方式、标签...',
-            action: { label: '新增客户', icon: 'ph ph-plus', variant: 'primary', onclick: 'openCustomerForm(null,null)' }
+            action: { label: '新增客户', icon: 'ph ph-plus', onclick: 'openCustomerForm(null,null)' }
         },
         'platform.html': {
-            type: 'breadcrumb',
-            breadcrumb: ['平台管理', '总览看板'],
+            title: '总览看板',
+            subtitle: '统一管理各平台发布内容，支持编辑、发布、数据追踪与效果分析',
             search: '搜索文案、内容、话题...'
         },
         'xianyu.html': {
-            type: 'platform',
-            platform: 'xianyu',
+            icon: 'platform:xianyu',
             title: '闲鱼运营',
             subtitle: '管理闲鱼发帖记录、数据追踪与转化分析',
             search: '搜索帖子标题、标签...',
-            action: { label: '记录发帖', icon: 'ph ph-plus', variant: 'primary' }
+            action: { label: '记录发帖', icon: 'ph ph-plus', onclick: 'PlatformManager.openForm()' }
         },
         'xiaohongshu.html': {
-            type: 'platform',
-            platform: 'xiaohongshu',
+            icon: 'platform:xiaohongshu',
             title: '小红书运营',
             subtitle: '管理小红书发帖记录、数据追踪与转化分析',
             search: '搜索笔记标题、标签...',
-            action: { label: '记录发帖', icon: 'ph ph-plus', variant: 'primary' }
+            action: { label: '记录发帖', icon: 'ph ph-plus', onclick: 'PlatformManager.openForm()' }
         },
         'douyin.html': {
-            type: 'platform',
-            platform: 'douyin',
+            icon: 'platform:douyin',
             title: '抖音运营',
             subtitle: '管理抖音视频发布、数据追踪与转化分析',
             search: '搜索视频标题、标签...',
-            action: { label: '记录发布', icon: 'ph ph-plus', variant: 'primary' }
+            action: { label: '记录发布', icon: 'ph ph-plus', onclick: 'PlatformManager.openForm()' }
         },
         'posters.html': {
-            type: 'standard',
             title: '宣传海报库',
             subtitle: '管理各平台引流素材，提升获客转化',
             search: '搜索海报名称、标签...',
             secondaryAction: { label: '从模板创建', icon: 'ph ph-copy', variant: 'secondary' },
-            action: { label: '上传海报', icon: 'ph ph-upload-simple', variant: 'primary' }
+            action: { label: '上传海报', icon: 'ph ph-upload-simple' }
         },
         'canvas.html': {
-            type: 'standard',
             title: '无限画布',
             subtitle: '创意节点、分支衍生与提示词沉淀'
         },
         'stats.html': {
-            type: 'standard',
             title: '数据统计',
             subtitle: '多维度数据分析，辅助业务决策',
             controls: [
@@ -86,32 +103,42 @@
             action: { label: '导出报表', icon: 'ph ph-export', variant: 'secondary' }
         },
         'project.html': {
-            type: 'standard',
             title: '项目管理',
             subtitle: '共 24 个项目 · 12 个进行中',
             search: '搜索项目名称、客户...',
-            action: { label: '新建项目', icon: 'ph ph-plus', variant: 'primary', onclick: 'openEditForm(null)' }
+            action: { label: '新建项目', icon: 'ph ph-plus', onclick: 'openEditForm(null)' }
+        },
+        'accounts.html': {
+            title: '账号管理',
+            subtitle: '管理各开发平台的账号信息',
+            search: '搜索平台、账号...',
+            action: { label: '添加账号', icon: 'ph ph-plus', onclick: 'openAccountForm()' }
+        },
+        'bookmarks.html': {
+            title: '网址收藏',
+            subtitle: '收藏整理常用的开发网站和资源',
+            search: '搜索网站名称、标签...',
+            action: { label: '添加收藏', icon: 'ph ph-plus', onclick: 'openBookmarkForm()' }
         },
         'resume.html': {
-            type: 'standard',
             title: '简历管理',
             subtitle: '管理简历版本，持续优化求职竞争力',
             search: '搜索版本、内容...',
-            action: { label: '新增简历', icon: 'ph ph-plus', variant: 'primary', onclick: 'createNewJob()' }
+            action: { label: '新增简历', icon: 'ph ph-plus', onclick: 'createNewJob()' }
         },
         'memo.html': {
-            type: 'standard',
             title: '信息备忘录',
             subtitle: '记录重要信息，快速检索与回顾',
             search: '搜索备忘录内容...',
-            action: { label: '新建备忘', icon: 'ph ph-plus', variant: 'primary' }
+            action: { label: '新建备忘', icon: 'ph ph-plus' }
         },
         'settings.html': {
-            type: 'standard',
             title: '设置中心',
             subtitle: '管理账号、数据备份与系统配置'
         }
     };
+
+    // ========== 工具函数 ==========
 
     function getCurrentPageName() {
         return window.location.pathname.split('/').pop() || 'index.html';
@@ -130,17 +157,78 @@
             .replace(/'/g, '&#39;');
     }
 
+    // ========== 渲染：左侧标题区 ==========
+
+    function renderIcon(config) {
+        if (!config.icon) return '';
+        // 格式: 'platform:xianyu'
+        if (config.icon.indexOf('platform:') === 0) {
+            var key = config.icon.split(':')[1];
+            var info = PLATFORM_ICONS[key];
+            if (!info) return '';
+            var scale = key === 'xiaohongshu' ? ' style="object-fit:cover;transform:scale(1.2)"' : '';
+            return '<div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">' +
+                '<img src="' + getIconUrl(info.file) + '" alt="' + escapeHtml(info.name) +
+                '" class="block w-full h-full" loading="lazy"' + scale + '></div>';
+        }
+        return '';
+    }
+
+    function renderLeft(config) {
+        var iconHtml = renderIcon(config);
+        var titleClass = config.titleClass || 'text-xl';
+        // 支持函数类型的 subtitle
+        var subtitleText = typeof config.subtitle === 'function' ? config.subtitle() : config.subtitle;
+        return [
+            '<div class="flex items-center gap-3">',
+            iconHtml,
+            '    <div>',
+            '        <h2 class="' + titleClass + ' font-bold text-gray-800">' + escapeHtml(config.title) + '</h2>',
+            subtitleText ? '        <p class="text-sm text-gray-500 mt-0.5">' + escapeHtml(subtitleText) + '</p>' : '',
+            '    </div>',
+            '</div>'
+        ].join('');
+    }
+
+    // ========== 渲染：右侧功能区各组件 ==========
+
     function renderSearch(search) {
         if (!search) return '';
         return [
             '<div class="relative">',
             '    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>',
-            '    <input type="text" placeholder="' + escapeHtml(search) + '" class="pl-9 pr-12 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm w-[360px] focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">',
+            '    <input type="text" placeholder="' + escapeHtml(search) + '" class="pl-9 pr-12 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm w-[280px] focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">',
             '    <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] text-gray-400 bg-white px-1.5 py-0.5 rounded border border-gray-200">',
             '        <i class="ph ph-command"></i> K',
             '    </div>',
             '</div>'
         ].join('');
+    }
+
+    function renderControls(controls) {
+        if (!controls || !controls.length) return '';
+        return [
+            '<div class="flex items-center gap-1 bg-gray-50 p-1 rounded-lg">',
+            controls.map(function (control) {
+                var className = control.active
+                    ? 'px-3 py-1.5 bg-white shadow-sm rounded-md text-gray-800 text-xs font-medium transition-colors'
+                    : 'px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium transition-colors';
+                var icon = control.icon ? '<i class="' + escapeHtml(control.icon) + '"></i> ' : '';
+                return '<button class="' + className + (control.icon ? ' flex items-center gap-1' : '') + '">' + icon + escapeHtml(control.label) + '</button>';
+            }).join(''),
+            '</div>'
+        ].join('');
+    }
+
+    function renderButton(action, defaultVariant) {
+        if (!action) return '';
+        var variant = action.variant || defaultVariant || 'primary';
+        var icon = action.icon ? '<i class="' + escapeHtml(action.icon) + '"></i>' : '';
+        var buttonClass = variant === 'secondary'
+            ? 'px-4 py-2 border border-gray-200 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2'
+            : 'bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm shadow-brand-500/30';
+        var onclickAttr = action.onclick ? ' onclick="' + escapeHtml(action.onclick) + '"' : '';
+        return '<button class="' + buttonClass + '"' + onclickAttr + '>' + icon + escapeHtml(action.label) + '</button>';
     }
 
     function renderBell() {
@@ -200,99 +288,59 @@
     }
 
     function renderAvatar() {
-        return '<img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">';
-    }
-
-    function renderButton(action, variant) {
-        if (!action) return '';
-        var icon = action.icon ? '<i class="' + escapeHtml(action.icon) + '"></i>' : '';
-        var buttonClass = variant === 'secondary'
-            ? 'px-4 py-2 border border-gray-200 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2'
-            : 'bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm shadow-brand-500/30';
-        var onclickAttr = action.onclick ? ' onclick="' + escapeHtml(action.onclick) + '"' : '';
-        return '<button class="' + buttonClass + '"' + onclickAttr + '>' + icon + escapeHtml(action.label) + '</button>';
-    }
-
-    function renderControls(controls) {
-        if (!controls || !controls.length) return '';
         return [
-            '<div class="flex items-center gap-1 bg-gray-50 p-1 rounded-lg">',
-            controls.map(function (control) {
-                var className = control.active
-                    ? 'px-3 py-1.5 bg-white shadow-sm rounded-md text-gray-800 text-xs font-medium transition-colors'
-                    : 'px-3 py-1.5 text-gray-500 hover:text-gray-800 rounded-md text-xs font-medium transition-colors';
-                var icon = control.icon ? '<i class="' + escapeHtml(control.icon) + '"></i> ' : '';
-                return '<button class="' + className + (control.icon ? ' flex items-center gap-1' : '') + '">' + icon + escapeHtml(control.label) + '</button>';
-            }).join(''),
-            '</div>'
-        ].join('');
-    }
-
-    function renderStandardLeft(config) {
-        var titleClass = config.titleClass || 'text-xl';
-        return [
-            '<div>',
-            '    <h2 class="' + titleClass + ' font-bold text-gray-800">' + escapeHtml(config.title) + '</h2>',
-            config.subtitle ? '    <p class="text-sm text-gray-500 mt-0.5">' + escapeHtml(config.subtitle) + '</p>' : '',
-            '</div>'
-        ].join('');
-    }
-
-    function renderPlatformLeft(config) {
-        return [
-            '<div class="flex items-center gap-4">',
-            '    <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0" data-platform="' + escapeHtml(config.platform) + '"></div>',
-            '    <div>',
-            '        <h2 class="text-xl font-bold text-gray-800">' + escapeHtml(config.title) + '</h2>',
-            '        <p class="text-sm text-gray-500 mt-0.5">' + escapeHtml(config.subtitle) + '</p>',
-            '    </div>',
-            '</div>'
-        ].join('');
-    }
-
-    function renderBreadcrumbLeft(config) {
-        var crumbs = (config.breadcrumb || []).map(function (item, index, list) {
-            var isLast = index === list.length - 1;
-            return [
-                '<span class="' + (isLast ? 'text-gray-900 font-semibold' : 'text-gray-500') + '">' + escapeHtml(item) + '</span>',
-                isLast ? '' : '<i class="ph ph-caret-right text-xs text-gray-300"></i>'
-            ].join('');
-        }).join('');
-
-        return [
-            '<nav class="flex items-center gap-2 text-sm">',
-            crumbs,
-            '</nav>'
-        ].join('');
-    }
-
-    function buildHeaderInnerHTML(pageName) {
-        var config = getHeaderConfig(pageName);
-        var leftHtml;
-
-        if (config.type === 'breadcrumb') {
-            leftHtml = renderBreadcrumbLeft(config);
-        } else if (config.type === 'platform') {
-            leftHtml = renderPlatformLeft(config);
-        } else {
-            leftHtml = renderStandardLeft(config);
-        }
-
-        return [
-            '<div class="flex items-center gap-4">',
-            leftHtml,
-            '</div>',
-            '<div class="flex items-center gap-5">',
-            renderSearch(config.search),
-            renderControls(config.controls),
-            renderButton(config.secondaryAction, 'secondary'),
-            renderBell(),
             '<div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1.5 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">',
-            renderAvatar(),
+            '    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">',
             '    <span class="text-sm font-medium text-gray-700">JERN</span>',
             '    <i class="ph ph-caret-down text-gray-400 text-xs"></i>',
+            '</div>'
+        ].join('');
+    }
+
+    // ========== 组装标题栏 ==========
+    //
+    // 统一布局：
+    //   ┌──────────────────────────────────────────────────────────────────┐
+    //   │ [图标] 标题          [搜索] [控件] [次按钮] [主按钮] │ [铃铛] [头像] │
+    //   │        副标题                                                    │
+    //   └──────────────────────────────────────────────────────────────────┘
+    //
+    // 左侧：可选图标 + 标题 + 副标题（所有页面结构一致）
+    // 右侧：功能按钮区 ─ 竖线分隔 ─ 系统区（铃铛 + 头像）
+    // 没有功能按钮的页面，竖线不显示，系统区仍靠右对齐
+    function buildHeaderInnerHTML(pageName) {
+        var config = getHeaderConfig(pageName);
+
+        // 右侧功能按钮区
+        var hasAction = config.search || (config.controls && config.controls.length) ||
+            config.secondaryAction || config.action;
+
+        var actionArea = hasAction
+            ? '<div class="flex items-center gap-3">' +
+              renderSearch(config.search) +
+              renderControls(config.controls) +
+              renderButton(config.secondaryAction, 'secondary') +
+              renderButton(config.action, 'primary') +
+              '</div>'
+            : '';
+
+        var divider = hasAction
+            ? '<div class="w-px h-8 bg-gray-200"></div>'
+            : '';
+
+        var systemArea = '<div class="flex items-center gap-2">' +
+            renderBell() +
+            renderAvatar() +
+            '</div>';
+
+        return [
+            '<div class="flex items-center gap-3">',
+            renderLeft(config),
             '</div>',
-            renderButton(config.action, config.action && config.action.variant === 'secondary' ? 'secondary' : 'primary'),
+            '<div class="flex items-center gap-3">',
+            actionArea,
+            divider,
+            systemArea,
             '</div>'
         ].join('');
     }

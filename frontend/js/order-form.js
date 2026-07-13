@@ -38,7 +38,7 @@
     var isOpen = false;
     var editMode = false;
     var editId = null; // 编辑模式下的订单 ID
-    var uploadedFiles = {}; // { screenshot: {name,size,type,url}, showcase: {...}, quote: {...}, taskBook: {...} }
+    var uploadedFiles = {}; // { screenshot: {name,size,type,url}, showcase: {...}, quote: {...}, taskBook: {...}, paymentRecord: {...} }
 
     // ========== 工具函数 ==========
 
@@ -58,6 +58,31 @@
         if (isNaN(s) || isNaN(e)) return '';
         var diff = Math.round((e - s) / 86400000);
         return diff >= 0 ? diff : '';
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function showToast(msg) {
+        var existing = document.getElementById('order-form-toast');
+        if (existing) existing.remove();
+
+        var toast = document.createElement('div');
+        toast.id = 'order-form-toast';
+        toast.className = 'fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-[90]';
+        toast.innerHTML = '<i class="ph-fill ph-check-circle text-green-400"></i><span>' + escapeHtml(msg) + '</span>';
+        document.body.appendChild(toast);
+
+        requestAnimationFrame(function () {
+            toast.classList.remove('translate-y-10', 'opacity-0');
+        });
+
+        setTimeout(function () {
+            toast.classList.add('translate-y-10', 'opacity-0');
+            setTimeout(function () { toast.remove(); }, 300);
+        }, 2000);
     }
 
     // ========== 构建 HTML ==========
@@ -151,9 +176,14 @@
             '    <form id="order-form" class="space-y-6">',
             // === Section 1: 客户信息 ===
             '      <div>',
-            '        <div class="flex items-center gap-2 mb-3">',
-            '          <div class="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center"><i class="ph ph-user text-blue-500 text-sm"></i></div>',
-            '          <h4 class="text-sm font-semibold text-gray-800">客户信息</h4>',
+            '        <div class="flex items-center justify-between mb-3">',
+            '          <div class="flex items-center gap-2">',
+            '            <div class="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center"><i class="ph ph-user text-blue-500 text-sm"></i></div>',
+            '            <h4 class="text-sm font-semibold text-gray-800">客户信息</h4>',
+            '          </div>',
+            '          <button type="button" id="order-form-select-customer" class="text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1 px-2 py-1 rounded hover:bg-brand-50 transition">',
+            '            <i class="ph ph-magnifying-glass"></i> 选择已有客户',
+            '          </button>',
             '        </div>',
             '        <div class="grid grid-cols-2 gap-x-4 gap-y-3">',
             buildField('客户昵称', inputHtml('customerNick', '如：张先生'), { required: true }),
@@ -241,10 +271,13 @@
             '        <div class="mt-3">',
             uploadZoneHtml('quote', 'ph-file-pdf', '报价单', '支持 PDF / Word / 图片，点击或拖拽上传', '.pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp'),
             '        </div>',
-            '        <div class="mt-3">',
+        '<div class="mt-3">',
             uploadZoneHtml('taskBook', 'ph-file-text', '项目任务书（可选）', '支持 PDF / Word / 图片，点击或拖拽上传', '.pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp,.txt,.md'),
-            '        </div>',
-            '      </div>',
+        '</div>',
+        '<div class="mt-3">',
+            uploadZoneHtml('paymentRecord', 'ph-currency-cny', '打款记录', '上传客户付款截图或转账记录，点击或拖拽上传', 'image/*'),
+        '</div>',
+      '</div>',
             '    </form>',
             '  </div>',
             // Footer
@@ -374,8 +407,8 @@
      * 上传所有需要上传的文件
      */
     function uploadAllFiles() {
-        var keys = ['screenshot', 'showcase', 'quote', 'taskBook'];
-        var promises = keys.map(function (key) {
+    var keys = ['screenshot', 'showcase', 'quote', 'taskBook', 'paymentRecord'];
+    var promises = keys.map(function (key) {
             if (uploadedFiles[key] && uploadedFiles[key]._needsUpload) {
                 return uploadFileToServer(uploadedFiles[key]).then(function (result) {
                     uploadedFiles[key] = result;
@@ -523,7 +556,8 @@
                 screenshot: uploadedFiles.screenshot || null,
                 showcase: uploadedFiles.showcase || null,
                 quote: uploadedFiles.quote || null,
-                taskBook: uploadedFiles.taskBook || null
+                taskBook: uploadedFiles.taskBook || null,
+                paymentRecord: uploadedFiles.paymentRecord || null
             }
         };
     }
@@ -559,7 +593,7 @@
         // 上传文件恢复
         var files = data.uploadedFiles || {};
         uploadedFiles = {};
-        ['screenshot', 'showcase', 'quote', 'taskBook'].forEach(function (key) {
+        ['screenshot', 'showcase', 'quote', 'taskBook', 'paymentRecord'].forEach(function (key) {
             if (files[key]) {
                 uploadedFiles[key] = files[key];
                 var zone = document.querySelector('.order-upload-zone[data-upload-type="' + key + '"]');
@@ -624,7 +658,7 @@
             uploadAllFiles().then(function () {
                 // 更新 data 中的 uploadedFiles（去除 _needsUpload 标记）
                 var cleanFiles = {};
-                ['screenshot', 'showcase', 'quote', 'taskBook'].forEach(function (key) {
+                ['screenshot', 'showcase', 'quote', 'taskBook', 'paymentRecord'].forEach(function (key) {
                     if (uploadedFiles[key]) {
                         var f = uploadedFiles[key];
                         cleanFiles[key] = { name: f.name, size: f.size, type: f.type, url: f.url || '' };
@@ -680,6 +714,12 @@
         // 文件上传
         bindUploadEvents();
 
+        // 选择客户按钮
+        var selectCustomerBtn = document.getElementById('order-form-select-customer');
+        if (selectCustomerBtn) {
+            selectCustomerBtn.addEventListener('click', openCustomerSelector);
+        }
+
         // ESC 关闭
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && isOpen) closeOrderForm();
@@ -689,7 +729,10 @@
     // ========== 打开 / 关闭 ==========
 
     function openOrderForm(data) {
-        if (isOpen) return;
+        if (isOpen) {
+            console.log('[OrderForm] 表单已打开，跳过');
+            return;
+        }
 
         // 构建 DOM
         document.body.insertAdjacentHTML('beforeend', buildDrawerHTML());
@@ -735,6 +778,187 @@
             document.body.style.overflow = '';
             isOpen = false;
         }, 300);
+    }
+
+    // ========== 客户选择器 ==========
+
+    var customerSelectorModal = null;
+    var customerListCache = null;
+
+    function buildCustomerSelectorHTML() {
+        return [
+            '<div id="customer-selector-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-4">',
+            '  <div class="absolute inset-0 bg-black/40" id="customer-selector-overlay"></div>',
+            '  <div class="relative bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col">',
+            '    <!-- Header -->',
+            '    <div class="flex items-center justify-between p-4 border-b border-gray-100">',
+            '      <h3 class="font-semibold text-gray-800">选择客户</h3>',
+            '      <button type="button" id="customer-selector-close" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition">',
+            '        <i class="ph ph-x text-lg"></i>',
+            '      </button>',
+            '    </div>',
+            '    <!-- Search -->',
+            '    <div class="p-4 border-b border-gray-100">',
+            '      <div class="relative">',
+            '        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>',
+            '        <input type="text" id="customer-selector-search" placeholder="搜索客户姓名、手机号..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-all">',
+            '      </div>',
+            '    </div>',
+            '    <!-- List -->',
+            '    <div id="customer-selector-list" class="flex-1 overflow-y-auto p-2">',
+            '      <div class="text-center py-8 text-gray-400 text-sm">加载中...</div>',
+            '    </div>',
+            '    <!-- Footer -->',
+            '    <div class="p-4 border-t border-gray-100 bg-gray-50/50 rounded-b-xl">',
+            '      <div class="flex items-center justify-between">',
+            '        <span class="text-xs text-gray-400" id="customer-selector-count">共 0 位客户</span>',
+            '        <button type="button" id="customer-selector-refresh" class="text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">',
+            '          <i class="ph ph-arrows-clockwise"></i> 刷新',
+            '        </button>',
+            '      </div>',
+            '    </div>',
+            '  </div>',
+            '</div>'
+        ].join('');
+    }
+
+    function renderCustomerList(customers, keyword) {
+        var container = document.getElementById('customer-selector-list');
+        var countEl = document.getElementById('customer-selector-count');
+        if (!container) return;
+
+        // 过滤
+        var list = customers || [];
+        if (keyword) {
+            var kw = keyword.toLowerCase();
+            list = list.filter(function (c) {
+                return (c.name && c.name.toLowerCase().indexOf(kw) !== -1) ||
+                       (c.phone && c.phone.indexOf(kw) !== -1);
+            });
+        }
+
+        // 更新计数
+        if (countEl) countEl.textContent = '共 ' + list.length + ' 位客户';
+
+        if (list.length === 0) {
+            container.innerHTML = '<div class="text-center py-8 text-gray-400 text-sm">' + (keyword ? '未找到匹配的客户' : '暂无客户数据') + '</div>';
+            return;
+        }
+
+        var html = list.map(function (c) {
+            var avatar = c.avatar || '';
+            var avatarHtml = avatar ?
+                '<img src="' + avatar + '" class="w-10 h-10 rounded-full object-cover">' :
+                '<div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-medium">' + (c.name ? c.name.charAt(0) : '?') + '</div>';
+            var tags = (c.tags || []).slice(0, 2).map(function (t) {
+                return '<span class="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">' + t + '</span>';
+            }).join('');
+
+            return [
+                '<div class="customer-item flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition group" data-customer-id="' + c.id + '">',
+                '  ' + avatarHtml,
+                '  <div class="flex-1 min-w-0">',
+                '    <div class="flex items-center gap-2">',
+                '      <span class="font-medium text-gray-800 truncate">' + (c.name || '未命名') + '</span>',
+                '      <span class="text-xs text-gray-400">' + (c.source || '') + '</span>',
+                '    </div>',
+                '    <div class="flex items-center gap-2 mt-0.5">',
+                '      <span class="text-xs text-gray-500">' + (c.phone || '无联系方式') + '</span>',
+                '      ' + tags,
+                '    </div>',
+                '  </div>',
+                '  <i class="ph ph-caret-right text-gray-300 group-hover:text-brand-500 transition"></i>',
+                '</div>'
+            ].join('');
+        }).join('');
+
+        container.innerHTML = html;
+
+        // 绑定点击事件
+        container.querySelectorAll('.customer-item').forEach(function (item) {
+            item.addEventListener('click', function () {
+                var customerId = item.getAttribute('data-customer-id');
+                var customer = customerListCache.find(function (c) { return c.id === customerId; });
+                if (customer) {
+                    selectCustomer(customer);
+                }
+            });
+        });
+    }
+
+    function loadCustomers() {
+        fetch('/api/customers').then(function (r) { return r.json(); }).then(function (res) {
+            if (res.success) {
+                customerListCache = res.data || [];
+                renderCustomerList(customerListCache);
+            } else {
+                var container = document.getElementById('customer-selector-list');
+                if (container) container.innerHTML = '<div class="text-center py-8 text-red-400 text-sm">加载失败：' + (res.error || '未知错误') + '</div>';
+            }
+        }).catch(function (err) {
+            var container = document.getElementById('customer-selector-list');
+            if (container) container.innerHTML = '<div class="text-center py-8 text-red-400 text-sm">加载失败：' + err.message + '</div>';
+        });
+    }
+
+    function selectCustomer(customer) {
+        // 填充表单
+        var form = document.getElementById('order-form');
+        if (form) {
+            form.customerNick.value = customer.name || '';
+            form.customerName.value = customer.name || '';
+            form.customerPhone.value = customer.phone || '';
+            form.customerSource.value = customer.source || '闲鱼';
+        }
+
+        // 填充标签
+        if (customer.tags && customer.tags.length > 0) {
+            selectedTags = customer.tags.slice();
+            document.querySelectorAll('.order-tag').forEach(function (btn) {
+                var tag = btn.getAttribute('data-tag');
+                if (selectedTags.indexOf(tag) !== -1) {
+                    btn.className = 'order-tag px-2.5 py-1 rounded-md text-xs border transition-all border-brand-500 bg-brand-50 text-brand-600';
+                } else {
+                    btn.className = 'order-tag px-2.5 py-1 rounded-md text-xs border transition-all border-gray-200 text-gray-600 hover:border-gray-300';
+                }
+            });
+        }
+
+        closeCustomerSelector();
+
+        // 显示提示
+        showToast('已选择客户：' + (customer.name || '未命名'));
+    }
+
+    function openCustomerSelector() {
+        if (customerSelectorModal) return;
+
+        document.body.insertAdjacentHTML('beforeend', buildCustomerSelectorHTML());
+        customerSelectorModal = document.getElementById('customer-selector-modal');
+
+        // 绑定事件
+        document.getElementById('customer-selector-close').addEventListener('click', closeCustomerSelector);
+        document.getElementById('customer-selector-overlay').addEventListener('click', closeCustomerSelector);
+        document.getElementById('customer-selector-refresh').addEventListener('click', function () {
+            loadCustomers();
+        });
+
+        // 搜索
+        var searchInput = document.getElementById('customer-selector-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                renderCustomerList(customerListCache, searchInput.value.trim());
+            });
+        }
+
+        // 加载数据
+        loadCustomers();
+    }
+
+    function closeCustomerSelector() {
+        if (!customerSelectorModal) return;
+        customerSelectorModal.remove();
+        customerSelectorModal = null;
     }
 
     // ========== 全局事件监听 ==========

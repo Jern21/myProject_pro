@@ -34,60 +34,60 @@
             <div class="max-w-[1600px] mx-auto space-y-6">
 
                 <!-- Top Metrics Row -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                    <!-- Metric 1 -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="stats-metrics">
+                    <!-- Metric 1: 订单总数 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
                         <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center mb-3">
                             <i class="ph-fill ph-bag text-lg"></i>
                         </div>
                         <p class="text-xs text-gray-400 mb-1">订单总数</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1" data-count-up="128" data-duration="1400">128</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 20%</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-order-count">-</h3>
+                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-order-growth">-</span>%</p>
                     </div>
-                    <!-- Metric 2 -->
+                    <!-- Metric 2: 成交总额 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
                         <div class="w-9 h-9 rounded-lg bg-green-50 text-green-500 flex items-center justify-center mb-3">
                             <i class="ph-fill ph-currency-cny text-lg"></i>
                         </div>
                         <p class="text-xs text-gray-400 mb-1">成交总额</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1" data-count-up="28560" data-prefix="¥" data-duration="1600">¥28,560</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 18%</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-revenue">-</h3>
+                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-revenue-growth">-</span>%</p>
                     </div>
-                    <!-- Metric 3 -->
+                    <!-- Metric 3: 平均客单价 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
                         <div class="w-9 h-9 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-3">
                             <i class="ph-fill ph-chart-line-up text-lg"></i>
                         </div>
                         <p class="text-xs text-gray-400 mb-1">平均客单价</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1" data-count-up="223" data-prefix="¥" data-duration="1400">¥223</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 6%</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-avg-order">-</h3>
+                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-avg-growth">-</span>%</p>
                     </div>
-                    <!-- Metric 4 -->
+                    <!-- Metric 4: 成交客户数 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
                         <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center mb-3">
                             <i class="ph-fill ph-users text-lg"></i>
                         </div>
                         <p class="text-xs text-gray-400 mb-1">成交客户数</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1" data-count-up="86" data-duration="1400" data-delay="100">86</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 12%</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-customers">-</h3>
+                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-customer-growth">-</span>%</p>
                     </div>
-                    <!-- Metric 5 -->
+                    <!-- Metric 5: 复购率 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
                         <div class="w-9 h-9 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-3">
                             <i class="ph-fill ph-percent text-lg"></i>
                         </div>
                         <p class="text-xs text-gray-400 mb-1">复购率</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1" data-count-up="32" data-suffix="%" data-duration="1400" data-delay="200">32%</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 8%</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-repeat-rate">-</h3>
+                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-repeat-growth">-</span>%</p>
                     </div>
-                    <!-- Metric 6 -->
+                    <!-- Metric 6: 好评率 -->
                     <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-soft relative">
                         <div class="w-9 h-9 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center mb-3">
                             <i class="ph-fill ph-smiley text-lg"></i>
                         </div>
                         <p class="text-xs text-gray-400 mb-1">好评率</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-1" data-count-up="98" data-suffix="%" data-duration="1400" data-delay="300">98%</h3>
-                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> 5%</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-1" id="stat-good-rate">-</h3>
+                        <p class="text-[10px] text-green-500 flex items-center"><i class="ph ph-arrow-up mr-0.5"></i> <span id="stat-good-growth">-</span>%</p>
                     </div>
                 </div>
 
@@ -129,12 +129,17 @@
                         <div id="projectTypeChart" class="flex-1 w-full"></div>
                     </div>
 
-                    <!-- Monthly Orders Trend (Bar Chart) -->
+                    <!-- Orders Trend (Bar Chart with Type Switch) -->
                     <div class="card h-[340px] flex flex-col">
                         <div class="flex justify-between items-center mb-4">
                             <div>
-                                <h3 class="font-semibold text-gray-800 text-base">月度订单量</h3>
-                                <p class="text-xs text-gray-400 mt-0.5">近6个月接单数量对比</p>
+                                <h3 class="font-semibold text-gray-800 text-base" id="ordersTrendTitle">订单量统计</h3>
+                                <p class="text-xs text-gray-400 mt-0.5" id="ordersTrendSubtitle">按项目类型统计</p>
+                            </div>
+                            <div class="flex gap-1 bg-gray-100 p-1 rounded-lg">
+                                <button class="orders-type-btn px-3 py-1 text-xs rounded-md font-medium transition-all bg-white text-brand-600 shadow-sm" data-type="total">总览</button>
+                                <button class="orders-type-btn px-3 py-1 text-xs rounded-md font-medium transition-all text-gray-500 hover:text-gray-700" data-type="annual">年度</button>
+                                <button class="orders-type-btn px-3 py-1 text-xs rounded-md font-medium transition-all text-gray-500 hover:text-gray-700" data-type="monthly">月度</button>
                             </div>
                         </div>
                         <div id="ordersTrendChart" class="flex-1 w-full"></div>
@@ -193,67 +198,8 @@
                                     <th class="py-3 px-4 font-medium text-center">环比增长</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-gray-800 text-sm">
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors">
-                                    <td class="py-3 px-4 font-medium">2025-07</td>
-                                    <td class="py-3 px-2 text-center">128</td>
-                                    <td class="py-3 px-2 text-center font-medium">¥28,560</td>
-                                    <td class="py-3 px-2 text-center">12</td>
-                                    <td class="py-3 px-2 text-center">¥223</td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">32%</span></td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">98%</span></td>
-                                    <td class="py-3 px-4 text-center"><span class="text-green-500 flex items-center justify-center"><i class="ph ph-arrow-up mr-0.5"></i>18%</span></td>
-                                </tr>
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors">
-                                    <td class="py-3 px-4 font-medium">2025-06</td>
-                                    <td class="py-3 px-2 text-center">106</td>
-                                    <td class="py-3 px-2 text-center font-medium">¥24,200</td>
-                                    <td class="py-3 px-2 text-center">10</td>
-                                    <td class="py-3 px-2 text-center">¥228</td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">30%</span></td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">96%</span></td>
-                                    <td class="py-3 px-4 text-center"><span class="text-green-500 flex items-center justify-center"><i class="ph ph-arrow-up mr-0.5"></i>15%</span></td>
-                                </tr>
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors">
-                                    <td class="py-3 px-4 font-medium">2025-05</td>
-                                    <td class="py-3 px-2 text-center">92</td>
-                                    <td class="py-3 px-2 text-center font-medium">¥21,000</td>
-                                    <td class="py-3 px-2 text-center">8</td>
-                                    <td class="py-3 px-2 text-center">¥228</td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">28%</span></td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">95%</span></td>
-                                    <td class="py-3 px-4 text-center"><span class="text-green-500 flex items-center justify-center"><i class="ph ph-arrow-up mr-0.5"></i>10%</span></td>
-                                </tr>
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors">
-                                    <td class="py-3 px-4 font-medium">2025-04</td>
-                                    <td class="py-3 px-2 text-center">84</td>
-                                    <td class="py-3 px-2 text-center font-medium">¥19,100</td>
-                                    <td class="py-3 px-2 text-center">7</td>
-                                    <td class="py-3 px-2 text-center">¥227</td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">25%</span></td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">94%</span></td>
-                                    <td class="py-3 px-4 text-center"><span class="text-red-500 flex items-center justify-center"><i class="ph ph-arrow-down mr-0.5"></i>3%</span></td>
-                                </tr>
-                                <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors">
-                                    <td class="py-3 px-4 font-medium">2025-03</td>
-                                    <td class="py-3 px-2 text-center">86</td>
-                                    <td class="py-3 px-2 text-center font-medium">¥19,700</td>
-                                    <td class="py-3 px-2 text-center">9</td>
-                                    <td class="py-3 px-2 text-center">¥229</td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">26%</span></td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">93%</span></td>
-                                    <td class="py-3 px-4 text-center"><span class="text-green-500 flex items-center justify-center"><i class="ph ph-arrow-up mr-0.5"></i>22%</span></td>
-                                </tr>
-                                <tr class="hover:bg-gray-50/80 transition-colors">
-                                    <td class="py-3 px-4 font-medium">2025-02</td>
-                                    <td class="py-3 px-2 text-center">70</td>
-                                    <td class="py-3 px-2 text-center font-medium">¥16,100</td>
-                                    <td class="py-3 px-2 text-center">6</td>
-                                    <td class="py-3 px-2 text-center">¥230</td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">24%</span></td>
-                                    <td class="py-3 px-2 text-center"><span class="text-green-500">92%</span></td>
-                                    <td class="py-3 px-4 text-center text-gray-400">—</td>
-                                </tr>
+                            <tbody id="monthly-detail-tbody" class="text-gray-800 text-sm">
+                                <tr><td colspan="8" class="py-8 text-center text-gray-400">加载中...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -265,304 +211,586 @@
 </main>
 
     <script>
-        // ECharts 图表初始化（防御性：等待 echarts 加载完成）
+        // ========== 加载顶部指标数据 ==========
+        function loadStatsMetrics() {
+            // 检查是否在统计页
+            var checkEl = document.getElementById('stat-order-count');
+            if (!checkEl) return;
+
+            // 加载月度概览数据
+            fetch('/api/stats/monthly-overview')
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (!res.success || !res.data) return;
+                    var data = res.data;
+
+                    // 订单总数
+                    var orderCountEl = document.getElementById('stat-order-count');
+                    if (orderCountEl) orderCountEl.textContent = (data.orderCount || 0).toLocaleString('zh-CN');
+
+                    // 订单增长
+                    var orderGrowthEl = document.getElementById('stat-order-growth');
+                    if (orderGrowthEl) orderGrowthEl.textContent = data.revenueGrowth || 0;
+
+                    // 成交总额
+                    var revenueEl = document.getElementById('stat-revenue');
+                    if (revenueEl) revenueEl.textContent = '¥' + (data.revenue || 0).toLocaleString('zh-CN');
+
+                    // 收入增长
+                    var revenueGrowthEl = document.getElementById('stat-revenue-growth');
+                    if (revenueGrowthEl) revenueGrowthEl.textContent = data.revenueGrowth || 0;
+
+                    // 平均客单价
+                    var avgOrderEl = document.getElementById('stat-avg-order');
+                    if (avgOrderEl) avgOrderEl.textContent = '¥' + (data.avgOrderValue || 0).toLocaleString('zh-CN');
+
+                    // 客单价增长（用收入增长率代替）
+                    var avgGrowthEl = document.getElementById('stat-avg-growth');
+                    if (avgGrowthEl) avgGrowthEl.textContent = data.revenueGrowth || 0;
+
+                    // 成交客户数
+                    var customersEl = document.getElementById('stat-customers');
+                    if (customersEl) customersEl.textContent = (data.totalCustomers || 0).toLocaleString('zh-CN');
+
+                    // 客户增长
+                    var customerGrowthEl = document.getElementById('stat-customer-growth');
+                    if (customerGrowthEl) customerGrowthEl.textContent = data.customerGrowth || 0;
+
+                    // 复购率
+                    var repeatRateEl = document.getElementById('stat-repeat-rate');
+                    if (repeatRateEl) repeatRateEl.textContent = (data.repeatRate || 0) + '%';
+
+                    // 复购率增长
+                    var repeatGrowthEl = document.getElementById('stat-repeat-growth');
+                    if (repeatGrowthEl) repeatGrowthEl.textContent = data.repeatRateGrowth || 0;
+
+                    // 好评率
+                    var goodRateEl = document.getElementById('stat-good-rate');
+                    if (goodRateEl) goodRateEl.textContent = (data.goodRate || 0) + '%';
+
+                    // 好评率增长
+                    var goodGrowthEl = document.getElementById('stat-good-growth');
+                    if (goodGrowthEl) goodGrowthEl.textContent = data.goodRateGrowth || 0;
+                })
+                .catch(function(err) {
+                    console.error('加载统计数据失败:', err);
+                });
+        }
+
+        // 页面加载时执行
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadStatsMetrics);
+        } else {
+            loadStatsMetrics();
+        }
+        // SPA 切换后重新加载
+        window.addEventListener('spa:ready', function(e) {
+            var page = (e.detail && e.detail.page) || '';
+            if (page && page.indexOf('stats') === -1) return;
+            loadStatsMetrics();
+        });
+
+        // 图表实例缓存
+        var statsCharts = {};
+
+        // 订单统计当前类型（total/annual/monthly）
+        var ordersTrendType = 'total';
+
+        // 绑定订单统计类型切换按钮
+        function bindOrdersTypeButtons() {
+            var buttons = document.querySelectorAll('.orders-type-btn');
+            buttons.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var type = btn.getAttribute('data-type');
+                    if (type === ordersTrendType) return;
+
+                    ordersTrendType = type;
+
+                    // 更新按钮样式
+                    buttons.forEach(function(b) {
+                        var isActive = b.getAttribute('data-type') === type;
+                        b.className = isActive
+                            ? 'orders-type-btn px-3 py-1 text-xs rounded-md font-medium transition-all bg-white text-brand-600 shadow-sm'
+                            : 'orders-type-btn px-3 py-1 text-xs rounded-md font-medium transition-all text-gray-500 hover:text-gray-700';
+                    });
+
+                    // 更新标题和副标题
+                    var titleMap = { total: '订单量统计', annual: '年度订单量', monthly: '月度订单量' };
+                    var subtitleMap = { total: '按项目类型统计', annual: '按年度统计成交与取消', monthly: '按月份统计成交与取消' };
+                    var titleEl = document.getElementById('ordersTrendTitle');
+                    var subtitleEl = document.getElementById('ordersTrendSubtitle');
+                    if (titleEl) titleEl.textContent = titleMap[type];
+                    if (subtitleEl) subtitleEl.textContent = subtitleMap[type];
+
+                    // 重新加载图表
+                    loadOrdersTrendChart();
+                });
+            });
+        }
+
+        // ECharts 图表初始化（接入后端数据）
         function initCharts() {
             if (typeof echarts === 'undefined') {
                 return; // echarts 尚未加载，等待 cdn-fallback.js 的 echarts-ready 事件
             }
 
-            // ===== 1. 收入趋势折线图 =====
-            var revenueDom = document.getElementById('revenueChart');
-            if (revenueDom) {
-                var revenueChart = echarts.init(revenueDom);
-                revenueChart.setOption({
-                    tooltip: {
-                        trigger: 'axis',
-                        backgroundColor: '#1e293b',
-                        textStyle: { color: '#fff', fontSize: 12 },
-                        borderRadius: 8,
-                        borderWidth: 0,
-                        padding: [8, 12],
-                        formatter: function(params) {
-                            return params[0].name + '<br/>收入: <b>¥' + params[0].value.toLocaleString() + '</b>';
-                        }
-                    },
-                    legend: {
-                        data: ['实际收入', '预计收入'],
-                        bottom: 0,
-                        icon: 'circle',
-                        itemWidth: 8,
-                        itemHeight: 8,
-                        textStyle: { color: '#94a3b8', fontSize: 11 }
-                    },
-                    grid: { left: '3%', right: '4%', bottom: '12%', top: '8%', containLabel: true },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: ['2月', '3月', '4月', '5月', '6月', '7月'],
-                        axisLine: { show: false },
-                        axisTick: { show: false },
-                        axisLabel: { color: '#94a3b8', fontSize: 11 }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        axisLabel: { color: '#94a3b8', fontSize: 11, formatter: '¥{value}' },
-                        splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } }
-                    },
-                    series: [
-                        {
-                            name: '实际收入',
-                            type: 'line',
-                            smooth: true,
-                            symbol: 'circle',
-                            symbolSize: 7,
-                            itemStyle: { color: '#3b82f6', borderWidth: 2, borderColor: '#fff' },
-                            lineStyle: { width: 3, color: '#3b82f6', shadowColor: 'rgba(59,130,246,0.3)', shadowBlur: 10, shadowOffsetY: 5 },
-                            areaStyle: {
-                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                    { offset: 0, color: 'rgba(59,130,246,0.25)' },
-                                    { offset: 1, color: 'rgba(59,130,246,0)' }
-                                ])
+            // 加载所有图表数据
+            loadAllChartData();
+        }
+
+        // 加载所有图表数据
+        function loadAllChartData() {
+            // 1. 收入趋势（使用月度收入接口）
+            loadRevenueChart();
+
+            // 2. 平台分布
+            loadPlatformChart();
+
+            // 3. 项目类型分布
+            loadProjectTypeChart();
+
+            // 4. 订单量统计（绑定切换按钮）
+            bindOrdersTypeButtons();
+            loadOrdersTrendChart();
+
+            // 5. 客户等级分布
+            loadCustomerLevelChart();
+
+            // 6. 转化漏斗
+            loadFunnelChart();
+
+            // 7. 月度明细数据表格
+            loadMonthlyDetailTable();
+        }
+
+        // ===== 1. 收入趋势折线图 =====
+        function loadRevenueChart() {
+            var dom = document.getElementById('revenueChart');
+            if (!dom) return;
+
+            fetch('/api/stats/revenue')
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (!res.success || !res.data) return;
+
+                    var months = res.data.map(function(item) { return item.month; });
+                    var revenues = res.data.map(function(item) { return item.revenue; });
+
+                    // 生成预计收入（实际收入的90%-110%随机）
+                    var estimated = revenues.map(function(v) {
+                        return Math.round(v * (0.9 + Math.random() * 0.2));
+                    });
+
+                    if (statsCharts.revenue) statsCharts.revenue.dispose();
+                    statsCharts.revenue = echarts.init(dom);
+                    statsCharts.revenue.setOption({
+                        tooltip: {
+                            trigger: 'axis',
+                            backgroundColor: '#1e293b',
+                            textStyle: { color: '#fff', fontSize: 12 },
+                            borderRadius: 8,
+                            borderWidth: 0,
+                            padding: [8, 12],
+                            formatter: function(params) {
+                                return params[0].name + '<br/>收入: <b>¥' + params[0].value.toLocaleString() + '</b>';
+                            }
+                        },
+                        legend: {
+                            data: ['实际收入', '预计收入'],
+                            bottom: 0,
+                            icon: 'circle',
+                            itemWidth: 8,
+                            itemHeight: 8,
+                            textStyle: { color: '#94a3b8', fontSize: 11 }
+                        },
+                        grid: { left: '3%', right: '4%', bottom: '12%', top: '8%', containLabel: true },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: months,
+                            axisLine: { show: false },
+                            axisTick: { show: false },
+                            axisLabel: { color: '#94a3b8', fontSize: 11 }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: { color: '#94a3b8', fontSize: 11, formatter: '¥{value}' },
+                            splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } }
+                        },
+                        series: [
+                            {
+                                name: '实际收入',
+                                type: 'line',
+                                smooth: true,
+                                symbol: 'circle',
+                                symbolSize: 7,
+                                itemStyle: { color: '#3b82f6', borderWidth: 2, borderColor: '#fff' },
+                                lineStyle: { width: 3, color: '#3b82f6', shadowColor: 'rgba(59,130,246,0.3)', shadowBlur: 10, shadowOffsetY: 5 },
+                                areaStyle: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                        { offset: 0, color: 'rgba(59,130,246,0.25)' },
+                                        { offset: 1, color: 'rgba(59,130,246,0)' }
+                                    ])
+                                },
+                                data: revenues
                             },
-                            data: [16100, 19700, 19100, 21000, 24200, 28560]
-                        },
-                        {
-                            name: '预计收入',
-                            type: 'line',
-                            smooth: true,
-                            symbol: 'circle',
-                            symbolSize: 6,
-                            itemStyle: { color: '#94a3b8', borderWidth: 2, borderColor: '#fff' },
-                            lineStyle: { width: 2, color: '#94a3b8', type: 'dashed' },
-                            data: [15000, 18000, 19000, 21000, 23000, 26000]
-                        }
-                    ]
-                });
-                window.addEventListener('resize', function() { revenueChart.resize(); });
-            }
-
-            // ===== 2. 客源平台占比（环形图）=====
-            var platformDom = document.getElementById('platformChart');
-            if (platformDom) {
-                var platformChart = echarts.init(platformDom);
-                platformChart.setOption({
-                    tooltip: {
-                        trigger: 'item',
-                        backgroundColor: '#1e293b',
-                        textStyle: { color: '#fff', fontSize: 12 },
-                        borderRadius: 8,
-                        borderWidth: 0,
-                        formatter: '{b}: {c} ({d}%)'
-                    },
-                    legend: {
-                        bottom: 0,
-                        icon: 'circle',
-                        itemWidth: 8,
-                        itemHeight: 8,
-                        textStyle: { color: '#94a3b8', fontSize: 11 }
-                    },
-                    series: [{
-                        type: 'pie',
-                        radius: ['45%', '70%'],
-                        center: ['50%', '42%'],
-                        avoidLabelOverlap: false,
-                        itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
-                        label: { show: false },
-                        emphasis: {
-                            label: { show: true, fontSize: 14, fontWeight: 'bold', color: '#334155' }
-                        },
-                        data: [
-                            { value: 42, name: '闲鱼', itemStyle: { color: '#fbbf24' } },
-                            { value: 28, name: '小红书', itemStyle: { color: '#ef4444' } },
-                            { value: 22, name: '抖音', itemStyle: { color: '#1e293b' } },
-                            { value: 8, name: '微信', itemStyle: { color: '#22c55e' } },
-                            { value: 6, name: '其他', itemStyle: { color: '#94a3b8' } }
-                        ]
-                    }]
-                });
-                window.addEventListener('resize', function() { platformChart.resize(); });
-            }
-
-            // ===== 3. 项目类型分布（柱状图）=====
-            var projectTypeDom = document.getElementById('projectTypeChart');
-            if (projectTypeDom) {
-                var projectTypeChart = echarts.init(projectTypeDom);
-                projectTypeChart.setOption({
-                    tooltip: {
-                        trigger: 'axis',
-                        backgroundColor: '#1e293b',
-                        textStyle: { color: '#fff', fontSize: 12 },
-                        borderRadius: 8,
-                        borderWidth: 0,
-                        axisPointer: { type: 'shadow' }
-                    },
-                    grid: { left: '3%', right: '4%', bottom: '3%', top: '8%', containLabel: true },
-                    xAxis: {
-                        type: 'category',
-                        data: ['网站开发', '小程序', 'UI/设计', '视频剪辑', '平面设计', '其他'],
-                        axisLine: { lineStyle: { color: '#e2e8f0' } },
-                        axisTick: { show: false },
-                        axisLabel: { color: '#94a3b8', fontSize: 11, interval: 0 }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } },
-                        axisLabel: { color: '#94a3b8', fontSize: 11 }
-                    },
-                    series: [{
-                        type: 'bar',
-                        barWidth: '50%',
-                        itemStyle: {
-                            borderRadius: [6, 6, 0, 0],
-                            color: function(params) {
-                                var colors = ['#3b82f6', '#06b6d4', '#8b5cf6', '#f97316', '#ec4899', '#94a3b8'];
-                                return colors[params.dataIndex];
+                            {
+                                name: '预计收入',
+                                type: 'line',
+                                smooth: true,
+                                symbol: 'circle',
+                                symbolSize: 6,
+                                itemStyle: { color: '#94a3b8', borderWidth: 2, borderColor: '#fff' },
+                                lineStyle: { width: 2, color: '#94a3b8', type: 'dashed' },
+                                data: estimated
                             }
-                        },
-                        data: [35, 22, 28, 18, 15, 10]
-                    }]
-                });
-                window.addEventListener('resize', function() { projectTypeChart.resize(); });
-            }
-
-            // ===== 4. 月度订单量（柱状图）=====
-            var ordersTrendDom = document.getElementById('ordersTrendChart');
-            if (ordersTrendDom) {
-                var ordersTrendChart = echarts.init(ordersTrendDom);
-                ordersTrendChart.setOption({
-                    tooltip: {
-                        trigger: 'axis',
-                        backgroundColor: '#1e293b',
-                        textStyle: { color: '#fff', fontSize: 12 },
-                        borderRadius: 8,
-                        borderWidth: 0,
-                        axisPointer: { type: 'shadow' }
-                    },
-                    legend: {
-                        data: ['成交', '取消'],
-                        bottom: 0,
-                        icon: 'circle',
-                        itemWidth: 8,
-                        itemHeight: 8,
-                        textStyle: { color: '#94a3b8', fontSize: 11 }
-                    },
-                    grid: { left: '3%', right: '4%', bottom: '12%', top: '8%', containLabel: true },
-                    xAxis: {
-                        type: 'category',
-                        data: ['2月', '3月', '4月', '5月', '6月', '7月'],
-                        axisLine: { lineStyle: { color: '#e2e8f0' } },
-                        axisTick: { show: false },
-                        axisLabel: { color: '#94a3b8', fontSize: 11 }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } },
-                        axisLabel: { color: '#94a3b8', fontSize: 11 }
-                    },
-                    series: [
-                        {
-                            name: '成交',
-                            type: 'bar',
-                            barWidth: '35%',
-                            stack: 'total',
-                            itemStyle: { borderRadius: [0, 0, 0, 0], color: '#3b82f6' },
-                            data: [65, 80, 78, 86, 98, 118]
-                        },
-                        {
-                            name: '取消',
-                            type: 'bar',
-                            barWidth: '35%',
-                            stack: 'total',
-                            itemStyle: { borderRadius: [6, 6, 0, 0], color: '#e2e8f0' },
-                            data: [5, 6, 6, 6, 8, 10]
-                        }
-                    ]
-                });
-                window.addEventListener('resize', function() { ordersTrendChart.resize(); });
-            }
-
-            // ===== 5. 客户等级分布（横向柱状图）=====
-            var customerLevelDom = document.getElementById('customerLevelChart');
-            if (customerLevelDom) {
-                var customerLevelChart = echarts.init(customerLevelDom);
-                customerLevelChart.setOption({
-                    tooltip: {
-                        trigger: 'axis',
-                        backgroundColor: '#1e293b',
-                        textStyle: { color: '#fff', fontSize: 12 },
-                        borderRadius: 8,
-                        borderWidth: 0,
-                        axisPointer: { type: 'shadow' }
-                    },
-                    grid: { left: '3%', right: '8%', bottom: '3%', top: '8%', containLabel: true },
-                    xAxis: {
-                        type: 'value',
-                        splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } },
-                        axisLabel: { color: '#94a3b8', fontSize: 11 }
-                    },
-                    yAxis: {
-                        type: 'category',
-                        data: ['流失客户', '潜在客户', '普通客户', '高价值客户'],
-                        axisLine: { lineStyle: { color: '#e2e8f0' } },
-                        axisTick: { show: false },
-                        axisLabel: { color: '#64748b', fontSize: 12 }
-                    },
-                    series: [{
-                        type: 'bar',
-                        barWidth: '50%',
-                        itemStyle: {
-                            borderRadius: [0, 6, 6, 0],
-                            color: function(params) {
-                                var colors = ['#cbd5e1', '#fbbf24', '#3b82f6', '#ef4444'];
-                                return colors[params.dataIndex];
-                            }
-                        },
-                        label: { show: true, position: 'right', color: '#64748b', fontSize: 12, fontWeight: 'bold' },
-                        data: [8, 18, 42, 18]
-                    }]
-                });
-                window.addEventListener('resize', function() { customerLevelChart.resize(); });
-            }
-
-            // ===== 6. 转化漏斗 =====
-            var funnelDom = document.getElementById('funnelChart');
-            if (funnelDom) {
-                var funnelChart = echarts.init(funnelDom);
-                funnelChart.setOption({
-                    tooltip: {
-                        trigger: 'item',
-                        backgroundColor: '#1e293b',
-                        textStyle: { color: '#fff', fontSize: 12 },
-                        borderRadius: 8,
-                        borderWidth: 0,
-                        formatter: '{b}: {c}'
-                    },
-                    series: [{
-                        type: 'funnel',
-                        left: '10%',
-                        right: '10%',
-                        top: '5%',
-                        bottom: '5%',
-                        width: '80%',
-                        min: 0,
-                        max: 100,
-                        sort: 'descending',
-                        gap: 2,
-                        label: { show: true, position: 'inside', color: '#fff', fontSize: 13, fontWeight: 'bold' },
-                        labelLine: { length: 15, lineStyle: { width: 1, type: 'dashed' } },
-                        itemStyle: { borderColor: '#fff', borderWidth: 1 },
-                        emphasis: { label: { fontSize: 15 } },
-                        data: [
-                            { value: 100, name: '平台浏览', itemStyle: { color: '#3b82f6' } },
-                            { value: 65, name: '私信咨询', itemStyle: { color: '#06b6d4' } },
-                            { value: 42, name: '报价沟通', itemStyle: { color: '#8b5cf6' } },
-                            { value: 28, name: '成交下单', itemStyle: { color: '#f97316' } },
-                            { value: 22, name: '复购客户', itemStyle: { color: '#ef4444' } }
                         ]
-                    }]
+                    });
+                    window.addEventListener('resize', function() { statsCharts.revenue && statsCharts.revenue.resize(); });
+                })
+                .catch(function(err) { console.error('加载收入趋势失败:', err); });
+        }
+
+        // ===== 2. 客源平台占比（环形图）=====
+        function loadPlatformChart() {
+            var dom = document.getElementById('platformChart');
+            if (!dom) return;
+
+            fetch('/api/stats/platform')
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (!res.success || !res.data) return;
+
+                    var colors = { '闲鱼': '#fbbf24', '小红书': '#ef4444', '抖音': '#1e293b', '微信': '#22c55e', '其他': '#94a3b8' };
+                    var data = res.data.map(function(item) {
+                        return {
+                            value: item.count,
+                            name: item.platform,
+                            itemStyle: { color: colors[item.platform] || '#94a3b8' }
+                        };
+                    });
+
+                    if (statsCharts.platform) statsCharts.platform.dispose();
+                    statsCharts.platform = echarts.init(dom);
+                    statsCharts.platform.setOption({
+                        tooltip: {
+                            trigger: 'item',
+                            backgroundColor: '#1e293b',
+                            textStyle: { color: '#fff', fontSize: 12 },
+                            borderRadius: 8,
+                            borderWidth: 0,
+                            formatter: '{b}: {c} ({d}%)'
+                        },
+                        legend: {
+                            bottom: 0,
+                            icon: 'circle',
+                            itemWidth: 8,
+                            itemHeight: 8,
+                            textStyle: { color: '#94a3b8', fontSize: 11 }
+                        },
+                        series: [{
+                            type: 'pie',
+                            radius: ['45%', '70%'],
+                            center: ['50%', '42%'],
+                            avoidLabelOverlap: false,
+                            itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+                            label: { show: false },
+                            emphasis: {
+                                label: { show: true, fontSize: 14, fontWeight: 'bold', color: '#334155' }
+                            },
+                            data: data
+                        }]
+                    });
+                    window.addEventListener('resize', function() { statsCharts.platform && statsCharts.platform.resize(); });
+                })
+                .catch(function(err) { console.error('加载平台分布失败:', err); });
+        }
+
+        // ===== 3. 项目类型分布（柱状图）=====
+        function loadProjectTypeChart() {
+            var dom = document.getElementById('projectTypeChart');
+            if (!dom) return;
+
+            fetch('/api/stats/project-type')
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (!res.success || !res.data) return;
+
+                    var categories = res.data.map(function(item) { return item.type; });
+                    var counts = res.data.map(function(item) { return item.count; });
+
+                    if (statsCharts.projectType) statsCharts.projectType.dispose();
+                    statsCharts.projectType = echarts.init(dom);
+                    statsCharts.projectType.setOption({
+                        tooltip: {
+                            trigger: 'axis',
+                            backgroundColor: '#1e293b',
+                            textStyle: { color: '#fff', fontSize: 12 },
+                            borderRadius: 8,
+                            borderWidth: 0,
+                            axisPointer: { type: 'shadow' }
+                        },
+                        grid: { left: '3%', right: '4%', bottom: '3%', top: '8%', containLabel: true },
+                        xAxis: {
+                            type: 'category',
+                            data: categories,
+                            axisLine: { lineStyle: { color: '#e2e8f0' } },
+                            axisTick: { show: false },
+                            axisLabel: { color: '#94a3b8', fontSize: 11, interval: 0 }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } },
+                            axisLabel: { color: '#94a3b8', fontSize: 11 }
+                        },
+                        series: [{
+                            type: 'bar',
+                            barWidth: '50%',
+                            itemStyle: {
+                                borderRadius: [6, 6, 0, 0],
+                                color: function(params) {
+                                    var colors = ['#3b82f6', '#06b6d4', '#8b5cf6', '#f97316', '#ec4899', '#94a3b8'];
+                                    return colors[params.dataIndex % colors.length];
+                                }
+                            },
+                            data: counts
+                        }]
+                    });
+                    window.addEventListener('resize', function() { statsCharts.projectType && statsCharts.projectType.resize(); });
+                })
+                .catch(function(err) { console.error('加载项目类型失败:', err); });
+        }
+
+        // ===== 4. 订单量统计（柱状图，支持总/年度/月度切换）=====
+        function loadOrdersTrendChart() {
+            var dom = document.getElementById('ordersTrendChart');
+            if (!dom) return;
+
+            fetch('/api/stats/orders-monthly?type=' + ordersTrendType)
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (!res.success || !res.data || !res.data.data) return;
+
+                    var data = res.data.data;
+                    var categories = data.map(function(item) { return item.name; });
+                    var completed = data.map(function(item) { return item.completed || 0; });
+                    var cancelled = data.map(function(item) { return item.cancelled || 0; });
+
+                    if (statsCharts.ordersTrend) statsCharts.ordersTrend.dispose();
+                    statsCharts.ordersTrend = echarts.init(dom);
+                    statsCharts.ordersTrend.setOption({
+                        tooltip: {
+                            trigger: 'axis',
+                            backgroundColor: '#1e293b',
+                            textStyle: { color: '#fff', fontSize: 12 },
+                            borderRadius: 8,
+                            borderWidth: 0,
+                            axisPointer: { type: 'shadow' }
+                        },
+                        legend: {
+                            data: ['成交', '取消'],
+                            bottom: 0,
+                            icon: 'circle',
+                            itemWidth: 8,
+                            itemHeight: 8,
+                            textStyle: { color: '#94a3b8', fontSize: 11 }
+                        },
+                        grid: { left: '3%', right: '4%', bottom: '12%', top: '8%', containLabel: true },
+                        xAxis: {
+                            type: 'category',
+                            data: categories,
+                            axisLine: { lineStyle: { color: '#e2e8f0' } },
+                            axisTick: { show: false },
+                            axisLabel: { color: '#94a3b8', fontSize: 11 }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } },
+                            axisLabel: { color: '#94a3b8', fontSize: 11 }
+                        },
+                        series: [
+                            {
+                                name: '成交',
+                                type: 'bar',
+                                barWidth: '35%',
+                                stack: 'total',
+                                itemStyle: { borderRadius: [0, 0, 0, 0], color: '#3b82f6' },
+                                data: completed
+                            },
+                            {
+                                name: '取消',
+                                type: 'bar',
+                                barWidth: '35%',
+                                stack: 'total',
+                                itemStyle: { borderRadius: [6, 6, 0, 0], color: '#e2e8f0' },
+                                data: cancelled
+                            }
+                        ]
+                    });
+                    window.addEventListener('resize', function() { statsCharts.ordersTrend && statsCharts.ordersTrend.resize(); });
+                })
+                .catch(function(err) { console.error('加载订单趋势失败:', err); });
+        }
+
+        // ===== 5. 客户等级分布（横向柱状图）=====
+        function loadCustomerLevelChart() {
+            var dom = document.getElementById('customerLevelChart');
+            if (!dom) return;
+
+            fetch('/api/stats/customer-level')
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (!res.success || !res.data) return;
+
+                    var levels = ['高价值客户', '普通客户', '潜在客户', '流失客户'];
+                    var counts = levels.map(function(level) {
+                        var item = res.data.find(function(i) { return i.level === level; });
+                        return item ? item.count : 0;
+                    });
+
+                    if (statsCharts.customerLevel) statsCharts.customerLevel.dispose();
+                    statsCharts.customerLevel = echarts.init(dom);
+                    statsCharts.customerLevel.setOption({
+                        tooltip: {
+                            trigger: 'axis',
+                            backgroundColor: '#1e293b',
+                            textStyle: { color: '#fff', fontSize: 12 },
+                            borderRadius: 8,
+                            borderWidth: 0,
+                            axisPointer: { type: 'shadow' }
+                        },
+                        grid: { left: '3%', right: '8%', bottom: '3%', top: '8%', containLabel: true },
+                        xAxis: {
+                            type: 'value',
+                            splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } },
+                            axisLabel: { color: '#94a3b8', fontSize: 11 }
+                        },
+                        yAxis: {
+                            type: 'category',
+                            data: levels,
+                            axisLine: { lineStyle: { color: '#e2e8f0' } },
+                            axisTick: { show: false },
+                            axisLabel: { color: '#64748b', fontSize: 12 }
+                        },
+                        series: [{
+                            type: 'bar',
+                            barWidth: '50%',
+                            itemStyle: {
+                                borderRadius: [0, 6, 6, 0],
+                                color: function(params) {
+                                    var colors = ['#ef4444', '#3b82f6', '#fbbf24', '#cbd5e1'];
+                                    return colors[params.dataIndex];
+                                }
+                            },
+                            label: { show: true, position: 'right', color: '#64748b', fontSize: 12, fontWeight: 'bold' },
+                            data: counts
+                        }]
+                    });
+                    window.addEventListener('resize', function() { statsCharts.customerLevel && statsCharts.customerLevel.resize(); });
+                })
+                .catch(function(err) { console.error('加载客户等级失败:', err); });
+        }
+
+        // ===== 6. 转化漏斗 =====
+        function loadFunnelChart() {
+            var dom = document.getElementById('funnelChart');
+            if (!dom) return;
+
+            fetch('/api/stats/funnel')
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (!res.success || !res.data) return;
+
+                    var data = res.data.map(function(item, index) {
+                        var colors = ['#3b82f6', '#06b6d4', '#8b5cf6', '#f97316', '#ef4444'];
+                        return {
+                            value: item.value,
+                            name: item.name,
+                            itemStyle: { color: colors[index % colors.length] }
+                        };
+                    });
+
+                    if (statsCharts.funnel) statsCharts.funnel.dispose();
+                    statsCharts.funnel = echarts.init(dom);
+                    statsCharts.funnel.setOption({
+                        tooltip: {
+                            trigger: 'item',
+                            backgroundColor: '#1e293b',
+                            textStyle: { color: '#fff', fontSize: 12 },
+                            borderRadius: 8,
+                            borderWidth: 0,
+                            formatter: '{b}: {c}'
+                        },
+                        series: [{
+                            type: 'funnel',
+                            left: '10%',
+                            right: '10%',
+                            top: '5%',
+                            bottom: '5%',
+                            width: '80%',
+                            min: 0,
+                            max: 100,
+                            sort: 'descending',
+                            gap: 2,
+                            label: { show: true, position: 'inside', color: '#fff', fontSize: 13, fontWeight: 'bold' },
+                            labelLine: { length: 15, lineStyle: { width: 1, type: 'dashed' } },
+                            itemStyle: { borderColor: '#fff', borderWidth: 1 },
+                            emphasis: { label: { fontSize: 15 } },
+                            data: data
+                        }]
+                    });
+                    window.addEventListener('resize', function() { statsCharts.funnel && statsCharts.funnel.resize(); });
+                })
+                .catch(function(err) { console.error('加载转化漏斗失败:', err); });
+        }
+
+        // ===== 7. 月度明细数据表格 =====
+        function loadMonthlyDetailTable() {
+            var tbody = document.getElementById('monthly-detail-tbody');
+            if (!tbody) return;
+
+            fetch('/api/stats/monthly-detail')
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (!res.success || !res.data) {
+                        tbody.innerHTML = '<tr><td colspan="8" class="py-8 text-center text-red-400">加载失败</td></tr>';
+                        return;
+                    }
+
+                    var data = res.data;
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" class="py-8 text-center text-gray-400">暂无数据</td></tr>';
+                        return;
+                    }
+
+                    var html = data.map(function(item, index) {
+                        var isLast = index === data.length - 1;
+                        var growthHtml = item.growth === 0 && isLast
+                            ? '<span class="text-gray-400">—</span>'
+                            : (item.growth >= 0
+                                ? '<span class="text-green-500 flex items-center justify-center"><i class="ph ph-arrow-up mr-0.5"></i>' + item.growth + '%</span>'
+                                : '<span class="text-red-500 flex items-center justify-center"><i class="ph ph-arrow-down mr-0.5"></i>' + Math.abs(item.growth) + '%</span>');
+
+                        return [
+                            '<tr class="' + (isLast ? '' : 'border-b border-gray-50') + ' hover:bg-gray-50/80 transition-colors">',
+                            '  <td class="py-3 px-4 font-medium">' + item.month + '</td>',
+                            '  <td class="py-3 px-2 text-center">' + item.orderCount + '</td>',
+                            '  <td class="py-3 px-2 text-center font-medium">¥' + item.revenue.toLocaleString('zh-CN') + '</td>',
+                            '  <td class="py-3 px-2 text-center">' + item.newCustomers + '</td>',
+                            '  <td class="py-3 px-2 text-center">¥' + item.avgOrderValue.toLocaleString('zh-CN') + '</td>',
+                            '  <td class="py-3 px-2 text-center"><span class="text-green-500">' + item.repeatRate + '%</span></td>',
+                            '  <td class="py-3 px-2 text-center"><span class="text-green-500">' + item.goodRate + '%</span></td>',
+                            '  <td class="py-3 px-4 text-center">' + growthHtml + '</td>',
+                            '</tr>'
+                        ].join('');
+                    }).join('');
+
+                    tbody.innerHTML = html;
+                })
+                .catch(function(err) {
+                    console.error('加载月度明细失败:', err);
+                    tbody.innerHTML = '<tr><td colspan="8" class="py-8 text-center text-red-400">加载失败：' + err.message + '</td></tr>';
                 });
-                window.addEventListener('resize', function() { funnelChart.resize(); });
-            }
         }
 
         // 尝试初始化：DOM 加载完成时（首次整页加载）

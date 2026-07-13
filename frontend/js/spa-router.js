@@ -30,6 +30,8 @@
         'canvas.html': 'pages/content/canvas.html',
         'stats.html': 'pages/content/stats.html',
         'project.html': 'pages/content/project.html',
+        'accounts.html': 'pages/personal/accounts.html',
+        'bookmarks.html': 'pages/personal/bookmarks.html',
         'resume.html': 'pages/personal/resume.html',
         'memo.html': 'pages/personal/memo.html',
         'reminder.html': 'pages/personal/reminder.html',

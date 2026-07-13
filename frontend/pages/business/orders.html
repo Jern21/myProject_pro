@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -246,8 +246,10 @@
                             </div>
                             <div class="min-w-0">
                                 <p id="detail-customer-name" class="font-medium text-gray-800 text-sm truncate">张先生</p>
-                                <p id="detail-customer-phone" class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                                    138****5678 <i class="ph-fill ph-wechat-logo text-green-500"></i>
+                                <p id="detail-customer-phone" class="text-xs text-gray-500 flex items-center gap-1 mt-0.5 cursor-pointer hover:text-brand-600 transition-colors" title="点击复制号码">
+                                    <span id="detail-customer-phone-text">138****5678</span>
+                                    <i class="ph ph-copy text-xs opacity-60"></i>
+                                    <i class="ph-fill ph-wechat-logo text-green-500"></i>
                                 </p>
                             </div>
                         </div>
@@ -574,10 +576,10 @@
                 return Math.max(1, Math.round(num / 1024)) + ' KB';
             }
 
-            function fileLabel(key) {
-                var labels = { screenshot: '需求沟通截图', showcase: '成品展示图', quote: '报价单', taskBook: '项目任务书' };
-                return labels[key] || '附件';
-            }
+function fileLabel(key) {
+            var labels = { screenshot: '需求沟通截图', showcase: '成品展示图', quote: '报价单', taskBook: '项目任务书', paymentRecord: '打款记录' };
+            return labels[key] || '附件';
+        }
 
             // ========== Toast ==========
 
@@ -716,6 +718,20 @@
                     state.total = res.data.total || 0;
                     renderTable(state.orders);
                     renderPagination();
+
+                    // 默认选中第一条数据并显示详情
+                    if (state.orders.length > 0) {
+                        var firstOrder = state.orders[0];
+                        updateDetailPanel(firstOrder);
+                        // 高亮第一行
+                        setTimeout(function() {
+                            var firstRow = tbody.querySelector('tr[data-order-id]');
+                            if (firstRow) {
+                                firstRow.classList.add('bg-brand-50');
+                                firstRow.classList.remove('bg-brand-50/30');
+                            }
+                        }, 0);
+                    }
                 }).catch(function (err) {
                     console.error('[Orders] 列表加载失败', err);
                     if (tbody) tbody.innerHTML = '<tr><td colspan="9" class="py-10 text-center text-red-400">加载失败，请检查后端服务是否启动</td></tr>';
@@ -770,9 +786,8 @@
                         '  </td>',
                         '  <td class="py-4 px-2"><span class="status-badge ' + statusClass + '">' + escapeHtml(statusText) + '</span></td>',
                         '  <td class="py-4 px-2 text-gray-600">' + escapeHtml(cycle) + '</td>',
-                        '  <td class="py-4 px-2' + (overdue ? ' text-red-500' : '') + '>',
+                        '  <td class="py-4 px-2' + (overdue ? ' text-red-500' : '') + '">',
                         '    <p>' + escapeHtml(order.orderDate || '—') + '</p>',
-                        (orderTime ? '    <p class="text-xs mt-0.5">' + escapeHtml(orderTime) + '</p>' : ''),
                         '  </td>',
                         '  <td class="py-4 px-4">',
                         '    <div class="flex items-center justify-center gap-2">',
@@ -1064,10 +1079,10 @@
 
             // ========== 详情面板 ==========
 
-            function renderAttachments(files) {
-                var box = document.getElementById('detail-attachments');
-                if (!box) return;
-                var keys = ['taskBook', 'quote', 'screenshot', 'showcase'];
+function renderAttachments(files) {
+            var box = document.getElementById('detail-attachments');
+            if (!box) return;
+            var keys = ['taskBook', 'quote', 'screenshot', 'showcase', 'paymentRecord'];
                 var html = keys.map(function (key) {
                     var file = files[key];
                     if (!file) return '';
@@ -1117,7 +1132,7 @@
                 setText('detail-hours', order.hours ? order.hours + ' 小时' : '—');
                 setText('detail-margin', margin);
                 setText('detail-rate', rate);
-                setText('detail-order-date', (order.orderDate || '—') + (getOrderTime(order) ? ' ' + getOrderTime(order) : ''));
+                setText('detail-order-date', order.orderDate || '—');
                 setText('detail-confirm-date', formatDateText(order.confirmDate));
                 setText('detail-draft-date', formatDateText(order.draftDate));
                 setText('detail-cycle', normalizeCycle('', order.orderDate, order.finalDate));
@@ -1139,7 +1154,22 @@
                 var sourceEl = document.getElementById('detail-source');
                 if (sourceEl) {
                     var sc = SOURCE_COLOR_MAP[order.customerSource] || 'bg-gray-50 text-gray-500';
-                    sourceEl.className = 'px-2 py-0.5 rounded text-xs font-medium ' + sc;
+                    sourceEl.className = 'px-2 py-0.5 rounded text-xs font-medium inline-flex items-center gap-1 ' + sc;
+
+                    // 平台图标映射
+                    var PLATFORM_ICONS = {
+                        '闲鱼': '闲鱼.svg',
+                        '小红书': '小红书.svg',
+                        '抖音': '抖音.svg'
+                    };
+
+                    var iconFile = PLATFORM_ICONS[order.customerSource];
+                    if (iconFile) {
+                        var base = window.PAGE_BASE || '../../';
+                        sourceEl.innerHTML = '<img src="' + base + 'assets/svg/' + iconFile + '" class="w-3.5 h-3.5" alt="">' + escapeHtml(order.customerSource);
+                    } else {
+                        sourceEl.textContent = order.customerSource;
+                    }
                 }
 
                 var tagsEl = document.getElementById('detail-tags');
@@ -1184,14 +1214,35 @@
                     });
                 }
 
+                // 客户号码点击复制
+                var phoneEl = document.getElementById('detail-customer-phone');
+                if (phoneEl && !phoneEl.dataset.bound) {
+                    phoneEl.dataset.bound = 'true';
+                    phoneEl.addEventListener('click', function () {
+                        var data = window.__currentOrderData || {};
+                        var phone = data.customerPhone || '';
+                        if (phone) {
+                            copyText(phone, '客户号码已复制');
+                        } else {
+                            showToast('暂无客户号码');
+                        }
+                    });
+                }
+
                 // 详情面板编辑按钮
                 var editBtn = document.getElementById('order-detail-edit-btn');
                 if (editBtn && !editBtn.dataset.bound) {
                     editBtn.dataset.bound = 'true';
                     editBtn.addEventListener('click', function () {
-                        if (typeof window.openOrderForm === 'function' && window.__currentOrderData) {
-                            window.openOrderForm(window.__currentOrderData);
+                        if (typeof window.openOrderForm !== 'function') {
+                            showToast('表单组件加载中，请稍后重试');
+                            return;
                         }
+                        if (!window.__currentOrderData) {
+                            showToast('请先选择订单');
+                            return;
+                        }
+                        window.openOrderForm(window.__currentOrderData);
                     });
                 }
 
@@ -1200,6 +1251,10 @@
                 if (quoteBtn && !quoteBtn.dataset.bound) {
                     quoteBtn.dataset.bound = 'true';
                     quoteBtn.addEventListener('click', function () {
+                        if (!window.__currentOrderData) {
+                            showToast('请先选择订单');
+                            return;
+                        }
                         showQuotePreview();
                     });
                 }

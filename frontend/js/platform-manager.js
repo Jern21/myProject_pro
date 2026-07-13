@@ -33,12 +33,15 @@
     var currentCategory = '';
     var editId = null;           // 编辑模式时的记录 ID
 
-    // 平台图标 HTML
-    var PLATFORM_ICONS = {
-        xianyu: '<span class="font-bold text-[10px]">闲鱼</span>',
-        xiaohongshu: '<span class="font-bold text-[10px]">小红书</span>',
-        douyin: '<i class="ph-fill ph-tiktok-logo text-sm"></i>'
-    };
+    // 生成平台 SVG 图标 HTML
+    function platformIconHtml(platform, sizeClass) {
+        var base = window.ROOT_URL || window.PAGE_BASE || '';
+        var files = { xianyu: '闲鱼.svg', xiaohongshu: '小红书.svg', douyin: '抖音.svg' };
+        var names = { xianyu: '闲鱼', xiaohongshu: '小红书', douyin: '抖音' };
+        if (!files[platform]) return '';
+        var scale = platform === 'xiaohongshu' ? 'style="object-fit:cover;transform:scale(1.2)"' : '';
+        return '<img src="' + base + 'assets/svg/' + files[platform] + '" alt="' + names[platform] + '" class="block ' + (sizeClass || 'w-full h-full') + ' rounded" loading="lazy" ' + scale + '>';
+    }
 
     // 状态标签映射
     var STATUS_MAP = {
@@ -856,7 +859,8 @@
     // ========== 暴露全局 API ==========
 
     window.PlatformManager = {
-        init: init
+        init: init,
+        openForm: function (id) { openFormModal(id || null); }
     };
 
 })();

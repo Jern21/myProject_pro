@@ -22,6 +22,15 @@ var resp = require('../utils/response');
 
 var posts = new Storage('platform-posts');
 
+// ========== 灌入种子数据 ==========
+
+router.post('/seed', resp.asyncHandler(function (req, res) {
+    var seedData = require('../data/seed-platform-posts');
+    posts.clear();
+    var records = posts.createMany(seedData);
+    return resp.success(res, { count: records.length });
+}));
+
 // 上传目录（与 upload.js 一致）
 var UPLOAD_DIR = path.join(__dirname, '..', '..', 'data', 'uploads');
 

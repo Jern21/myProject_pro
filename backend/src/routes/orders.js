@@ -84,8 +84,16 @@ router.get('/stats/summary', resp.asyncHandler(function (req, res) {
     var dueTodayCount = 0;
 
     all.forEach(function (o) {
-        totalRevenue += parseFloat(o.amount) || 0;
-        totalCost += parseFloat(o.cost) || 0;
+        var ratio = 0;
+        if (o.paymentStatus === '已结清') {
+            ratio = 1;
+        } else if (o.paymentStatus === '部分付款') {
+            ratio = Math.min(Math.max(parseInt(o.paymentRatio, 10) || 0, 0), 100) / 100;
+        }
+        if (ratio > 0) {
+            totalRevenue += (parseFloat(o.amount) || 0) * ratio;
+            totalCost += (parseFloat(o.cost) || 0) * ratio;
+        }
         totalHours += parseFloat(o.hours) || 0;
         if (statusCounts[o.orderStatus] !== undefined) statusCounts[o.orderStatus]++;
         if (paymentCounts[o.paymentStatus] !== undefined) paymentCounts[o.paymentStatus]++;

@@ -207,4 +207,7 @@
 
     // SPA 局部刷新后重新替换
     window.addEventListener('spa:ready', replaceIcons);
+
+    // 暴露全局函数，供动态渲染后手动调用
+    window.replacePlatformIcons = replaceIcons;
 })();
