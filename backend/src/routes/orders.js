@@ -18,6 +18,7 @@ var express = require('express');
 var router = express.Router();
 var Storage = require('../utils/storage');
 var resp = require('../utils/response');
+var orderRules = require('../utils/order-rules');
 
 var orders = new Storage('orders');
 
@@ -44,34 +45,6 @@ function generateOrderNo() {
     return prefix + seq;
 }
 
-/**
- * 判断订单是否逾期：终稿交付日已过，且状态未完成/未关闭
- */
-function isOverdue(order) {
-    if (!order.finalDate) return false;
-    if (order.orderStatus === 'completed' || order.orderStatus === 'closed') return false;
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-    var final = new Date(order.finalDate);
-    if (isNaN(final)) return false;
-    final.setHours(0, 0, 0, 0);
-    return final < today;
-}
-
-/**
- * 判断订单是否今日到期
- */
-function isDueToday(order) {
-    if (!order.finalDate) return false;
-    if (order.orderStatus === 'completed' || order.orderStatus === 'closed') return false;
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-    var final = new Date(order.finalDate);
-    if (isNaN(final)) return false;
-    final.setHours(0, 0, 0, 0);
-    return final.getTime() === today.getTime();
-}
-
 // ========== 统计摘要 ==========
 router.get('/stats/summary', resp.asyncHandler(function (req, res) {
     var all = orders.findAll();
@@ -84,24 +57,18 @@ router.get('/stats/summary', resp.asyncHandler(function (req, res) {
     var dueTodayCount = 0;
 
     all.forEach(function (o) {
-        var ratio = 0;
-        if (o.paymentStatus === '已结清') {
-            ratio = 1;
-        } else if (o.paymentStatus === '部分付款') {
-            ratio = Math.min(Math.max(parseInt(o.paymentRatio, 10) || 0, 0), 100) / 100;
-        }
-        if (ratio > 0) {
-            totalRevenue += (parseFloat(o.amount) || 0) * ratio;
-            totalCost += (parseFloat(o.cost) || 0) * ratio;
+        if (orderRules.hasPayment(o)) {
+            totalRevenue += orderRules.paidAmount(o);
+            totalCost += orderRules.paidCost(o);
         }
         totalHours += parseFloat(o.hours) || 0;
         if (statusCounts[o.orderStatus] !== undefined) statusCounts[o.orderStatus]++;
         if (paymentCounts[o.paymentStatus] !== undefined) paymentCounts[o.paymentStatus]++;
-        if (isOverdue(o)) overdueCount++;
-        if (isDueToday(o)) dueTodayCount++;
+        if (orderRules.isOverdue(o)) overdueCount++;
+        if (orderRules.isDueToday(o)) dueTodayCount++;
     });
 
-    var processingCount = statusCounts.processing;
+    var processingCount = all.filter(function (o) { return orderRules.isActiveProcessing(o); }).length;
     var acceptanceCount = statusCounts.acceptance;
     var completedCount = statusCounts.completed;
 
@@ -147,6 +114,7 @@ router.get('/', resp.asyncHandler(function (req, res) {
     var customerId = req.query.customerId;
     var keyword = req.query.keyword;
     var overdue = req.query.overdue;
+    var excludeOverdue = req.query.excludeOverdue;
     var dueToday = req.query.dueToday;
     var dateFrom = req.query.dateFrom;
     var dateTo = req.query.dateTo;
@@ -205,11 +173,14 @@ router.get('/', resp.asyncHandler(function (req, res) {
     }
     // 逾期筛选
     if (overdue === '1' || overdue === 'true') {
-        filtered = filtered.filter(function (o) { return isOverdue(o); });
+        filtered = filtered.filter(function (o) { return orderRules.isOverdue(o); });
+    }
+    if (excludeOverdue === '1' || excludeOverdue === 'true') {
+        filtered = filtered.filter(function (o) { return !orderRules.isOverdue(o); });
     }
     // 今日到期筛选
     if (dueToday === '1' || dueToday === 'true') {
-        filtered = filtered.filter(function (o) { return isDueToday(o); });
+        filtered = filtered.filter(function (o) { return orderRules.isDueToday(o); });
     }
 
     // 排序

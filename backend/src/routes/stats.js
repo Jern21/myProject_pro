@@ -23,6 +23,7 @@ var express = require('express');
 var router = express.Router();
 var Storage = require('../utils/storage');
 var resp = require('../utils/response');
+var orderRules = require('../utils/order-rules');
 
 var orders = new Storage('orders');
 var customers = new Storage('customers');
@@ -31,63 +32,18 @@ var projects = new Storage('projects');
 var posts = new Storage('platform-posts');
 var reminders = new Storage('reminders');
 
-/** 本地日期 YYYY-MM-DD（避免 toISOString 的 UTC 偏移） */
-function localDateStr(d) {
-    var y = d.getFullYear();
-    var m = String(d.getMonth() + 1).padStart(2, '0');
-    var day = String(d.getDate()).padStart(2, '0');
-    return y + '-' + m + '-' + day;
-}
+var localDateStr = orderRules.localDateStr;
+var paidAmount = orderRules.paidAmount;
+var paidCost = orderRules.paidCost;
+var hasPayment = orderRules.hasPayment;
+var sumPaidAmount = orderRules.sumPaidAmount;
+var sumPaidCost = orderRules.sumPaidCost;
 
 /** 环比增长率；基准为 0 时：当前>0 视为 100，否则 0 */
 function calcGrowth(current, previous) {
     if (previous > 0) return Math.round((current - previous) / previous * 100);
     if (current > 0) return 100;
     return 0;
-}
-
-/** 付款比例：已结清=1，部分付款=ratio%，未付款=0 */
-function paidRatio(o) {
-    if (!o) return 0;
-    if (o.paymentStatus === '已结清') return 1;
-    if (o.paymentStatus === '部分付款') {
-        var ratio = parseInt(o.paymentRatio, 10) || 0;
-        return Math.min(Math.max(ratio, 0), 100) / 100;
-    }
-    return 0;
-}
-
-/** 单笔已收成交额（按付款状态） */
-function paidAmount(o) {
-    return (parseFloat(o && o.amount) || 0) * paidRatio(o);
-}
-
-/** 单笔按付款比例分摊的成本 */
-function paidCost(o) {
-    return (parseFloat(o && o.cost) || 0) * paidRatio(o);
-}
-
-function hasPayment(o) {
-    return paidRatio(o) > 0;
-}
-
-function sumAmount(list) {
-    return list.reduce(function (sum, o) {
-        return sum + (parseFloat(o.amount) || 0);
-    }, 0);
-}
-
-/** 成交金额合计：按付款状态折算 */
-function sumPaidAmount(list) {
-    return list.reduce(function (sum, o) {
-        return sum + paidAmount(o);
-    }, 0);
-}
-
-function sumPaidCost(list) {
-    return list.reduce(function (sum, o) {
-        return sum + paidCost(o);
-    }, 0);
 }
 
 function ordersCreatedOnDate(allOrders, dateStr) {
@@ -216,7 +172,7 @@ router.get('/home-metrics', resp.asyncHandler(function (req, res) {
     var yesterdayRevenue = sumPaidAmount(yesterdayRevenueOrders);
 
     var activeOrders = allOrders.filter(function (o) {
-        return o.orderStatus === 'processing' || o.orderStatus === 'acceptance';
+        return orderRules.isActiveProcessing(o);
     }).length;
 
     var monthPaidOrders = allOrders.filter(function (o) {
@@ -775,6 +731,130 @@ router.get('/monthly-detail', resp.asyncHandler(function (req, res) {
     });
 
     return resp.success(res, result);
+}));
+
+// ========== 通知中心：聚合提醒与待办 ==========
+
+/** 将日期差值转为友好时间文案 */
+function relativeTime(dateStr) {
+    if (!dateStr) return '';
+    var target = new Date(dateStr + 'T00:00:00');
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    var diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return '今天';
+    if (diffDays === 1) return '明天';
+    if (diffDays === -1) return '昨天';
+    if (diffDays < 0) return '逾期 ' + Math.abs(diffDays) + ' 天';
+    return diffDays + ' 天后';
+}
+
+router.get('/notifications', resp.asyncHandler(function (req, res) {
+    var allReminders = reminders.findAll();
+    var allOrders = orders.findAll();
+    var today = new Date();
+    var todayStr = localDateStr(today);
+    var threeDaysLater = new Date(today);
+    threeDaysLater.setDate(today.getDate() + 3);
+    var threeDaysLaterStr = localDateStr(threeDaysLater);
+
+    var items = [];
+
+    // 1. 逾期提醒（日期已过且未完成）— 最高优先级
+    var overdue = allReminders.filter(function (r) {
+        return !r.done && r.date < todayStr;
+    }).sort(function (a, b) {
+        return new Date(a.date) - new Date(b.date);
+    });
+
+    if (overdue.length) {
+        items.push({
+            type: 'overdue',
+            icon: 'ph ph-warning-circle',
+            color: 'red',
+            title: overdue.length + ' 条提醒已逾期',
+            desc: overdue.slice(0, 2).map(function (r) { return r.title; }).join('、') + (overdue.length > 2 ? ' 等' : ''),
+            time: relativeTime(overdue[0].date),
+            count: overdue.length
+        });
+    }
+
+    // 2. 今日提醒（未完成）
+    var todayList = allReminders.filter(function (r) {
+        return !r.done && r.date === todayStr;
+    }).sort(function (a, b) {
+        return (a.time || '').localeCompare(b.time || '');
+    });
+
+    if (todayList.length) {
+        items.push({
+            type: 'today',
+            icon: 'ph ph-clock-countdown',
+            color: 'amber',
+            title: '今日有 ' + todayList.length + ' 项待办提醒',
+            desc: todayList.slice(0, 2).map(function (r) { return r.title; }).join('、') + (todayList.length > 2 ? ' 等' : ''),
+            time: todayList[0].time ? todayList[0].time : '今天',
+            count: todayList.length
+        });
+    }
+
+    // 3. 近 3 天即将到来的提醒
+    var upcoming = allReminders.filter(function (r) {
+        return !r.done && r.date > todayStr && r.date <= threeDaysLaterStr;
+    }).sort(function (a, b) {
+        return new Date(a.date) - new Date(b.date);
+    });
+
+    if (upcoming.length) {
+        items.push({
+            type: 'upcoming',
+            icon: 'ph ph-calendar-blank',
+            color: 'blue',
+            title: '近 3 天有 ' + upcoming.length + ' 项提醒',
+            desc: upcoming.slice(0, 2).map(function (r) { return r.title + ' (' + relativeTime(r.date) + ')'; }).join('、'),
+            time: relativeTime(upcoming[0].date),
+            count: upcoming.length
+        });
+    }
+
+    // 4. 待报价订单
+    var pendingQuoteOrders = allOrders.filter(function (o) {
+        return o.orderStatus === 'pending';
+    });
+    if (pendingQuoteOrders.length) {
+        items.push({
+            type: 'pending-quote',
+            icon: 'ph ph-receipt',
+            color: 'indigo',
+            title: pendingQuoteOrders.length + ' 个订单待报价',
+            desc: pendingQuoteOrders.slice(0, 2).map(function (o) { return o.projectName || o.title || '--'; }).join('、'),
+            time: '待处理',
+            count: pendingQuoteOrders.length
+        });
+    }
+
+    // 5. 待验收订单
+    var acceptanceOrders = allOrders.filter(function (o) {
+        return o.orderStatus === 'acceptance';
+    });
+    if (acceptanceOrders.length) {
+        items.push({
+            type: 'acceptance',
+            icon: 'ph ph-check-circle',
+            color: 'emerald',
+            title: acceptanceOrders.length + ' 个订单待验收',
+            desc: acceptanceOrders.slice(0, 2).map(function (o) { return o.projectName || o.title || '--'; }).join('、'),
+            time: '待处理',
+            count: acceptanceOrders.length
+        });
+    }
+
+    var unreadCount = items.reduce(function (sum, item) { return sum + item.count; }, 0);
+
+    return resp.success(res, {
+        unreadCount: unreadCount,
+        items: items
+    });
 }));
 
 module.exports = router;

@@ -102,7 +102,7 @@
         },
         'project.html': {
             title: '项目管理',
-            subtitle: '共 24 个项目 · 12 个进行中',
+            subtitle: function() { return window.__projectSubtitle || '加载中...'; },
             search: '搜索项目名称、客户...',
             action: { label: '新建项目', icon: 'ph ph-plus', onclick: 'openEditForm(null)' }
         },
@@ -264,60 +264,231 @@
         return '<button class="' + buttonClass + '"' + onclickAttr + '>' + icon + escapeHtml(action.label) + '</button>';
     }
 
+    // ========== 通知铃铛：动态渲染 ==========
+
+    // 通知颜色 → Tailwind class 映射
+    var BELL_COLOR_MAP = {
+        red:     { bg: 'bg-red-50',     text: 'text-red-500'     },
+        amber:   { bg: 'bg-amber-50',   text: 'text-amber-500'   },
+        blue:    { bg: 'bg-blue-50',    text: 'text-blue-500'    },
+        indigo:  { bg: 'bg-indigo-50',  text: 'text-indigo-500'  },
+        emerald: { bg: 'bg-emerald-50', text: 'text-emerald-500' }
+    };
+
     function renderBell() {
         return [
-            '<div class="relative group">',
-            '    <button aria-label="通知" class="relative w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition-colors">',
+            '<div class="relative" id="bell-container">',
+            '    <button aria-label="通知" id="bell-button" class="relative w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition-colors">',
             '        <i class="ph ph-bell text-lg"></i>',
-            '        <span class="absolute top-0 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">12</span>',
+            '        <span id="bell-badge" class="absolute top-0 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white" style="display:none">0</span>',
             '    </button>',
-            '    <div class="absolute right-0 top-full pt-3 w-80 opacity-0 invisible translate-y-2 scale-[0.98] group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:scale-100 transition-all duration-200 ease-out pointer-events-none group-hover:pointer-events-auto z-50">',
-            '        <div class="relative bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/70 overflow-hidden">',
-            '            <div class="absolute -top-1.5 right-6 w-3 h-3 bg-white border-l border-t border-gray-100 rotate-45"></div>',
-            '            <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">',
-            '                <div>',
-            '                    <p class="text-sm font-bold text-gray-800">通知中心</p>',
-            '                    <p class="text-[11px] text-gray-400 mt-0.5">12 条未读 · 今日优先处理</p>',
-            '                </div>',
-            '                <span class="px-2 py-0.5 rounded-full bg-red-50 text-red-500 text-[10px] font-semibold">NEW</span>',
-            '            </div>',
-            '            <div class="p-2 space-y-1">',
-            '                <div class="flex gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">',
-            '                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center shrink-0"><i class="ph ph-clock-countdown text-base"></i></div>',
-            '                    <div class="min-w-0 flex-1">',
-            '                        <div class="flex items-center justify-between gap-3">',
-            '                            <p class="text-sm font-medium text-gray-800 truncate">今日有 3 个项目临近交付</p>',
-            '                            <span class="text-[10px] text-gray-400 shrink-0">刚刚</span>',
-            '                        </div>',
-            '                        <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">官网改版、海报设计、报价单模板需要跟进。</p>',
-            '                    </div>',
-            '                </div>',
-            '                <div class="flex gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">',
-            '                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center shrink-0"><i class="ph ph-receipt text-base"></i></div>',
-            '                    <div class="min-w-0 flex-1">',
-            '                        <div class="flex items-center justify-between gap-3">',
-            '                            <p class="text-sm font-medium text-gray-800 truncate">订单 DD20250703001 已更新</p>',
-            '                            <span class="text-[10px] text-gray-400 shrink-0">12 分钟</span>',
-            '                        </div>',
-            '                        <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">客户补充了项目任务书，可在订单详情中查看。</p>',
-            '                    </div>',
-            '                </div>',
-            '                <div class="flex gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">',
-            '                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0"><i class="ph ph-check-circle text-base"></i></div>',
-            '                    <div class="min-w-0 flex-1">',
-            '                        <div class="flex items-center justify-between gap-3">',
-            '                            <p class="text-sm font-medium text-gray-800 truncate">平台发布状态同步完成</p>',
-            '                            <span class="text-[10px] text-gray-400 shrink-0">1 小时</span>',
-            '                        </div>',
-            '                        <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">闲鱼、小红书、抖音发布记录已刷新。</p>',
-            '                    </div>',
-            '                </div>',
-            '            </div>',
-            '            <button class="w-full py-2.5 border-t border-gray-100 text-xs font-medium text-brand-600 hover:bg-brand-50 transition-colors">查看全部通知</button>',
-            '        </div>',
-            '    </div>',
             '</div>'
         ].join('');
+    }
+
+    /** 浮窗 HTML 模板（会被移到 body 末尾，脱离 header 层叠上下文） */
+    function getBellDropdownHTML() {
+        return [
+            '<div class="relative bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/70 overflow-hidden">',
+            '    <div class="absolute -top-1.5 right-6 w-3 h-3 bg-white border-l border-t border-gray-100 rotate-45"></div>',
+            '    <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">',
+            '        <div>',
+            '            <p class="text-sm font-bold text-gray-800">通知中心</p>',
+            '            <p id="bell-subtitle" class="text-[11px] text-gray-400 mt-0.5">加载中...</p>',
+            '        </div>',
+            '        <span id="bell-new-tag" class="px-2 py-0.5 rounded-full bg-red-50 text-red-500 text-[10px] font-semibold" style="display:none">NEW</span>',
+            '    </div>',
+            '    <div id="bell-items" class="p-2 space-y-1">',
+            '        <div class="flex items-center justify-center py-8 text-gray-400 text-sm"><i class="ph ph-spinner animate-spin mr-2"></i>加载中...</div>',
+            '    </div>',
+            '    <button id="bell-view-all" class="w-full py-2.5 border-t border-gray-100 text-xs font-medium text-brand-600 hover:bg-brand-50 transition-colors">查看全部通知</button>',
+            '</div>'
+        ].join('');
+    }
+
+    /** 将浮窗移到 body 末尾，脱离 header 的层叠上下文 */
+    function ensureBellDropdownOnBody() {
+        var dropdown = document.getElementById('bell-dropdown');
+        if (dropdown && dropdown.parentElement === document.body) return dropdown;
+        if (!dropdown) {
+            dropdown = document.createElement('div');
+            dropdown.id = 'bell-dropdown';
+            dropdown.className = 'fixed w-80 opacity-0 invisible translate-y-2 scale-[0.98] transition-all duration-200 ease-out pointer-events-none z-[9999]';
+            dropdown.innerHTML = getBellDropdownHTML();
+        } else {
+            // 已存在但在 header 内部，移出来
+            dropdown.className = 'fixed w-80 opacity-0 invisible translate-y-2 scale-[0.98] transition-all duration-200 ease-out pointer-events-none z-[9999]';
+        }
+        document.body.appendChild(dropdown);
+        return dropdown;
+    }
+
+    /** 显示浮窗 */
+    function showBellDropdown() {
+        var dropdown = ensureBellDropdownOnBody();
+        positionBellDropdown();
+        dropdown.classList.remove('opacity-0', 'invisible', 'translate-y-2', 'scale-[0.98]', 'pointer-events-none');
+        dropdown.classList.add('opacity-100', 'visible', 'translate-y-0', 'scale-100', 'pointer-events-auto');
+    }
+
+    /** 隐藏浮窗 */
+    function hideBellDropdown() {
+        var dropdown = document.getElementById('bell-dropdown');
+        if (!dropdown) return;
+        dropdown.classList.add('opacity-0', 'invisible', 'translate-y-2', 'scale-[0.98]', 'pointer-events-none');
+        dropdown.classList.remove('opacity-100', 'visible', 'translate-y-0', 'scale-100', 'pointer-events-auto');
+    }
+
+    /** 根据铃铛按钮位置，定位 fixed 浮窗 */
+    function positionBellDropdown() {
+        var btn = document.getElementById('bell-button');
+        var dropdown = document.getElementById('bell-dropdown');
+        if (!btn || !dropdown) return;
+        var rect = btn.getBoundingClientRect();
+        dropdown.style.top = (rect.bottom + 8) + 'px';
+        // 右对齐：让浮窗右边距 viewport 右边的距离 = 铃铛右边距 viewport 右边的距离 - 8px 偏移
+        dropdown.style.right = (window.innerWidth - rect.right + 8) + 'px';
+        dropdown.style.left = 'auto';
+    }
+
+    /** 加载通知数据并更新铃铛 UI */
+    function loadBellNotifications() {
+        var bellBtn = document.getElementById('bell-button');
+        var bellContainer = document.getElementById('bell-container');
+        if (!bellBtn) return;
+
+        // 确保浮窗在 body 末尾
+        ensureBellDropdownOnBody();
+
+        var badge = document.getElementById('bell-badge');
+        var subtitle = document.getElementById('bell-subtitle');
+        var itemsBox = document.getElementById('bell-items');
+        var newTag = document.getElementById('bell-new-tag');
+        var viewAllBtn = document.getElementById('bell-view-all');
+        if (!badge || !itemsBox) return;
+
+        // 用 JS 接管 hover 显隐（替代之前的 CSS group-hover）
+        if (!bellContainer.dataset.hoverBound) {
+            bellContainer.dataset.hoverBound = 'true';
+            var hideTimer = null;
+            var dropdown = document.getElementById('bell-dropdown');
+
+            function enterHandler() {
+                clearTimeout(hideTimer);
+                showBellDropdown();
+            }
+            function leaveHandler() {
+                hideTimer = setTimeout(hideBellDropdown, 200);
+            }
+
+            bellContainer.addEventListener('mouseenter', enterHandler);
+            bellContainer.addEventListener('mouseleave', leaveHandler);
+            // 浮窗本身也需要响应——鼠标移到浮窗上时保持显示
+            if (dropdown) {
+                dropdown.addEventListener('mouseenter', function () { clearTimeout(hideTimer); });
+                dropdown.addEventListener('mouseleave', leaveHandler);
+            }
+        }
+
+        // 定位浮窗 + 绑定 resize/scroll 更新
+        positionBellDropdown();
+        if (!window.__bellPosBound) {
+            window.__bellPosBound = true;
+            window.addEventListener('resize', positionBellDropdown);
+            window.addEventListener('scroll', positionBellDropdown, true);
+        }
+
+        // 绑定「查看全部通知」跳转
+        if (viewAllBtn && !viewAllBtn.dataset.bound) {
+            viewAllBtn.dataset.bound = 'true';
+            viewAllBtn.addEventListener('click', function () {
+                hideBellDropdown();
+                if (typeof window.spaNavigate === 'function') {
+                    window.spaNavigate('reminder.html');
+                } else {
+                    window.location.href = 'pages/personal/reminder.html';
+                }
+            });
+        }
+
+        if (!window.api || !window.api.get) return;
+
+        window.api.get('/api/stats/notifications')
+            .then(function (res) {
+                if (!res.success || !res.data) {
+                    renderBellEmpty(itemsBox, badge, subtitle, newTag);
+                    return;
+                }
+                var data = res.data;
+                var count = data.unreadCount || 0;
+                var items = data.items || [];
+
+                // 更新角标
+                if (count > 0) {
+                    badge.textContent = count > 99 ? '99+' : String(count);
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                // 更新副标题
+                subtitle.textContent = count > 0
+                    ? count + ' 条未读 · 今日优先处理'
+                    : '暂无未读通知';
+                newTag.style.display = count > 0 ? 'inline-block' : 'none';
+
+                // 渲染通知列表
+                if (!items.length) {
+                    itemsBox.innerHTML = '<div class="flex flex-col items-center justify-center py-8 text-gray-400 text-sm">' +
+                        '<i class="ph ph-bell-slash text-2xl mb-2"></i>暂无通知</div>';
+                    return;
+                }
+
+                itemsBox.innerHTML = items.map(function (item) {
+                    var c = BELL_COLOR_MAP[item.color] || BELL_COLOR_MAP.blue;
+                    return '<div class="flex gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer" data-type="' + escapeHtml(item.type) + '">' +
+                        '<div class="w-8 h-8 rounded-lg ' + c.bg + ' ' + c.text + ' flex items-center justify-center shrink-0"><i class="' + escapeHtml(item.icon) + ' text-base"></i></div>' +
+                        '<div class="min-w-0 flex-1">' +
+                        '  <div class="flex items-center justify-between gap-3">' +
+                        '    <p class="text-sm font-medium text-gray-800 truncate">' + escapeHtml(item.title) + '</p>' +
+                        '    <span class="text-[10px] text-gray-400 shrink-0">' + escapeHtml(item.time) + '</span>' +
+                        '  </div>' +
+                        '  <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">' + escapeHtml(item.desc) + '</p>' +
+                        '</div>' +
+                        '</div>';
+                }).join('');
+
+                // 点击通知项跳转到对应页面
+                itemsBox.querySelectorAll('[data-type]').forEach(function (el) {
+                    el.addEventListener('click', function () {
+                        hideBellDropdown();
+                        var type = el.getAttribute('data-type');
+                        var targetPage = 'reminder.html';
+                        if (type === 'pending-quote' || type === 'acceptance') {
+                            targetPage = 'orders.html';
+                        }
+                        if (typeof window.spaNavigate === 'function') {
+                            window.spaNavigate(targetPage);
+                        } else {
+                            window.location.href = targetPage;
+                        }
+                    });
+                });
+            })
+            .catch(function (err) {
+                console.error('加载通知失败:', err);
+                renderBellEmpty(itemsBox, badge, subtitle, newTag);
+            });
+    }
+
+    function renderBellEmpty(itemsBox, badge, subtitle, newTag) {
+        badge.style.display = 'none';
+        if (subtitle) subtitle.textContent = '暂无未读通知';
+        if (newTag) newTag.style.display = 'none';
+        if (itemsBox) {
+            itemsBox.innerHTML = '<div class="flex flex-col items-center justify-center py-8 text-gray-400 text-sm">' +
+                '<i class="ph ph-bell-slash text-2xl mb-2"></i>暂无通知</div>';
+        }
     }
 
     function renderAvatar() {
@@ -378,6 +549,27 @@
         ].join('');
     }
 
+    /** 异步加载页面副标题数据（目前仅 project.html 需要） */
+    function loadPageSubtitle(pageName) {
+        if (pageName !== 'project.html') return;
+        if (!window.api || !window.api.get) return;
+        window.api.get('/api/projects/stats')
+            .then(function (res) {
+                if (!res.success || !res.data) return;
+                var d = res.data;
+                window.__projectSubtitle = '共 ' + (d.total || 0) + ' 个项目 · ' + (d.inProgress || 0) + ' 个进行中';
+                // 更新已渲染的副标题
+                var header = document.getElementById('app-header');
+                if (header) {
+                    var subtitleEl = header.querySelector('p.text-sm.text-gray-500');
+                    if (subtitleEl) subtitleEl.textContent = window.__projectSubtitle;
+                }
+            })
+            .catch(function (err) {
+                console.error('加载项目统计失败:', err);
+            });
+    }
+
     function renderHeader(pageName) {
         var currentPage = pageName || getCurrentPageName();
         var header = document.getElementById('app-header');
@@ -387,6 +579,8 @@
             header.innerHTML = headerHtml;
             bindStatsRangeButtons(header);
             syncStatsRangeButtons(header);
+            loadBellNotifications();
+            loadPageSubtitle(currentPage);
             return header;
         }
 
@@ -402,6 +596,8 @@
         header = document.getElementById('app-header');
         bindStatsRangeButtons(header);
         syncStatsRangeButtons(header);
+        loadBellNotifications();
+        loadPageSubtitle(currentPage);
         return header;
     }
 

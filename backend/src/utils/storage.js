@@ -16,19 +16,7 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
-
-// data 目录的绝对路径（backend/data/）
-const DATA_DIR = path.join(__dirname, '..', '..', 'data');
-
-/**
- * 确保目录存在
- */
-function ensureDir(dir) {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-}
+const dataBackups = require('./data-backups');
 
 /**
  * 生成唯一 ID（时间戳 + 随机串）
@@ -42,7 +30,8 @@ class Storage {
      * @param {string} fileName - 文件名（不含 .json 后缀）
      */
     constructor(fileName) {
-        this.filePath = path.join(DATA_DIR, fileName + '.json');
+        this.fileName = fileName;
+        this.filePath = dataBackups.getDataFilePath(fileName);
         this._ensureFile();
     }
 
@@ -50,9 +39,9 @@ class Storage {
      * 确保数据文件存在，不存在则创建空数组
      */
     _ensureFile() {
-        ensureDir(DATA_DIR);
+        dataBackups.ensureDir(dataBackups.DATA_DIR);
         if (!fs.existsSync(this.filePath)) {
-            this._write([]);
+            this._write([], { backup: false });
         }
     }
 
@@ -75,12 +64,32 @@ class Storage {
      * 写入 JSON 数组
      * @param {Array} data
      */
-    _write(data) {
+    _write(data, options) {
+        options = options || {};
+        if (!Array.isArray(data)) {
+            throw new Error('Storage 只能写入数组数据: ' + this.fileName);
+        }
+
         try {
-            fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+            dataBackups.writeJsonFile(this.fileName, data, options);
         } catch (e) {
             console.error('[Storage] 写入文件失败:', this.filePath, e.message);
+            throw e;
         }
+    }
+
+    /**
+     * 写入前备份当前数据文件，并保留最近 MAX_BACKUPS_PER_FILE 份。
+     */
+    _backupCurrentFile() {
+        return dataBackups.createBackup(this.fileName);
+    }
+
+    /**
+     * 手动列出备份，便于后续恢复工具使用。
+     */
+    listBackups() {
+        return dataBackups.listBackups(this.fileName);
     }
 
     /**

@@ -24,23 +24,11 @@ var express = require('express');
 var router = express.Router();
 var Storage = require('../utils/storage');
 var resp = require('../utils/response');
+var orderRules = require('../utils/order-rules');
 
 var customers = new Storage('customers');
 var orders = new Storage('orders');
-
-function paidRatio(o) {
-    if (!o) return 0;
-    if (o.paymentStatus === '已结清') return 1;
-    if (o.paymentStatus === '部分付款') {
-        var ratio = parseInt(o.paymentRatio, 10) || 0;
-        return Math.min(Math.max(ratio, 0), 100) / 100;
-    }
-    return 0;
-}
-
-function paidAmount(o) {
-    return (parseFloat(o && o.amount) || 0) * paidRatio(o);
-}
+var paidAmount = orderRules.paidAmount;
 
 function formatMoney(num) {
     var n = Math.round(num || 0);

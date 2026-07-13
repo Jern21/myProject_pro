@@ -8,18 +8,19 @@
  *   PUT    /api/settings           - 更新设置（merge 模式）
  *   POST   /api/settings/reset     - 重置为默认设置
  *   POST   /api/settings/backup    - 导出全部数据备份
- *   POST   /api/settings/restore   - 导入数据恢复
+ *   POST   /api/settings/restore   - 导入整包数据恢复
+ *   GET    /api/settings/backups   - 查看本地备份历史
+ *   POST   /api/settings/backups   - 创建本地备份快照
+ *   GET    /api/settings/backups/:fileName/:backupName - 下载单个备份文件
+ *   POST   /api/settings/backups/:fileName/:backupName/restore - 恢复单个数据文件
  */
 'use strict';
 
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
-var path = require('path');
 var resp = require('../utils/response');
-
-var DATA_DIR = path.join(__dirname, '..', '..', 'data');
-var SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
+var dataBackups = require('../utils/data-backups');
 
 var DEFAULT_SETTINGS = {
     theme: 'pure-white',
@@ -39,26 +40,15 @@ var DEFAULT_SETTINGS = {
 
 // ========== 读取设置 ==========
 router.get('/', resp.asyncHandler(function (req, res) {
-    try {
-        var raw = fs.readFileSync(SETTINGS_FILE, 'utf-8');
-        var settings = JSON.parse(raw);
-        return resp.success(res, settings);
-    } catch (e) {
-        return resp.success(res, DEFAULT_SETTINGS);
-    }
+    return resp.success(res, readSettings());
 }));
 
 // ========== 更新设置 ==========
 router.put('/', resp.asyncHandler(function (req, res) {
     try {
-        // 读取当前设置，merge 新值
-        var current = {};
-        try {
-            current = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8'));
-        } catch (e) {}
-
+        var current = readSettings();
         var updated = deepMerge(current, req.body || {});
-        fs.writeFileSync(SETTINGS_FILE, JSON.stringify(updated, null, 2), 'utf-8');
+        saveSettings(updated);
         return resp.success(res, updated);
     } catch (e) {
         return resp.error(res, '保存设置失败: ' + e.message, 500);
@@ -67,21 +57,66 @@ router.put('/', resp.asyncHandler(function (req, res) {
 
 // ========== 重置为默认 ==========
 router.post('/reset', resp.asyncHandler(function (req, res) {
-    fs.writeFileSync(SETTINGS_FILE, JSON.stringify(DEFAULT_SETTINGS, null, 2), 'utf-8');
+    saveSettings(DEFAULT_SETTINGS);
     return resp.success(res, DEFAULT_SETTINGS);
+}));
+
+// ========== 本地备份历史 ==========
+router.get('/backups', resp.asyncHandler(function (req, res) {
+    return resp.success(res, dataBackups.getBackupSummary());
+}));
+
+// ========== 创建本地备份快照 ==========
+router.post('/backups', resp.asyncHandler(function (req, res) {
+    var settings = readSettings();
+    settings.backup = settings.backup || {};
+    settings.backup.lastBackup = new Date().toISOString();
+    saveSettings(settings, { backup: false });
+
+    var created = dataBackups.createAllBackups();
+    return resp.success(res, {
+        created: created,
+        count: created.length,
+        summary: dataBackups.getBackupSummary()
+    });
+}));
+
+// ========== 下载单个备份文件 ==========
+router.get('/backups/:fileName/:backupName', resp.asyncHandler(function (req, res) {
+    try {
+        var backupPath = dataBackups.getBackupPath(req.params.fileName, req.params.backupName);
+        if (!fs.existsSync(backupPath)) {
+            return resp.notFound(res, '备份文件不存在');
+        }
+        return res.download(backupPath, req.params.backupName);
+    } catch (e) {
+        return resp.error(res, '下载备份失败: ' + e.message, 400);
+    }
+}));
+
+// ========== 恢复单个数据文件 ==========
+router.post('/backups/:fileName/:backupName/restore', resp.asyncHandler(function (req, res) {
+    try {
+        var restored = dataBackups.restoreBackup(req.params.fileName, req.params.backupName);
+        return resp.success(res, {
+            restored: restored,
+            summary: dataBackups.getBackupSummary()
+        });
+    } catch (e) {
+        return resp.error(res, '恢复备份失败: ' + e.message, 400);
+    }
 }));
 
 // ========== 导出全部数据备份 ==========
 router.post('/backup', resp.asyncHandler(function (req, res) {
     var backup = {};
-    var files = fs.readdirSync(DATA_DIR).filter(function (f) { return f.endsWith('.json'); });
+    var files = dataBackups.listDataFiles();
 
-    files.forEach(function (file) {
+    files.forEach(function (fileName) {
         try {
-            var content = JSON.parse(fs.readFileSync(path.join(DATA_DIR, file), 'utf-8'));
-            backup[file.replace('.json', '')] = content;
+            backup[fileName] = dataBackups.readJsonFile(fileName, []);
         } catch (e) {
-            backup[file.replace('.json', '')] = [];
+            backup[fileName] = [];
         }
     });
 
@@ -92,10 +127,10 @@ router.post('/backup', resp.asyncHandler(function (req, res) {
 
     // 更新备份时间
     try {
-        var settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8'));
+        var settings = readSettings();
         settings.backup = settings.backup || {};
         settings.backup.lastBackup = new Date().toISOString();
-        fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2), 'utf-8');
+        saveSettings(settings, { backup: false });
     } catch (e) {}
 
     return resp.success(res, backup);
@@ -111,9 +146,8 @@ router.post('/restore', resp.asyncHandler(function (req, res) {
     var restored = [];
     Object.keys(backup).forEach(function (key) {
         if (key === '_meta') return;
-        var filePath = path.join(DATA_DIR, key + '.json');
         try {
-            fs.writeFileSync(filePath, JSON.stringify(backup[key], null, 2), 'utf-8');
+            dataBackups.writeJsonFile(key, backup[key]);
             restored.push(key);
         } catch (e) {
             console.error('[Restore] 恢复失败:', key, e.message);
@@ -124,6 +158,15 @@ router.post('/restore', resp.asyncHandler(function (req, res) {
 }));
 
 // ========== 深度合并工具 ==========
+function readSettings() {
+    return deepMerge(DEFAULT_SETTINGS, dataBackups.readJsonFile('settings', DEFAULT_SETTINGS) || {});
+}
+
+function saveSettings(settings, options) {
+    dataBackups.writeJsonFile('settings', settings, options);
+    return settings;
+}
+
 function deepMerge(target, source) {
     var result = Object.assign({}, target);
     Object.keys(source).forEach(function (key) {

@@ -246,9 +246,10 @@
 
         // 4. 兜底：清理 body 直接子元素中所有 position:fixed 的残留浮层
         //    （防止遗漏未知的动态创建遮罩）
+        //    注意：排除 #bell-dropdown（通知铃铛浮窗，需跨页面保持）
         document.body.querySelectorAll(':scope > .fixed').forEach(function (el) {
-            // 保留 sidebar aside 和 main，只移除浮层
-            if (el.tagName !== 'ASIDE' && el.tagName !== 'MAIN') {
+            // 保留 sidebar aside、main 和通知铃铛浮窗
+            if (el.tagName !== 'ASIDE' && el.tagName !== 'MAIN' && el.id !== 'bell-dropdown') {
                 el.remove();
             }
         });

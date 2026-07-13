@@ -692,6 +692,7 @@ function fileLabel(key) {
                 // Tab 筛选
                 if (state.activeTab === 'processing') {
                     params.set('status', 'processing');
+                    params.set('excludeOverdue', '1');
                 } else if (state.activeTab === 'dueToday') {
                     params.set('dueToday', '1');
                 } else if (state.activeTab === 'overdue') {
