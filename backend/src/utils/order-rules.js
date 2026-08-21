@@ -37,8 +37,35 @@ function parseLocalDate(value) {
     return isNaN(parsed) ? null : parsed;
 }
 
+function normalizePaymentRecords(value) {
+    var raw = Array.isArray(value) ? value : (value && Array.isArray(value.paymentRecords) ? value.paymentRecords : []);
+    return raw.map(function (item) {
+        item = item || {};
+        return {
+            date: String(item.date || item.payDate || item.time || '').trim(),
+            amount: Math.max(0, parseFloat(item.amount) || 0),
+            note: String(item.note || item.remark || '').trim()
+        };
+    }).filter(function (item) {
+        return item.date || item.amount > 0 || item.note;
+    });
+}
+
+function paymentRecordAmount(order) {
+    return normalizePaymentRecords(order).reduce(function (sum, item) {
+        return sum + (parseFloat(item.amount) || 0);
+    }, 0);
+}
+
+function fallbackPaymentDate(order) {
+    return (order && (order.payDate || order.orderDate || (order.createdAt ? String(order.createdAt).slice(0, 10) : ''))) || '';
+}
+
 function paidRatio(order) {
     if (!order) return 0;
+    var amount = parseFloat(order.amount) || 0;
+    var recordAmount = paymentRecordAmount(order);
+    if (recordAmount > 0 && amount > 0) return Math.min(recordAmount / amount, 1);
     if (order.paymentStatus === '已结清') return 1;
     if (order.paymentStatus === '部分付款') {
         var ratio = parseInt(order.paymentRatio, 10) || 0;
@@ -48,7 +75,10 @@ function paidRatio(order) {
 }
 
 function paidAmount(order) {
-    return (parseFloat(order && order.amount) || 0) * paidRatio(order);
+    var amount = parseFloat(order && order.amount) || 0;
+    var recordAmount = paymentRecordAmount(order);
+    if (recordAmount > 0) return amount > 0 ? Math.min(recordAmount, amount) : recordAmount;
+    return amount * paidRatio(order);
 }
 
 function paidCost(order) {
@@ -56,7 +86,34 @@ function paidCost(order) {
 }
 
 function hasPayment(order) {
-    return paidRatio(order) > 0;
+    return paidAmount(order) > 0;
+}
+
+function paymentEntries(order) {
+    if (!order) return [];
+    var records = normalizePaymentRecords(order).filter(function (item) {
+        return (parseFloat(item.amount) || 0) > 0;
+    });
+    if (records.length) {
+        var orderAmount = parseFloat(order.amount) || 0;
+        var remaining = orderAmount > 0 ? orderAmount : Infinity;
+        return records.map(function (item) {
+            var amount = Math.min(parseFloat(item.amount) || 0, remaining);
+            remaining -= amount;
+            return {
+                date: item.date || fallbackPaymentDate(order),
+                amount: amount,
+                note: item.note || ''
+            };
+        }).filter(function (item) {
+            return item.date && item.amount > 0;
+        });
+    }
+
+    var amount = paidAmount(order);
+    var date = fallbackPaymentDate(order);
+    if (!date || amount <= 0) return [];
+    return [{ date: date, amount: amount, note: '' }];
 }
 
 function sumAmount(list) {
@@ -112,6 +169,9 @@ function isActiveProcessing(order, referenceDate) {
 module.exports = {
     localDateStr: localDateStr,
     parseLocalDate: parseLocalDate,
+    normalizePaymentRecords: normalizePaymentRecords,
+    paymentRecordAmount: paymentRecordAmount,
+    paymentEntries: paymentEntries,
     paidRatio: paidRatio,
     paidAmount: paidAmount,
     paidCost: paidCost,

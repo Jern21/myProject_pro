@@ -23,6 +23,16 @@ var resp = require('../utils/response');
 var dataBackups = require('../utils/data-backups');
 
 var DEFAULT_SETTINGS = {
+    profile: {
+        nickname: 'JERN',
+        realName: '',
+        phone: '',
+        email: '',
+        role: '全栈开发工程师',
+        city: '',
+        bio: '',
+        avatar: ''
+    },
     theme: 'pure-white',
     notifications: {
         orderReminders: true,

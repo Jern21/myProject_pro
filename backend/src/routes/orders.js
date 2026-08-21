@@ -45,6 +45,72 @@ function generateOrderNo() {
     return prefix + seq;
 }
 
+function clampPercent(value) {
+    var num = parseInt(value, 10) || 0;
+    return Math.min(Math.max(num, 0), 100);
+}
+
+function normalizePaymentFields(body) {
+    body = body || {};
+    var amount = parseFloat(body.amount) || 0;
+    var paymentStatus = body.paymentStatus || '未付款';
+    var paymentRecords = paymentStatus === '未付款' ? [] : orderRules.normalizePaymentRecords(body.paymentRecords);
+    var paidByRecords = paymentRecords.reduce(function (sum, item) {
+        return sum + (parseFloat(item.amount) || 0);
+    }, 0);
+    var paymentRatio = clampPercent(body.paymentRatio);
+
+    if (paymentStatus === '未付款') {
+        paymentRatio = 0;
+    } else if (paidByRecords > 0 && amount > 0) {
+        paymentRatio = Math.min(Math.round(paidByRecords / amount * 100), 100);
+    } else if (paymentStatus === '已结清') {
+        paymentRatio = 100;
+    }
+
+    return {
+        paymentStatus: paymentStatus,
+        paymentRatio: paymentRatio,
+        payDate: body.payDate || '',
+        paymentRecords: paymentRecords
+    };
+}
+
+function normalizeFile(file) {
+    if (!file || typeof file !== 'object') return null;
+    var name = file.name || file.originalName || file.filename || '';
+    var type = file.type || file.mimetype || '';
+    var record = {
+        name: name,
+        originalName: file.originalName || name,
+        filename: file.filename || '',
+        size: Number(file.size) || 0,
+        type: type,
+        mimetype: file.mimetype || type,
+        url: file.url || ''
+    };
+    return record.url || record.name || record.filename ? record : null;
+}
+
+function normalizeUploadedFiles(files) {
+    files = files || {};
+    var result = {};
+    ['screenshot', 'showcase', 'quote', 'taskBook'].forEach(function (key) {
+        var file = normalizeFile(files[key]);
+        result[key] = file || null;
+    });
+
+    var paymentFiles = files.paymentRecord;
+    if (Array.isArray(paymentFiles)) {
+        result.paymentRecord = paymentFiles.map(normalizeFile).filter(Boolean).slice(0, 10);
+    } else {
+        var singlePaymentFile = normalizeFile(paymentFiles);
+        result.paymentRecord = singlePaymentFile ? [singlePaymentFile] : [];
+    }
+
+    return result;
+}
+
 // ========== 统计摘要 ==========
 router.get('/stats/summary', resp.asyncHandler(function (req, res) {
     var all = orders.findAll();
@@ -233,6 +299,7 @@ router.post('/', resp.asyncHandler(function (req, res) {
     if (!body.amount || parseFloat(body.amount) <= 0) return resp.error(res, '成交金额必须大于 0');
     if (!body.orderDate) return resp.error(res, '接单日期为必填项');
 
+    var paymentFields = normalizePaymentFields(body);
     var record = orders.create({
         // 订单编号（自动生成）
         orderNo: body.orderNo || generateOrderNo(),
@@ -258,13 +325,14 @@ router.post('/', resp.asyncHandler(function (req, res) {
         finalDate: body.finalDate || '',
         // 状态管理
         orderStatus: body.orderStatus || 'pending',
-        paymentStatus: body.paymentStatus || '未付款',
-        paymentRatio: parseInt(body.paymentRatio) || 0,
-        payDate: body.payDate || '',
+        paymentStatus: paymentFields.paymentStatus,
+        paymentRatio: paymentFields.paymentRatio,
+        payDate: paymentFields.payDate,
+        paymentRecords: paymentFields.paymentRecords,
         // 附件与关联
         gitUrl: body.gitUrl || '',
         quoteRef: body.quoteRef || '',
-        uploadedFiles: body.uploadedFiles || {}
+        uploadedFiles: normalizeUploadedFiles(body.uploadedFiles)
     });
 
     return resp.success(res, record, 201);
@@ -273,8 +341,17 @@ router.post('/', resp.asyncHandler(function (req, res) {
 // ========== 更新 ==========
 router.put('/:id', resp.asyncHandler(function (req, res) {
     var body = req.body || {};
-    var updated = orders.update(req.params.id, body);
-    if (!updated) return resp.notFound(res, '订单不存在');
+    var existing = orders.findById(req.params.id);
+    if (!existing) return resp.notFound(res, '订单不存在');
+
+    var patch = Object.assign({}, body);
+    var merged = Object.assign({}, existing, body);
+    Object.assign(patch, normalizePaymentFields(merged));
+    if (Object.prototype.hasOwnProperty.call(body, 'uploadedFiles')) {
+        patch.uploadedFiles = normalizeUploadedFiles(body.uploadedFiles);
+    }
+
+    var updated = orders.update(req.params.id, patch);
     return resp.success(res, updated);
 }));
 

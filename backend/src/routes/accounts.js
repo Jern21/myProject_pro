@@ -33,67 +33,13 @@ var DEFAULT_PLATFORMS = [
     { id: 'other', name: '其他', color: 'other' }
 ];
 
-// Mock 数据
-var MOCK_ACCOUNTS = [
-    {
-        id: '1',
-        platform: 'github',
-        accountName: 'wen_dev',
-        email: 'wen@example.com',
-        password: '',
-        remark: '主要开发账号',
-        createdAt: '2024-01-15T08:30:00Z',
-        updatedAt: '2024-06-20T14:22:00Z'
-    },
-    {
-        id: '2',
-        platform: 'gitee',
-        accountName: 'wen_gitee',
-        email: 'wen@gitee.com',
-        password: '',
-        remark: '国内代码托管',
-        createdAt: '2024-02-10T10:15:00Z',
-        updatedAt: '2024-05-18T09:45:00Z'
-    },
-    {
-        id: '3',
-        platform: 'juejin',
-        accountName: 'wen_tech',
-        email: 'wen@juejin.cn',
-        password: '',
-        remark: '技术博客账号',
-        createdAt: '2024-03-05T16:20:00Z',
-        updatedAt: '2024-07-01T11:30:00Z'
-    },
-    {
-        id: '4',
-        platform: 'leetcode',
-        accountName: 'wen_algo',
-        email: 'wen@leetcode.com',
-        password: '',
-        remark: '刷题专用',
-        createdAt: '2024-01-20T09:00:00Z',
-        updatedAt: '2024-04-12T15:10:00Z'
-    },
-    {
-        id: '5',
-        platform: 'csdn',
-        accountName: 'wen_coder',
-        email: 'wen@csdn.net',
-        password: '',
-        remark: '备用博客',
-        createdAt: '2023-12-01T14:30:00Z',
-        updatedAt: '2024-03-20T10:00:00Z'
-    }
-];
-
 // 确保数据文件存在
 function ensureDataFile() {
     if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
     }
     if (!fs.existsSync(ACCOUNTS_FILE)) {
-        fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(MOCK_ACCOUNTS, null, 2), 'utf-8');
+        fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify([], null, 2), 'utf-8');
     }
 }
 
@@ -104,7 +50,7 @@ function readAccounts() {
         var raw = fs.readFileSync(ACCOUNTS_FILE, 'utf-8');
         return JSON.parse(raw);
     } catch (e) {
-        return MOCK_ACCOUNTS;
+        return [];
     }
 }
 

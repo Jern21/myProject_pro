@@ -36,8 +36,7 @@ var localDateStr = orderRules.localDateStr;
 var paidAmount = orderRules.paidAmount;
 var paidCost = orderRules.paidCost;
 var hasPayment = orderRules.hasPayment;
-var sumPaidAmount = orderRules.sumPaidAmount;
-var sumPaidCost = orderRules.sumPaidCost;
+var paymentEntries = orderRules.paymentEntries;
 
 /** 环比增长率；基准为 0 时：当前>0 视为 100，否则 0 */
 function calcGrowth(current, previous) {
@@ -117,6 +116,63 @@ function filterOrdersByRange(allOrders, meta, previous) {
     });
 }
 
+function normalizeEntryDate(value) {
+    return value ? String(value).slice(0, 10) : '';
+}
+
+function paymentCostForEntry(order, entry) {
+    var amount = parseFloat(order && order.amount) || 0;
+    var cost = parseFloat(order && order.cost) || 0;
+    var paid = parseFloat(entry && entry.amount) || 0;
+    if (amount <= 0 || cost <= 0 || paid <= 0) return 0;
+    return Math.min(cost, cost * Math.min(paid / amount, 1));
+}
+
+function eachPaymentEntry(allOrders, iterator) {
+    (allOrders || []).forEach(function (order) {
+        paymentEntries(order).forEach(function (entry) {
+            var date = normalizeEntryDate(entry.date);
+            if (!date) return;
+            iterator(order, {
+                date: date,
+                amount: parseFloat(entry.amount) || 0,
+                note: entry.note || ''
+            });
+        });
+    });
+}
+
+function sumPaymentAmountByDate(allOrders, matcher) {
+    var total = 0;
+    eachPaymentEntry(allOrders, function (order, entry) {
+        if (matcher(entry.date, order, entry)) total += entry.amount;
+    });
+    return total;
+}
+
+function sumPaymentCostByRange(allOrders, meta, previous) {
+    var total = 0;
+    eachPaymentEntry(allOrders, function (order, entry) {
+        if (matchRangeDate(entry.date, meta, previous)) {
+            total += paymentCostForEntry(order, entry);
+        }
+    });
+    return total;
+}
+
+function paymentOrdersByRange(allOrders, meta, previous) {
+    var seen = {};
+    var list = [];
+    eachPaymentEntry(allOrders, function (order, entry) {
+        if (!matchRangeDate(entry.date, meta, previous)) return;
+        var key = order.id || order.orderNo || JSON.stringify(order);
+        if (seen[key]) return;
+        seen[key] = true;
+        list.push(order);
+    });
+    return list;
+}
+
 function filterCustomersByRange(allCustomers, meta, previous) {
     if (meta.range === 'all') return previous ? [] : allCustomers.slice();
     return allCustomers.filter(function (c) {
@@ -159,39 +215,32 @@ router.get('/home-metrics', resp.asyncHandler(function (req, res) {
     var todayCreated = ordersCreatedOnDate(allOrders, todayStr);
     var yesterdayCreated = ordersCreatedOnDate(allOrders, yesterdayStr);
 
-    var todayRevenueOrders = allOrders.filter(function (o) {
-        return hasPayment(o) && o.orderDate === todayStr;
-    });
-    var yesterdayRevenueOrders = allOrders.filter(function (o) {
-        return hasPayment(o) && o.orderDate === yesterdayStr;
-    });
-
     var todayOrders = todayCreated.length;
     var yesterdayOrders = yesterdayCreated.length;
-    var todayRevenue = sumPaidAmount(todayRevenueOrders);
-    var yesterdayRevenue = sumPaidAmount(yesterdayRevenueOrders);
+    var todayRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return date === todayStr;
+    });
+    var yesterdayRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return date === yesterdayStr;
+    });
 
     var activeOrders = allOrders.filter(function (o) {
         return orderRules.isActiveProcessing(o);
     }).length;
 
-    var monthPaidOrders = allOrders.filter(function (o) {
-        return hasPayment(o) && o.orderDate && o.orderDate.startsWith(thisMonth);
+    var monthRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return date && date.startsWith(thisMonth);
     });
-    var lastMonthPaidOrders = allOrders.filter(function (o) {
-        return hasPayment(o) && o.orderDate && o.orderDate.startsWith(lastMonth);
+    var lastMonthRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return date && date.startsWith(lastMonth);
     });
-    var monthRevenue = sumPaidAmount(monthPaidOrders);
-    var lastMonthRevenue = sumPaidAmount(lastMonthPaidOrders);
 
-    var yearPaidOrders = allOrders.filter(function (o) {
-        return hasPayment(o) && o.orderDate && o.orderDate.startsWith(thisYear);
+    var yearRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return date && date.startsWith(thisYear);
     });
-    var lastYearPaidOrders = allOrders.filter(function (o) {
-        return hasPayment(o) && o.orderDate && o.orderDate.startsWith(lastYear);
+    var lastYearRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return date && date.startsWith(lastYear);
     });
-    var yearRevenue = sumPaidAmount(yearPaidOrders);
-    var lastYearRevenue = sumPaidAmount(lastYearPaidOrders);
 
     return resp.success(res, {
         todayOrders: todayOrders,
@@ -251,12 +300,16 @@ router.get('/monthly-overview', resp.asyncHandler(function (req, res) {
 
     var monthOrders = filterOrdersByRange(allOrders, meta, false);
     var lastMonthOrders = filterOrdersByRange(allOrders, meta, true);
-    var monthPaid = monthOrders.filter(hasPayment);
-    var lastMonthPaid = lastMonthOrders.filter(hasPayment);
+    var monthPaid = paymentOrdersByRange(allOrders, meta, false);
+    var lastMonthPaid = paymentOrdersByRange(allOrders, meta, true);
 
-    var monthRevenue = sumPaidAmount(monthPaid);
-    var lastMonthRevenue = sumPaidAmount(lastMonthPaid);
-    var monthCost = sumPaidCost(monthPaid);
+    var monthRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return matchRangeDate(date, meta, false);
+    });
+    var lastMonthRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return matchRangeDate(date, meta, true);
+    });
+    var monthCost = sumPaymentCostByRange(allOrders, meta, false);
     var monthProfit = monthRevenue - monthCost;
 
     var revenueGrowth = hasComparison ? calcGrowth(monthRevenue, lastMonthRevenue) : null;
@@ -274,10 +327,12 @@ router.get('/monthly-overview', resp.asyncHandler(function (req, res) {
     var monthNewCustomers = currentCustomers.length;
 
     var yearMeta = createRangeMeta('year');
-    var yearPaid = filterOrdersByRange(allOrders, yearMeta, false).filter(hasPayment);
-    var lastYearPaid = filterOrdersByRange(allOrders, yearMeta, true).filter(hasPayment);
-    var yearRevenue = sumPaidAmount(yearPaid);
-    var lastYearRevenue = sumPaidAmount(lastYearPaid);
+    var yearRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return matchRangeDate(date, yearMeta, false);
+    });
+    var lastYearRevenue = sumPaymentAmountByDate(allOrders, function (date) {
+        return matchRangeDate(date, yearMeta, true);
+    });
     var yearGrowth = calcGrowth(yearRevenue, lastYearRevenue);
 
     var customerCount = uniqueOrderCustomerCount(monthPaid);
@@ -325,15 +380,15 @@ router.get('/monthly-overview', resp.asyncHandler(function (req, res) {
 router.get('/revenue', resp.asyncHandler(function (req, res) {
     var range = normalizeStatsRange(req, 'all');
     var meta = createRangeMeta(range);
-    var allOrders = filterOrdersByRange(orders.findAll(), meta, false);
+    var allOrders = orders.findAll();
     var months = {};
 
-    allOrders.forEach(function (o) {
-        if (!hasPayment(o) || !o.orderDate) return;
-        var month = o.orderDate.substring(0, 7); // YYYY-MM
+    eachPaymentEntry(allOrders, function (o, entry) {
+        if (!matchRangeDate(entry.date, meta, false)) return;
+        var month = entry.date.substring(0, 7); // YYYY-MM
         if (!months[month]) months[month] = { revenue: 0, cost: 0, profit: 0, count: 0 };
-        var rev = paidAmount(o);
-        var cost = paidCost(o);
+        var rev = entry.amount;
+        var cost = paymentCostForEntry(o, entry);
         months[month].revenue += rev;
         months[month].cost += cost;
         months[month].profit += rev - cost;
@@ -371,7 +426,11 @@ router.get('/revenue/daily', resp.asyncHandler(function (req, res) {
         if (!o.orderDate) return;
         if (days[o.orderDate]) {
             days[o.orderDate].count++;
-            days[o.orderDate].revenue += paidAmount(o);
+        }
+    });
+    eachPaymentEntry(allOrders, function (o, entry) {
+        if (days[entry.date]) {
+            days[entry.date].revenue += entry.amount;
         }
     });
 
@@ -647,9 +706,11 @@ router.get('/todos', resp.asyncHandler(function (req, res) {
 router.get('/monthly-detail', resp.asyncHandler(function (req, res) {
     var range = normalizeStatsRange(req, 'all');
     var meta = createRangeMeta(range);
-    var allOrders = filterOrdersByRange(orders.findAll(), meta, false);
+    var allOrders = orders.findAll();
+    var rangeOrders = filterOrdersByRange(allOrders, meta, false);
     var allCustomers = filterCustomersByRange(customers.findAll(), meta, false);
     var periodStats = {};
+    var periodPaidOrderMap = {};
 
     function periodKey(dateStr) {
         if (!dateStr) return '';
@@ -682,18 +743,23 @@ router.get('/monthly-detail', resp.asyncHandler(function (req, res) {
         }
     }
 
-    // 统计订单数据（成交额按付款状态折算）
-    allOrders.forEach(function (o) {
+    // 统计订单数据：订单数按接单日期归属
+    rangeOrders.forEach(function (o) {
         var stat = ensurePeriod(periodKey(o.orderDate));
         if (stat) {
             stat.orderCount++;
             stat.orders.push(o);
-            var rev = paidAmount(o);
-            if (rev > 0) {
-                stat.revenue += rev;
-                stat.paidCount++;
-            }
         }
+    });
+
+    // 统计收入数据：成交额按实际付款日期归属
+    eachPaymentEntry(allOrders, function (o, entry) {
+        if (!matchRangeDate(entry.date, meta, false)) return;
+        var stat = ensurePeriod(periodKey(entry.date));
+        if (!stat) return;
+        stat.revenue += entry.amount;
+        if (!periodPaidOrderMap[stat.period]) periodPaidOrderMap[stat.period] = {};
+        periodPaidOrderMap[stat.period][o.id || o.orderNo || entry.date + ':' + entry.amount] = true;
     });
 
     // 统计新增客户
@@ -707,7 +773,7 @@ router.get('/monthly-detail', resp.asyncHandler(function (req, res) {
     // 转换为数组并计算派生指标
     var result = Object.keys(periodStats).sort().reverse().map(function (period, index, arr) {
         var stat = periodStats[period];
-        var paidCount = stat.paidCount || 0;
+        var paidCount = Object.keys(periodPaidOrderMap[period] || {}).length;
         var avgOrderValue = paidCount > 0 ? Math.round(stat.revenue / paidCount) : 0;
 
         // 计算环比（与上一周期比较）

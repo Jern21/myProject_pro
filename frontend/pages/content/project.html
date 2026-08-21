@@ -143,7 +143,7 @@
                 </div>
 
                 <!-- Kanban Board -->
-                <div id="kanban-view" class="project-kanban-board">
+                <div id="kanban-view" class="project-kanban-board" data-project-static-demo="true" style="visibility:hidden">
 
                     <!-- Column 1: 待确认需求 -->
                     <div class="flex-shrink-0 w-72 bg-gray-50 rounded-xl border border-gray-100 flex flex-col max-h-[calc(100vh-260px)]">
@@ -497,7 +497,7 @@
                 </div>
 
                 <!-- List View -->
-                <div id="list-view" class="hidden">
+                <div id="list-view" class="hidden" data-project-static-demo="true" style="visibility:hidden">
                     <div class="bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse table-fixed">
@@ -514,7 +514,7 @@
                                         <th class="py-3 px-2 font-medium text-center w-[70px]">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody id="ent-list-tbody" class="text-gray-800 text-sm">
+                                <tbody id="ent-list-tbody" class="text-gray-800 text-sm" data-project-static-demo="true">
                                     <!-- 待确认需求 -->
                                     <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">
                                         <td class="py-3 px-4">
@@ -814,7 +814,7 @@
                     </div>
 
                     <!-- Personal Kanban Board -->
-                    <div id="p-kanban-view" class="project-kanban-board">
+                    <div id="p-kanban-view" class="project-kanban-board" data-project-static-demo="true" style="visibility:hidden">
                         <!-- Column 1: 待确认需求 -->
                         <div class="flex-shrink-0 w-72 bg-gray-50 rounded-xl border border-gray-100 flex flex-col max-h-[calc(100vh-260px)]">
                             <div class="p-4 border-b border-gray-100 flex items-center justify-between">
@@ -1106,7 +1106,7 @@
                     </div>
 
                     <!-- Personal List View -->
-                    <div id="p-list-view" class="hidden">
+                    <div id="p-list-view" class="hidden" data-project-static-demo="true" style="visibility:hidden">
                         <div class="bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left border-collapse table-fixed">
@@ -1123,7 +1123,7 @@
                                         <th class="py-3 px-2 font-medium text-center w-[70px]">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody id="per-list-tbody" class="text-gray-800 text-sm">
+                                    <tbody id="per-list-tbody" class="text-gray-800 text-sm" data-project-static-demo="true">
                                         <!-- 待确认需求 -->
                                         <tr class="border-b border-gray-50 hover:bg-gray-50/80 transition-colors cursor-pointer">
                                             <td class="py-3 px-4">

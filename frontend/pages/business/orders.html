@@ -223,10 +223,10 @@
                 <!-- Title & Status -->
                 <div class="mb-5">
                     <div class="flex items-center gap-2 mb-2">
-                        <span id="detail-status-badge" class="status-badge status-processing text-[10px] py-0.5">进行中</span>
-                        <span id="detail-order-no" class="text-gray-400 text-xs">DD20250703001</span>
+                        <span id="detail-status-badge" class="status-badge text-[10px] py-0.5 bg-gray-100 text-gray-500">未选择</span>
+                        <span id="detail-order-no" class="text-gray-400 text-xs">暂无订单</span>
                     </div>
-                    <h2 id="detail-order-name" class="text-xl font-bold text-gray-900">企业官网定制开发</h2>
+                    <h2 id="detail-order-name" class="text-xl font-bold text-gray-900">暂无订单数据</h2>
                 </div>
 
                 <!-- Inner Tabs -->
@@ -245,9 +245,9 @@
                                 <i class="ph-fill ph-user text-xl"></i>
                             </div>
                             <div class="min-w-0">
-                                <p id="detail-customer-name" class="font-medium text-gray-800 text-sm truncate">张先生</p>
+                                <p id="detail-customer-name" class="font-medium text-gray-800 text-sm truncate">未选择客户</p>
                                 <p id="detail-customer-phone" class="text-xs text-gray-500 flex items-center gap-1 mt-0.5 cursor-pointer hover:text-brand-600 transition-colors" title="点击复制号码">
-                                    <span id="detail-customer-phone-text">138****5678</span>
+                                    <span id="detail-customer-phone-text">暂无号码</span>
                                     <i class="ph ph-copy text-xs opacity-60"></i>
                                     <i class="ph-fill ph-wechat-logo text-green-500"></i>
                                 </p>
@@ -260,14 +260,12 @@
                             </div>
                             <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                                 <span class="text-sm text-gray-500">客户来源</span>
-                                <span id="detail-source" class="px-2 py-0.5 bg-yellow-50 text-yellow-600 rounded text-xs font-medium">闲鱼</span>
+                                <span id="detail-source" class="px-2 py-0.5 bg-gray-50 text-gray-500 rounded text-xs font-medium">—</span>
                             </div>
                             <div class="flex justify-between items-start border-b border-gray-50 pb-3">
                                 <span class="text-sm text-gray-500 mt-0.5">客户标签</span>
                                 <div id="detail-tags" class="flex gap-1.5 flex-wrap justify-end">
-                                    <span class="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">高价值</span>
-                                    <span class="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">爽快型</span>
-                                    <span class="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">复购客户</span>
+                                    <span class="text-xs text-gray-300">暂无标签</span>
                                 </div>
                             </div>
                         </div>
@@ -279,16 +277,16 @@
                         <div class="grid grid-cols-2 gap-y-4 gap-x-4 mb-3">
                             <div>
                                 <p class="text-xs text-gray-400 mb-1">项目类型</p>
-                                <p id="detail-project-type" class="text-sm font-medium text-gray-800">网站开发</p>
+                                <p id="detail-project-type" class="text-sm font-medium text-gray-800">—</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 mb-1">项目名称</p>
-                                <p id="detail-project-name" class="text-sm font-medium text-gray-800 truncate">企业官网定制开发</p>
+                                <p id="detail-project-name" class="text-sm font-medium text-gray-800 truncate">—</p>
                             </div>
                         </div>
                         <div class="border-b border-gray-50 pb-3">
                             <p class="text-xs text-gray-400 mb-1">需求简述</p>
-                            <p id="detail-project-desc" class="text-sm text-gray-700 leading-relaxed">企业官网定制开发，包含首页、关于我们、产品展示等核心页面的设计与前后端开发，双端自适应。</p>
+                            <p id="detail-project-desc" class="text-sm text-gray-700 leading-relaxed">暂无订单数据，创建订单后这里会显示完整详情。</p>
                         </div>
                     </section>
 
@@ -298,27 +296,27 @@
                         <div class="grid grid-cols-2 gap-y-4 gap-x-4">
                             <div>
                                 <p class="text-xs text-gray-400 mb-1">成交金额</p>
-                                <p id="detail-amount" class="text-sm font-medium text-gray-800">¥ 6,800</p>
+                                <p id="detail-amount" class="text-sm font-medium text-gray-800">—</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 mb-1">实际成本</p>
-                                <p id="detail-cost" class="text-sm font-medium text-gray-800">¥ 2,600</p>
+                                <p id="detail-cost" class="text-sm font-medium text-gray-800">—</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 mb-1">预计利润</p>
-                                <p id="detail-profit" class="text-sm font-medium text-gray-800">¥ 4,200</p>
+                                <p id="detail-profit" class="text-sm font-medium text-gray-800">—</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 mb-1">实际耗时</p>
-                                <p id="detail-hours" class="text-sm font-medium text-gray-800">36 小时</p>
+                                <p id="detail-hours" class="text-sm font-medium text-gray-800">—</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 mb-1">净利率</p>
-                                <p id="detail-margin" class="text-sm font-medium text-gray-800">61.8%</p>
+                                <p id="detail-margin" class="text-sm font-medium text-gray-800">—</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 mb-1">时薪</p>
-                                <p id="detail-rate" class="text-sm font-medium text-gray-800">¥ 116.7/h</p>
+                                <p id="detail-rate" class="text-sm font-medium text-gray-800">—</p>
                             </div>
                         </div>
                     </section>
@@ -332,23 +330,23 @@
                         <div class="space-y-3">
                             <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                                 <span class="text-sm text-gray-500">接单时间</span>
-                                <span id="detail-order-date" class="text-sm text-gray-800">2025-07-03 14:32</span>
+                                <span id="detail-order-date" class="text-sm text-gray-800">—</span>
                             </div>
                             <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                                 <span class="text-sm text-gray-500">需求确认日</span>
-                                <span id="detail-confirm-date" class="text-sm text-gray-800">2025-07-04</span>
+                                <span id="detail-confirm-date" class="text-sm text-gray-800">—</span>
                             </div>
                             <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                                 <span class="text-sm text-gray-500">初稿交付日</span>
-                                <span id="detail-draft-date" class="text-sm text-gray-800">2025-07-10</span>
+                                <span id="detail-draft-date" class="text-sm text-gray-800">—</span>
                             </div>
                             <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                                 <span class="text-sm text-gray-500">终稿交付日</span>
-                                <span id="detail-delivery-date" class="text-sm text-gray-800 font-medium">2025-07-18</span>
+                                <span id="detail-delivery-date" class="text-sm text-gray-800 font-medium">—</span>
                             </div>
                             <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                                 <span class="text-sm text-gray-500">交付周期</span>
-                                <span id="detail-cycle" class="text-sm text-gray-800">15 天</span>
+                                <span id="detail-cycle" class="text-sm text-gray-800">—</span>
                             </div>
                         </div>
                     </section>
@@ -359,16 +357,17 @@
                         <div class="mb-3">
                             <div class="flex justify-between items-end mb-2">
                                 <p class="text-xs text-gray-400">付款状态</p>
-                                <p class="text-xs font-medium"><span id="detail-payment-status" class="text-gray-700">部分付款</span> <span id="detail-payment-ratio" class="text-red-500">已付 50%</span> <span class="text-gray-400">/ <span id="detail-payment-amount">¥ 6,800</span></span></p>
+                                <p class="text-xs font-medium"><span id="detail-payment-status" class="text-gray-700">—</span> <span id="detail-payment-ratio" class="text-red-500">—</span> <span class="text-gray-400">/ <span id="detail-payment-amount">—</span></span></p>
                             </div>
                             <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden flex">
-                                <div id="detail-payment-bar" class="bg-brand-500 w-1/2 h-full"></div>
+                                <div id="detail-payment-bar" class="bg-brand-500 w-0 h-full"></div>
                             </div>
                         </div>
                         <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                             <span class="text-sm text-gray-500">预计回款日</span>
-                            <span id="detail-pay-date" class="text-sm text-gray-800">2025-07-18</span>
+                            <span id="detail-pay-date" class="text-sm text-gray-800">—</span>
                         </div>
+                        <div id="detail-payment-records" class="space-y-2 mt-3"></div>
                     </section>
 
                 </div>
@@ -385,11 +384,11 @@
                                         <i class="ph ph-copy"></i>复制
                                     </button>
                                 </div>
-                                <p id="detail-git-url" class="text-xs text-gray-700 mt-1 break-all">https://github.com/wen/company-site</p>
+                                <p id="detail-git-url" class="text-xs text-gray-700 mt-1 break-all">未填写</p>
                             </div>
                             <div class="flex justify-between items-center border-b border-gray-50 pb-3">
                                 <span class="text-sm text-gray-500">关联报价单</span>
-                                <span id="detail-quote-ref" class="text-sm text-gray-800">QUO-20250703-001</span>
+                                <span id="detail-quote-ref" class="text-sm text-gray-800">—</span>
                             </div>
                             <div id="detail-attachments" class="space-y-2"></div>
                         </div>
@@ -560,13 +559,44 @@
             }
 
             function getFileIcon(file) {
-                var type = (file && file.type) || '';
-                var name = (file && file.name) || '';
+                var type = (file && (file.type || file.mimetype)) || '';
+                var name = (file && (file.name || file.originalName || file.filename)) || '';
                 if (type.startsWith('image/')) return 'ph-image text-blue-500';
                 if (type.indexOf('pdf') !== -1 || name.match(/\.pdf$/i)) return 'ph-file-pdf text-red-500';
                 if (type.indexOf('word') !== -1 || name.match(/\.(doc|docx)$/i)) return 'ph-file-doc text-blue-600';
                 if (type.indexOf('video') !== -1) return 'ph-video-camera text-purple-500';
                 return 'ph-file text-gray-500';
+            }
+
+            function fileNameOf(file) {
+                return (file && (file.name || file.originalName || file.filename)) || '未命名文件';
+            }
+
+            function fileUrlOf(file) {
+                var url = (file && file.url) || '';
+                if (!url) return '';
+                if (/^(https?:|data:|blob:|\/)/i.test(url)) return url;
+                return '/' + String(url).replace(/^\/+/, '');
+            }
+
+            function fileTypeOf(file) {
+                return (file && (file.type || file.mimetype)) || '';
+            }
+
+            function isImageFile(file) {
+                return fileTypeOf(file).indexOf('image/') === 0 || /\.(png|jpe?g|gif|webp)$/i.test(fileNameOf(file));
+            }
+
+            function isPdfFile(file) {
+                return fileTypeOf(file).indexOf('pdf') !== -1 || /\.pdf$/i.test(fileNameOf(file));
+            }
+
+            function isOfficeFile(file) {
+                return fileTypeOf(file).indexOf('word') !== -1 || /\.(doc|docx)$/i.test(fileNameOf(file));
+            }
+
+            function canPreviewFile(file) {
+                return !!(fileUrlOf(file) && (isImageFile(file) || isPdfFile(file) || isOfficeFile(file)));
             }
 
             function fileSizeText(size) {
@@ -580,6 +610,75 @@ function fileLabel(key) {
             var labels = { screenshot: '需求沟通截图', showcase: '成品展示图', quote: '报价单', taskBook: '项目任务书', paymentRecord: '打款记录' };
             return labels[key] || '附件';
         }
+
+            function normalizePaymentRecords(value) {
+                if (!Array.isArray(value)) return [];
+                return value.map(function (item) {
+                    item = item || {};
+                    return {
+                        date: String(item.date || item.payDate || item.time || '').trim(),
+                        amount: moneyNumber(item.amount),
+                        note: String(item.note || item.remark || '').trim()
+                    };
+                }).filter(function (item) {
+                    return item.date || item.amount > 0 || item.note;
+                });
+            }
+
+            function paymentRecordsTotal(records) {
+                return normalizePaymentRecords(records).reduce(function (sum, item) {
+                    return sum + moneyNumber(item.amount);
+                }, 0);
+            }
+
+            function paymentInfo(order) {
+                order = order || {};
+                var amount = moneyNumber(order.amount);
+                var records = normalizePaymentRecords(order.paymentRecords);
+                var paidTotal = paymentRecordsTotal(records);
+                var ratio = parseInt(order.paymentRatio, 10) || 0;
+
+                if (paidTotal > 0 && amount > 0) {
+                    paidTotal = Math.min(paidTotal, amount);
+                    ratio = Math.min(Math.round(paidTotal / amount * 100), 100);
+                } else if (order.paymentStatus === '已结清') {
+                    ratio = 100;
+                    paidTotal = amount;
+                } else if (order.paymentStatus === '未付款') {
+                    ratio = 0;
+                    paidTotal = 0;
+                } else if (ratio > 0) {
+                    paidTotal = amount * ratio / 100;
+                }
+
+                return {
+                    records: records,
+                    paidTotal: paidTotal,
+                    ratio: Math.min(Math.max(ratio, 0), 100)
+                };
+            }
+
+            function renderPaymentRecordsDetail(order) {
+                var box = document.getElementById('detail-payment-records');
+                if (!box) return;
+                var records = normalizePaymentRecords(order && order.paymentRecords);
+                if (!records.length) {
+                    box.innerHTML = '<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50/60 py-3 text-center text-xs text-gray-300">暂无分次付款记录</div>';
+                    return;
+                }
+                box.innerHTML = [
+                    '<p class="text-xs text-gray-400">分次付款记录</p>',
+                    records.map(function (item) {
+                        return '<div class="rounded-lg border border-gray-100 bg-gray-50/70 px-3 py-2 flex items-start justify-between gap-3">' +
+                            '<div class="min-w-0">' +
+                            '<p class="text-sm font-medium text-gray-700">' + formatMoney(item.amount) + '</p>' +
+                            (item.note ? '<p class="text-xs text-gray-400 truncate">' + escapeHtml(item.note) + '</p>' : '') +
+                            '</div>' +
+                            '<span class="text-xs text-gray-400 flex-shrink-0">' + escapeHtml(item.date || '未填日期') + '</span>' +
+                            '</div>';
+                    }).join('')
+                ].join('');
+            }
 
             // ========== Toast ==========
 
@@ -713,6 +812,7 @@ function fileLabel(key) {
                 api('/api/orders?' + params.toString()).then(function (res) {
                     if (!res.success) {
                         if (tbody) tbody.innerHTML = '<tr><td colspan="9" class="py-10 text-center text-red-400">加载失败：' + escapeHtml(res.error || '') + '</td></tr>';
+                        renderEmptyDetailPanel('订单加载失败，请检查后端服务状态。');
                         return;
                     }
                 state.orders = res.data.list || [];
@@ -732,10 +832,13 @@ function fileLabel(key) {
                                 firstRow.classList.remove('bg-brand-50/30');
                             }
                         }, 0);
+                    } else {
+                        renderEmptyDetailPanel();
                     }
                 }).catch(function (err) {
                     console.error('[Orders] 列表加载失败', err);
                     if (tbody) tbody.innerHTML = '<tr><td colspan="9" class="py-10 text-center text-red-400">加载失败，请检查后端服务是否启动</td></tr>';
+                    renderEmptyDetailPanel('订单加载失败，请检查后端服务是否启动。');
                 });
             }
 
@@ -1080,35 +1183,162 @@ function fileLabel(key) {
 
             // ========== 详情面板 ==========
 
-function renderAttachments(files) {
-            var box = document.getElementById('detail-attachments');
-            if (!box) return;
-            var keys = ['taskBook', 'quote', 'screenshot', 'showcase', 'paymentRecord'];
+function normalizeAttachmentList(value) {
+            if (!value) return [];
+            return Array.isArray(value) ? value.filter(Boolean) : [value];
+        }
+
+            function renderAttachments(files) {
+                var box = document.getElementById('detail-attachments');
+                if (!box) return;
+                files = files || {};
+                var keys = ['taskBook', 'quote', 'screenshot', 'showcase', 'paymentRecord'];
                 var html = keys.map(function (key) {
-                    var file = files[key];
-                    if (!file) return '';
-                    var canDownload = !!file.url;
-                    var actionHtml = canDownload
-                        ? '<button type="button" class="detail-file-download text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1" data-file-key="' + key + '"><i class="ph ph-download-simple"></i>下载</button>'
-                        : '<span class="text-xs text-gray-300">未保存文件</span>';
-                    return [
-                        '<div class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/70 px-3 py-2">',
-                        '  <i class="ph ' + getFileIcon(file) + ' text-lg flex-shrink-0"></i>',
-                        '  <div class="min-w-0 flex-1">',
-                        '    <p class="text-xs text-gray-400">' + fileLabel(key) + '</p>',
-                        '    <p class="text-sm text-gray-700 truncate">' + escapeHtml(file.name || '未命名文件') + '</p>',
-                        fileSizeText(file.size) ? '    <p class="text-[10px] text-gray-400">' + fileSizeText(file.size) + '</p>' : '',
-                        '  </div>',
-                        actionHtml,
-                        '</div>'
-                    ].join('');
+                    var items = normalizeAttachmentList(files[key]);
+                    return items.map(function (file, index) {
+                        var url = fileUrlOf(file);
+                        var canDownload = !!url;
+                        var previewHtml = canPreviewFile(file)
+                            ? '<button type="button" class="detail-file-preview text-xs text-gray-600 hover:text-brand-600 font-medium flex items-center gap-1" data-file-key="' + key + '" data-file-index="' + index + '"><i class="ph ph-eye"></i>预览</button>'
+                            : '';
+                        var downloadHtml = canDownload
+                            ? '<button type="button" class="detail-file-download text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1" data-file-key="' + key + '" data-file-index="' + index + '"><i class="ph ph-download-simple"></i>下载</button>'
+                            : '<span class="text-xs text-gray-300">未保存文件</span>';
+                        var iconHtml = isImageFile(file) && url
+                            ? '<img src="' + escapeHtml(url) + '" class="w-10 h-10 rounded-lg object-cover border border-gray-100 flex-shrink-0" alt="">'
+                            : '<i class="ph ' + getFileIcon(file) + ' text-lg flex-shrink-0"></i>';
+                        return [
+                            '<div class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/70 px-3 py-2">',
+                            '  ' + iconHtml,
+                            '  <div class="min-w-0 flex-1">',
+                            '    <p class="text-xs text-gray-400">' + fileLabel(key) + (items.length > 1 ? ' #' + (index + 1) : '') + '</p>',
+                            '    <p class="text-sm text-gray-700 truncate">' + escapeHtml(fileNameOf(file)) + '</p>',
+                            fileSizeText(file.size) ? '    <p class="text-[10px] text-gray-400">' + fileSizeText(file.size) + '</p>' : '',
+                            '  </div>',
+                            '  <div class="flex items-center gap-2 flex-shrink-0">',
+                            previewHtml,
+                            downloadHtml,
+                            '  </div>',
+                            '</div>'
+                        ].join('');
+                    }).join('');
                 }).join('');
                 box.innerHTML = html || '<div class="rounded-lg border border-dashed border-gray-200 py-4 text-center text-xs text-gray-300">暂无附件</div>';
             }
 
+            function fileFromAttachmentButton(btn) {
+                var key = btn.getAttribute('data-file-key');
+                var index = parseInt(btn.getAttribute('data-file-index'), 10) || 0;
+                var data = window.__currentOrderData || {};
+                var items = normalizeAttachmentList(data.uploadedFiles && data.uploadedFiles[key]);
+                return items[index] || null;
+            }
+
+            function openImagePreview(file) {
+                var existing = document.getElementById('order-file-preview-modal');
+                if (existing) existing.remove();
+                var modal = document.createElement('div');
+                modal.id = 'order-file-preview-modal';
+                modal.className = 'fixed inset-0 z-[70] flex items-center justify-center p-4';
+                modal.innerHTML = [
+                    '<div class="absolute inset-0 bg-black/60" data-preview-close="1"></div>',
+                    '<div class="relative max-w-5xl w-full max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden">',
+                    '  <div class="h-12 px-4 border-b border-gray-100 flex items-center justify-between gap-3">',
+                    '    <p class="text-sm font-medium text-gray-700 truncate">' + escapeHtml(fileNameOf(file)) + '</p>',
+                    '    <button type="button" class="w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-500 flex items-center justify-center" data-preview-close="1"><i class="ph ph-x"></i></button>',
+                    '  </div>',
+                    '  <div class="bg-gray-950/95 flex items-center justify-center max-h-[calc(90vh-3rem)] overflow-auto">',
+                    '    <img src="' + escapeHtml(fileUrlOf(file)) + '" class="max-w-full max-h-[calc(90vh-3rem)] object-contain" alt="">',
+                    '  </div>',
+                    '</div>'
+                ].join('');
+                document.body.appendChild(modal);
+                modal.addEventListener('click', function (e) {
+                    if (e.target.closest('[data-preview-close]')) modal.remove();
+                });
+            }
+
+            function previewFile(file) {
+                var url = fileUrlOf(file);
+                if (!file || !url) {
+                    showToast('当前文件没有可预览地址');
+                    return;
+                }
+                if (isImageFile(file)) {
+                    openImagePreview(file);
+                    return;
+                }
+                window.open(url, '_blank', 'noopener');
+            }
+
+            function setDetailActionsEnabled(enabled) {
+                ['order-detail-edit-btn', 'order-detail-quote-btn', 'detail-copy-git-btn'].forEach(function (id) {
+                    var btn = document.getElementById(id);
+                    if (!btn) return;
+                    btn.disabled = !enabled;
+                    btn.classList.toggle('opacity-50', !enabled);
+                    btn.classList.toggle('cursor-not-allowed', !enabled);
+                });
+            }
+
+            function renderEmptyDetailPanel(message) {
+                window.__currentOrderData = null;
+                setText('detail-order-no', '暂无订单');
+                setText('detail-order-name', '暂无订单数据');
+                setText('detail-customer-name', '未选择客户');
+                setText('detail-customer-phone-text', '暂无号码');
+                setText('detail-real-name', '—');
+                setText('detail-project-type', '—');
+                setText('detail-project-name', '—');
+                setText('detail-project-desc', message || '暂无订单数据，创建订单后这里会显示完整详情。');
+                setText('detail-amount', '—');
+                setText('detail-cost', '—');
+                setText('detail-profit', '—');
+                setText('detail-hours', '—');
+                setText('detail-margin', '—');
+                setText('detail-rate', '—');
+                setText('detail-order-date', '—');
+                setText('detail-confirm-date', '—');
+                setText('detail-draft-date', '—');
+                setText('detail-cycle', '—');
+                setText('detail-delivery-date', '—');
+                setText('detail-payment-status', '—');
+                setText('detail-payment-ratio', '—');
+                setText('detail-payment-amount', '—');
+                setText('detail-pay-date', '—');
+                setText('detail-git-url', '未填写');
+                setText('detail-quote-ref', '—');
+
+                var badge = document.getElementById('detail-status-badge');
+                if (badge) {
+                    badge.textContent = '未选择';
+                    badge.className = 'status-badge text-[10px] py-0.5 bg-gray-100 text-gray-500';
+                }
+
+                var bar = document.getElementById('detail-payment-bar');
+                if (bar) bar.style.width = '0%';
+
+                var sourceEl = document.getElementById('detail-source');
+                if (sourceEl) {
+                    sourceEl.textContent = '—';
+                    sourceEl.className = 'px-2 py-0.5 bg-gray-50 text-gray-500 rounded text-xs font-medium';
+                }
+
+                var tagsEl = document.getElementById('detail-tags');
+                if (tagsEl) tagsEl.innerHTML = '<span class="text-xs text-gray-300">暂无标签</span>';
+
+                renderAttachments({});
+                renderPaymentRecordsDetail(null);
+                setDetailActionsEnabled(false);
+            }
+
             function updateDetailPanel(order) {
-                if (!order) return;
+                if (!order) {
+                    renderEmptyDetailPanel();
+                    return;
+                }
                 window.__currentOrderData = order;
+                setDetailActionsEnabled(true);
 
                 var amountVal = moneyNumber(order.amount);
                 var costVal = moneyNumber(order.cost);
@@ -1122,7 +1352,7 @@ function renderAttachments(files) {
                 setText('detail-order-no', order.orderNo);
                 setText('detail-order-name', order.projectName);
                 setText('detail-customer-name', order.customerNick);
-                setText('detail-customer-phone', order.customerPhone);
+                setText('detail-customer-phone-text', order.customerPhone || '暂无号码');
                 setText('detail-real-name', order.customerName || '—');
                 setText('detail-project-type', order.projectType);
                 setText('detail-project-name', order.projectName);
@@ -1139,9 +1369,13 @@ function renderAttachments(files) {
                 setText('detail-cycle', normalizeCycle('', order.orderDate, order.finalDate));
                 setText('detail-delivery-date', formatDateText(order.finalDate));
                 setText('detail-source', order.customerSource);
-                setText('detail-payment-status', order.paymentStatus);
-                setText('detail-payment-ratio', '已付 ' + (parseInt(order.paymentRatio, 10) || 0) + '%');
-                setText('detail-payment-amount', formatMoney(amountVal));
+                var payInfo = paymentInfo(order);
+                var payRatioText = order.paymentStatus === '已结清' && !payInfo.records.length
+                    ? '已结清'
+                    : (payInfo.ratio > 0 ? '已付 ' + payInfo.ratio + '%' : '未付款');
+                setText('detail-payment-status', order.paymentStatus || '—');
+                setText('detail-payment-ratio', payRatioText);
+                setText('detail-payment-amount', payInfo.paidTotal > 0 ? formatMoney(payInfo.paidTotal) : '—');
                 setText('detail-pay-date', formatDateText(order.payDate));
                 setText('detail-git-url', order.gitUrl || '未填写');
                 setText('detail-quote-ref', order.quoteRef || '—');
@@ -1150,7 +1384,7 @@ function renderAttachments(files) {
                 if (badge) { badge.textContent = statusText; badge.className = 'status-badge text-[10px] py-0.5 ' + statusClass; }
 
                 var bar = document.getElementById('detail-payment-bar');
-                if (bar) bar.style.width = (parseInt(order.paymentRatio, 10) || 0) + '%';
+                if (bar) bar.style.width = payInfo.ratio + '%';
 
                 var sourceEl = document.getElementById('detail-source');
                 if (sourceEl) {
@@ -1182,6 +1416,7 @@ function renderAttachments(files) {
                 }
 
                 renderAttachments(order.uploadedFiles || {});
+                renderPaymentRecordsDetail(order);
             }
 
             // ========== 详情面板交互 ==========
@@ -1192,6 +1427,10 @@ function renderAttachments(files) {
                     copyGitBtn.dataset.bound = 'true';
                     copyGitBtn.addEventListener('click', function () {
                         var data = window.__currentOrderData || {};
+                        if (!data.gitUrl) {
+                            showToast('暂无仓库链接');
+                            return;
+                        }
                         copyText(data.gitUrl || '', '仓库链接已复制');
                     });
                 }
@@ -1200,14 +1439,18 @@ function renderAttachments(files) {
                 if (attachments && !attachments.dataset.bound) {
                     attachments.dataset.bound = 'true';
                     attachments.addEventListener('click', function (e) {
+                        var previewBtn = e.target.closest('.detail-file-preview');
+                        if (previewBtn) {
+                            previewFile(fileFromAttachmentButton(previewBtn));
+                            return;
+                        }
                         var btn = e.target.closest('.detail-file-download');
                         if (!btn) return;
-                        var key = btn.getAttribute('data-file-key');
-                        var data = window.__currentOrderData || {};
-                        var file = data.uploadedFiles && data.uploadedFiles[key];
-                        if (file && file.url) {
+                        var file = fileFromAttachmentButton(btn);
+                        var fileUrl = fileUrlOf(file);
+                        if (file && fileUrl) {
                             var link = document.createElement('a');
-                            link.href = file.url; link.download = file.name || 'download';
+                            link.href = fileUrl; link.download = fileNameOf(file) || 'download';
                             document.body.appendChild(link); link.click(); link.remove();
                         } else {
                             showToast('当前文件没有可下载地址');

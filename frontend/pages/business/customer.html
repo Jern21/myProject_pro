@@ -423,6 +423,21 @@
             return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;');
         }
 
+        function customerAvatarDataUrl(name) {
+            var label = String(name || '客').trim().charAt(0) || '客';
+            var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">' +
+                '<rect width="96" height="96" rx="48" fill="#e0e7ff"/>' +
+                '<text x="50%" y="50%" dy=".08em" text-anchor="middle" dominant-baseline="middle" ' +
+                'font-family="Inter, system-ui, sans-serif" font-size="38" font-weight="700" fill="#4f46e5">' +
+                escapeHtml(label) + '</text></svg>';
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
+
+        function normalizeCustomerAvatar(src, name) {
+            if (src && src.indexOf('ui-avatars.com') === -1) return src;
+            return customerAvatarDataUrl(name);
+        }
+
         // ========== API 加载 ==========
         function loadCustomers() {
             var params = new URLSearchParams();
@@ -457,11 +472,18 @@
                             detailFollows = [];
                             renderOrdersList([]);
                             renderFollowList([]);
+                            renderEmptyDetailPanel();
                         }
                     }
                 })
                 .catch(function (err) {
                     console.error('加载客户列表失败:', err);
+                    customerCache = [];
+                    customerMap = {};
+                    renderTable();
+                    renderPagination();
+                    renderSummary();
+                    renderEmptyDetailPanel('客户数据加载失败，请检查后端服务是否启动。');
                 });
         }
 
@@ -521,7 +543,7 @@
                     return '<span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">' + escapeAttr(t) + '</span>';
                 }).join('');
 
-                var avatar = c.avatar || ('https://ui-avatars.com/api/?name=' + encodeURIComponent((c.name || '客').charAt(0)) + '&background=e0e7ff&color=4f46e5');
+                var avatar = normalizeCustomerAvatar(c.avatar, c.name);
                 var avatarCls = isLost ? 'w-8 h-8 rounded-full grayscale' : 'w-10 h-10 rounded-full';
 
                 return '<tr class="' + rowClass + selectedCls + '" data-cid="' + c.id + '">' +
@@ -797,7 +819,10 @@
         function selectCustomer(id) {
             selectedCustomerId = id;
             var c = customerMap[id];
-            if (!c) return;
+            if (!c) {
+                renderEmptyDetailPanel();
+                return;
+            }
 
             document.querySelectorAll('#customer-tbody tr').forEach(function (tr) {
                 if (tr.dataset.cid === id) tr.classList.add('bg-brand-50/30');
@@ -808,8 +833,61 @@
             loadCustomerDetail(id);
         }
 
+        function renderEmptyDetailPanel(message) {
+            selectedCustomerId = null;
+            var set = function (id, text) {
+                var el = document.getElementById(id);
+                if (el) el.textContent = text;
+            };
+
+            set('detail-name', '暂无客户数据');
+            set('detail-phone', '创建客户后这里会显示联系方式');
+            set('detail-addtime', '—');
+            set('detail-amount', '—');
+            set('detail-orders', '0 单');
+            set('detail-firstdeal', '—');
+            set('detail-status', '未选择');
+            set('detail-followstatus', '—');
+            set('detail-level-grid', '—');
+            set('detail-level', '—');
+            set('detail-type', '—');
+            set('detail-desc', message || '暂无客户数据，新增客户后这里会显示基本信息、跟进记录、订单记录和备注。');
+
+            var sourceEl = document.getElementById('detail-source');
+            if (sourceEl) sourceEl.textContent = '—';
+
+            var avatar = document.getElementById('detail-avatar');
+            if (avatar) avatar.src = customerAvatarDataUrl('客');
+
+            var fsEl = document.getElementById('detail-followstatus');
+            if (fsEl) fsEl.className = 'text-sm font-medium text-gray-400';
+
+            var statusEl = document.getElementById('detail-status');
+            if (statusEl) statusEl.className = 'text-sm font-medium text-gray-400';
+
+            var typeEl = document.getElementById('detail-type');
+            if (typeEl) typeEl.className = 'px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-50 text-gray-400 border border-gray-100';
+            var levelEl = document.getElementById('detail-level');
+            if (levelEl) levelEl.className = 'px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-50 text-gray-400 border border-gray-100';
+
+            var tagsEl = document.getElementById('detail-tags');
+            if (tagsEl) tagsEl.innerHTML = '<span class="text-xs text-gray-400">暂无标签</span>';
+
+            var notesInput = document.getElementById('detail-notes-input');
+            if (notesInput) notesInput.value = '';
+
+            detailOrders = [];
+            detailFollows = [];
+            renderOrdersList([]);
+            renderFollowList([]);
+            switchDetailTab('basic');
+        }
+
         function updateDetailPanel(c) {
-            if (!c) return;
+            if (!c) {
+                renderEmptyDetailPanel();
+                return;
+            }
             var set = function (id, text) {
                 var el = document.getElementById(id);
                 if (el) el.textContent = text;
@@ -832,7 +910,7 @@
 
             var avatar = document.getElementById('detail-avatar');
             if (avatar) {
-                avatar.src = c.avatar || ('https://ui-avatars.com/api/?name=' + encodeURIComponent((c.name || '客').charAt(0)) + '&background=e0e7ff&color=4f46e5');
+                avatar.src = normalizeCustomerAvatar(c.avatar, c.name);
             }
 
             var fsEl = document.getElementById('detail-followstatus');
@@ -843,6 +921,15 @@
             var statusEl = document.getElementById('detail-status');
             if (statusEl) {
                 statusEl.className = 'text-sm font-medium ' + (c.status === '已流失' ? 'text-gray-400' : 'text-green-500');
+            }
+
+            var typeEl = document.getElementById('detail-type');
+            if (typeEl) {
+                typeEl.className = 'px-1.5 py-0.5 rounded text-[10px] font-medium border ' + (TYPE_STYLES[c.type] || 'bg-gray-50 text-gray-500 border-gray-100');
+            }
+            var levelEl = document.getElementById('detail-level');
+            if (levelEl) {
+                levelEl.className = 'px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-50 text-green-600 border border-green-100';
             }
 
             var tagsEl = document.getElementById('detail-tags');
@@ -903,7 +990,10 @@
         }
 
         function submitFollow() {
-            if (!selectedCustomerId) return;
+            if (!selectedCustomerId) {
+                showToast('请先选择客户');
+                return;
+            }
             var input = document.getElementById('follow-input');
             var content = ((input && input.value) || '').trim();
             if (!content) {
@@ -930,7 +1020,10 @@
         }
 
         function saveNotes() {
-            if (!selectedCustomerId) return;
+            if (!selectedCustomerId) {
+                showToast('请先选择客户');
+                return;
+            }
             var input = document.getElementById('detail-notes-input');
             var notes = input ? input.value : '';
             fetch('/api/customers/' + encodeURIComponent(selectedCustomerId), {
@@ -1185,7 +1278,7 @@
                     formData.totalAmount = '-';
                     formData.firstDeal = '—';
                     formData.status = '正常';
-                    formData.avatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name.charAt(0)) + '&background=e0e7ff&color=4f46e5';
+                    formData.avatar = '';
                 }
 
                 var apiUrl = '/api/customers';
@@ -1297,6 +1390,8 @@
                     });
                     if (customerCache.length > 0) {
                         selectCustomer(customerCache[0].id);
+                    } else {
+                        renderEmptyDetailPanel();
                     }
                 });
             }
@@ -1339,6 +1434,10 @@
             if (quickFollowBtn && !quickFollowBtn.dataset.bound) {
                 quickFollowBtn.dataset.bound = 'true';
                 quickFollowBtn.addEventListener('click', function () {
+                    if (!selectedCustomerId) {
+                        showToast('请先选择客户');
+                        return;
+                    }
                     switchDetailTab('follow');
                     var input = document.getElementById('follow-input');
                     if (input) input.focus();

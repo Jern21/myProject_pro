@@ -214,6 +214,60 @@
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
+        function renderKanbanLoading(scope) {
+            var kanban = document.getElementById(scope === 'personal' ? 'p-kanban-view' : 'kanban-view');
+            if (!kanban) return;
+            kanban.innerHTML = KANBAN_COLUMNS.map(function (col) {
+                return '<div class="flex-shrink-0 w-72 ' + col.colClass + ' rounded-xl border border-gray-100 flex flex-col max-h-[calc(100vh-260px)]">' +
+                    '<div class="p-4 border-b ' + col.headerBorder + ' flex items-center justify-between">' +
+                    '<div class="flex items-center gap-2">' +
+                    '<span class="w-2 h-2 rounded-full ' + col.dotClass + '"></span>' +
+                    '<h3 class="font-semibold text-gray-700 text-sm">' + col.key + '</h3>' +
+                    '</div>' +
+                    '<span class="text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full border border-gray-200">0</span>' +
+                    '</div>' +
+                    '<div class="flex-1 p-3">' +
+                    '<div class="rounded-lg border border-dashed border-gray-200 bg-white/70 py-8 text-center text-xs text-gray-400">' +
+                    '<i class="ph ph-spinner-gap animate-spin text-lg block mb-2"></i>加载项目中...' +
+                    '</div>' +
+                    '</div></div>';
+            }).join('');
+            kanban.style.visibility = 'visible';
+            kanban.removeAttribute('data-project-static-demo');
+        }
+
+        function clearStaticProjectDemo() {
+            ['enterprise', 'personal'].forEach(function (scope) {
+                var kanban = document.getElementById(scope === 'personal' ? 'p-kanban-view' : 'kanban-view');
+                if (kanban && kanban.getAttribute('data-project-static-demo') === 'true') {
+                    renderKanbanLoading(scope);
+                } else if (kanban) {
+                    kanban.style.visibility = 'visible';
+                }
+            });
+
+            [
+                { id: 'ent-list-tbody', colspan: 9 },
+                { id: 'per-list-tbody', colspan: 9 }
+            ].forEach(function (cfg) {
+                var tbody = document.getElementById(cfg.id);
+                if (tbody && tbody.getAttribute('data-project-static-demo') === 'true') {
+                    tbody.innerHTML = '<tr><td colspan="' + cfg.colspan + '" class="py-8 text-center text-gray-400 text-sm"><i class="ph ph-spinner-gap animate-spin mr-1"></i>加载项目中...</td></tr>';
+                    tbody.removeAttribute('data-project-static-demo');
+                }
+            });
+
+            ['list-view', 'p-list-view'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el && el.getAttribute('data-project-static-demo') === 'true') {
+                    el.style.visibility = 'visible';
+                    el.removeAttribute('data-project-static-demo');
+                } else if (el) {
+                    el.style.visibility = 'visible';
+                }
+            });
+        }
+
         function formatAmount(amount) {
             if (!amount) return '—';
             return '¥' + Number(amount).toLocaleString();
@@ -1641,6 +1695,8 @@ break;
 
         // ========== 初始化 ==========
         function init() {
+            clearStaticProjectDemo();
+
             // Scope toggle
             var entScopeBtn = document.getElementById('scope-enterprise');
             var perScopeBtn = document.getElementById('scope-personal');

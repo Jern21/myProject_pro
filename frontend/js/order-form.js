@@ -39,7 +39,8 @@
     var editMode = false;
     var editId = null; // 编辑模式下的订单 ID
     var selectedCustomerId = '';
-    var uploadedFiles = {}; // { screenshot: {name,size,type,url}, showcase: {...}, quote: {...}, taskBook: {...}, paymentRecord: {...} }
+    var uploadedFiles = {}; // { screenshot: {...}, showcase: {...}, quote: {...}, taskBook: {...}, paymentRecord: [{...}] }
+    var paymentRecordsState = [];
 
     // ========== 工具函数 ==========
 
@@ -135,8 +136,9 @@
         }).join('');
     }
 
-    function uploadZoneHtml(type, icon, label, hint, accept) {
+    function uploadZoneHtml(type, icon, label, hint, accept, multiple) {
         accept = accept || '';
+        var multipleAttr = multiple ? ' multiple' : '';
         return [
             '<div class="order-upload-zone border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-brand-300 transition cursor-pointer relative" data-upload-type="' + type + '">',
             '  <div class="upload-placeholder">',
@@ -151,7 +153,7 @@
             '      <button type="button" class="upload-remove w-5 h-5 flex items-center justify-center text-gray-400 hover:text-red-500 transition flex-shrink-0"><i class="ph ph-x text-xs"></i></button>',
             '    </div>',
             '  </div>',
-            '  <input type="file" class="upload-input hidden" accept="' + accept + '">',
+            '  <input type="file" class="upload-input hidden" accept="' + accept + '"' + multipleAttr + '>',
             '</div>'
         ].join('');
     }
@@ -253,6 +255,18 @@
             buildField('付款比例（%）', '<div id="payment-ratio-wrap" class="hidden"><input type="number" name="paymentRatio" placeholder="如：50" min="0" max="100" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-all bg-white"></div>', { half: true }),
             buildField('预计回款日', inputHtml('payDate', '', 'date'), { half: true }),
             '        </div>',
+            '        <div id="payment-records-wrap" class="hidden mt-4 rounded-xl border border-gray-100 bg-gray-50/60 p-3">',
+            '          <div class="flex items-center justify-between gap-3">',
+            '            <div>',
+            '              <p class="text-xs font-semibold text-gray-700">分次付款记录</p>',
+            '              <p id="payment-record-summary" class="text-[10px] text-gray-400 mt-0.5">暂无实际付款记录</p>',
+            '            </div>',
+            '            <button type="button" id="payment-record-add" class="h-8 px-3 rounded-lg border border-gray-200 bg-white text-xs text-gray-600 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 transition flex items-center gap-1">',
+            '              <i class="ph ph-plus"></i>添加',
+            '            </button>',
+            '          </div>',
+            '          <div id="payment-record-list" class="space-y-2 mt-3"></div>',
+            '        </div>',
             '      </div>',
             // === Section 6: 附件与关联 ===
             '      <div class="border-t border-gray-50 pt-5">',
@@ -276,7 +290,7 @@
             uploadZoneHtml('taskBook', 'ph-file-text', '项目任务书（可选）', '支持 PDF / Word / 图片，点击或拖拽上传', '.pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp,.txt,.md'),
         '</div>',
         '<div class="mt-3">',
-            uploadZoneHtml('paymentRecord', 'ph-currency-cny', '打款记录', '上传客户付款截图或转账记录，点击或拖拽上传', 'image/*'),
+            uploadZoneHtml('paymentRecord', 'ph-currency-cny', '打款记录', '支持多张客户付款截图或转账记录', 'image/*,.pdf', true),
         '</div>',
       '</div>',
             '    </form>',
@@ -343,20 +357,98 @@
 
     // ========== 付款状态联动 ==========
 
+    function normalizePaymentRecords(value) {
+        if (!Array.isArray(value)) return [];
+        return value.map(function (item) {
+            item = item || {};
+            return {
+                date: String(item.date || item.payDate || item.time || '').trim(),
+                amount: parseFloat(item.amount) || 0,
+                note: String(item.note || item.remark || '').trim()
+            };
+        }).filter(function (item) {
+            return item.date || item.amount > 0 || item.note;
+        });
+    }
+
+    function paymentRecordTotal(records) {
+        return normalizePaymentRecords(records).reduce(function (sum, item) {
+            return sum + (parseFloat(item.amount) || 0);
+        }, 0);
+    }
+
+    function currencyText(value) {
+        var num = Math.round(parseFloat(value) || 0);
+        return '¥ ' + num.toLocaleString('zh-CN');
+    }
+
+    function updatePaymentRecordSummary() {
+        var form = document.getElementById('order-form');
+        var summary = document.getElementById('payment-record-summary');
+        var records = normalizePaymentRecords(paymentRecordsState);
+        var total = paymentRecordTotal(records);
+        var amount = form ? (parseFloat(form.amount.value) || 0) : 0;
+        var ratio = amount > 0 && total > 0 ? Math.min(Math.round(total / amount * 100), 100) : 0;
+
+        if (summary) {
+            summary.textContent = records.length
+                ? ('已记录 ' + records.length + ' 笔，合计 ' + currencyText(total) + (ratio ? '，约 ' + ratio + '%' : ''))
+                : '暂无实际付款记录';
+        }
+
+        if (form && form.paymentRatio && total > 0) {
+            form.paymentRatio.value = ratio;
+        }
+    }
+
+    function paymentRecordRowHtml(record, index) {
+        record = record || {};
+        return [
+            '<div class="payment-record-row rounded-lg border border-gray-100 bg-white p-2.5" data-index="' + index + '">',
+            '  <div class="grid grid-cols-[1fr_1fr_auto] gap-2 items-start">',
+            '    <input type="date" data-field="date" value="' + escapeHtml(record.date || '') + '" class="payment-record-input border border-gray-200 rounded-lg px-2.5 py-2 text-xs outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 bg-white">',
+            '    <input type="number" data-field="amount" min="0" step="0.01" placeholder="金额" value="' + (record.amount > 0 ? escapeHtml(String(record.amount)) : '') + '" class="payment-record-input border border-gray-200 rounded-lg px-2.5 py-2 text-xs outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 bg-white">',
+            '    <button type="button" class="payment-record-remove w-9 h-9 rounded-lg border border-gray-200 text-gray-400 hover:text-red-500 hover:bg-red-50 hover:border-red-100 transition flex items-center justify-center" title="删除"><i class="ph ph-trash"></i></button>',
+            '  </div>',
+            '  <input type="text" data-field="note" placeholder="备注，如首款、尾款、补款" value="' + escapeHtml(record.note || '') + '" class="payment-record-input mt-2 w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 bg-white">',
+            '</div>'
+        ].join('');
+    }
+
+    function renderPaymentRecords() {
+        var list = document.getElementById('payment-record-list');
+        if (!list) return;
+        if (!paymentRecordsState.length) {
+            list.innerHTML = '<div class="rounded-lg border border-dashed border-gray-200 bg-white py-3 text-center text-xs text-gray-300">暂无分次付款记录</div>';
+        } else {
+            list.innerHTML = paymentRecordsState.map(paymentRecordRowHtml).join('');
+        }
+        updatePaymentRecordSummary();
+    }
+
     function togglePaymentRatio() {
         var form = document.getElementById('order-form');
         if (!form) return;
         var wrap = document.getElementById('payment-ratio-wrap');
+        var recordsWrap = document.getElementById('payment-records-wrap');
         if (form.paymentStatus.value === '部分付款') {
             wrap.classList.remove('hidden');
         } else {
             wrap.classList.add('hidden');
         }
+        if (recordsWrap) {
+            recordsWrap.classList.toggle('hidden', form.paymentStatus.value === '未付款');
+        }
+        updatePaymentRecordSummary();
     }
 
     // ========== 文件上传 ==========
 
     function revokeFileUrl(file) {
+        if (Array.isArray(file)) {
+            file.forEach(revokeFileUrl);
+            return;
+        }
         if (file && file.url && file.url.indexOf('blob:') === 0 && window.URL && window.URL.revokeObjectURL) {
             window.URL.revokeObjectURL(file.url);
         }
@@ -410,6 +502,13 @@
     function uploadAllFiles() {
     var keys = ['screenshot', 'showcase', 'quote', 'taskBook', 'paymentRecord'];
     var promises = keys.map(function (key) {
+            if (key === 'paymentRecord' && Array.isArray(uploadedFiles[key])) {
+                return Promise.all(uploadedFiles[key].map(function (file) {
+                    return uploadFileToServer(file);
+                })).then(function (results) {
+                    uploadedFiles[key] = results.filter(Boolean);
+                });
+            }
             if (uploadedFiles[key] && uploadedFiles[key]._needsUpload) {
                 return uploadFileToServer(uploadedFiles[key]).then(function (result) {
                     uploadedFiles[key] = result;
@@ -421,8 +520,8 @@
     }
 
     function getFileIconClass(file) {
-        var type = (file && file.type) || '';
-        var name = (file && file.name) || '';
+        var type = (file && (file.type || file.mimetype)) || '';
+        var name = (file && (file.name || file.originalName || file.filename)) || '';
         var iconClass = 'ph file-icon text-lg ';
         if (type.startsWith('image/')) {
             iconClass += 'ph-image text-blue-500';
@@ -442,15 +541,26 @@
         var fileNameEl = zone.querySelector('.file-name');
         var fileIcon = zone.querySelector('.file-icon');
 
-        revokeFileUrl(uploadedFiles[type]);
-        uploadedFiles[type] = createFileRecord(file);
+        if (type === 'paymentRecord') {
+            if (!Array.isArray(uploadedFiles[type])) uploadedFiles[type] = [];
+            uploadedFiles[type].push(createFileRecord(file));
+            uploadedFiles[type] = uploadedFiles[type].slice(0, 10);
+        } else {
+            revokeFileUrl(uploadedFiles[type]);
+            uploadedFiles[type] = createFileRecord(file);
+        }
 
         placeholder.classList.add('hidden');
         preview.classList.remove('hidden');
-        if (fileNameEl) fileNameEl.textContent = file.name;
+        if (fileNameEl) {
+            fileNameEl.textContent = type === 'paymentRecord'
+                ? ('已选择 ' + (uploadedFiles[type] || []).length + ' 个打款附件')
+                : file.name;
+        }
 
         if (fileIcon) {
-            fileIcon.className = getFileIconClass(uploadedFiles[type]);
+            var iconSource = type === 'paymentRecord' ? (uploadedFiles[type] && uploadedFiles[type][0]) : uploadedFiles[type];
+            fileIcon.className = getFileIconClass(iconSource);
         }
     }
 
@@ -469,9 +579,14 @@
 
             // 文件选择
             fileInput.addEventListener('change', function () {
-                if (this.files && this.files[0]) {
-                    handleFileUpload(type, this.files[0], zone);
+                var files = Array.prototype.slice.call(this.files || []);
+                if (files.length) {
+                    if (type !== 'paymentRecord') files = files.slice(0, 1);
+                    files.forEach(function (file) {
+                        handleFileUpload(type, file, zone);
+                    });
                 }
+                fileInput.value = '';
             });
 
             // 拖拽
@@ -485,8 +600,12 @@
             zone.addEventListener('drop', function (e) {
                 e.preventDefault();
                 zone.classList.remove('border-brand-400', 'bg-brand-50/30');
-                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                    handleFileUpload(type, e.dataTransfer.files[0], zone);
+                var files = Array.prototype.slice.call(e.dataTransfer.files || []);
+                if (files.length) {
+                    if (type !== 'paymentRecord') files = files.slice(0, 1);
+                    files.forEach(function (file) {
+                        handleFileUpload(type, file, zone);
+                    });
                 }
             });
 
@@ -495,7 +614,7 @@
                 removeBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     revokeFileUrl(uploadedFiles[type]);
-                    uploadedFiles[type] = null;
+                    uploadedFiles[type] = type === 'paymentRecord' ? [] : null;
                     placeholder.classList.remove('hidden');
                     zone.querySelector('.upload-preview').classList.add('hidden');
                     fileInput.value = '';
@@ -527,10 +646,41 @@
         return true;
     }
 
+    function cleanUploadedFile(file) {
+        if (!file) return null;
+        return {
+            name: file.name || file.originalName || file.filename || '',
+            originalName: file.originalName || file.name || file.filename || '',
+            filename: file.filename || '',
+            size: file.size || 0,
+            type: file.type || file.mimetype || '',
+            mimetype: file.mimetype || file.type || '',
+            url: file.url || ''
+        };
+    }
+
+    function cleanUploadedFileValue(value) {
+        if (Array.isArray(value)) {
+            return value.map(cleanUploadedFile).filter(Boolean);
+        }
+        return cleanUploadedFile(value);
+    }
+
     // ========== 收集数据 ==========
 
     function collectData() {
         var form = document.getElementById('order-form');
+        var paymentRecords = form.paymentStatus.value === '未付款' ? [] : normalizePaymentRecords(paymentRecordsState);
+        var paidTotal = paymentRecordTotal(paymentRecords);
+        var amount = parseFloat(form.amount.value) || 0;
+        var paymentRatio = form.paymentRatio ? parseInt(form.paymentRatio.value, 10) || 0 : 0;
+        if (form.paymentStatus.value === '未付款') {
+            paymentRatio = 0;
+        } else if (paidTotal > 0 && amount > 0) {
+            paymentRatio = Math.min(Math.round(paidTotal / amount * 100), 100);
+        } else if (form.paymentStatus.value === '已结清') {
+            paymentRatio = 100;
+        }
         return {
             customerId: selectedCustomerId || '',
             customerNick: form.customerNick.value.trim(),
@@ -550,8 +700,9 @@
             finalDate: form.finalDate.value,
             orderStatus: form.orderStatus.value,
             paymentStatus: form.paymentStatus.value,
-            paymentRatio: form.paymentRatio ? parseInt(form.paymentRatio.value) || 0 : 0,
+            paymentRatio: paymentRatio,
             payDate: form.payDate.value,
+            paymentRecords: paymentRecords,
             gitUrl: form.gitUrl.value.trim(),
             quoteRef: form.quoteRef.value.trim(),
             uploadedFiles: {
@@ -602,25 +753,36 @@
         setValue('gitUrl', data.gitUrl, '');
         setValue('quoteRef', data.quoteRef, '');
 
-        // 付款比例
-        if (form.paymentRatio && data.paymentRatio) form.paymentRatio.value = data.paymentRatio;
+        // 付款比例与分次付款
+        if (form.paymentRatio) form.paymentRatio.value = data.paymentRatio || '';
+        paymentRecordsState = normalizePaymentRecords(data.paymentRecords || []);
+        renderPaymentRecords();
 
         // 上传文件恢复
         var files = data.uploadedFiles || {};
         uploadedFiles = {};
         ['screenshot', 'showcase', 'quote', 'taskBook', 'paymentRecord'].forEach(function (key) {
-            if (files[key]) {
-                uploadedFiles[key] = files[key];
+            var value = files[key];
+            if (key === 'paymentRecord') {
+                value = Array.isArray(value) ? value : (value ? [value] : []);
+            }
+            if ((Array.isArray(value) && value.length) || (!Array.isArray(value) && value)) {
+                uploadedFiles[key] = value;
                 var zone = document.querySelector('.order-upload-zone[data-upload-type="' + key + '"]');
                 if (zone) {
                     var ph = zone.querySelector('.upload-placeholder');
                     var pv = zone.querySelector('.upload-preview');
                     var fnEl = zone.querySelector('.file-name');
                     var iconEl = zone.querySelector('.file-icon');
+                    var previewFile = Array.isArray(value) ? value[0] : value;
                     if (ph) ph.classList.add('hidden');
                     if (pv) pv.classList.remove('hidden');
-                    if (fnEl) fnEl.textContent = files[key].name;
-                    if (iconEl) iconEl.className = getFileIconClass(files[key]);
+                    if (fnEl) {
+                        fnEl.textContent = key === 'paymentRecord'
+                            ? ('已保存 ' + value.length + ' 个打款附件')
+                            : (previewFile.name || previewFile.originalName || previewFile.filename || '已保存附件');
+                    }
+                    if (iconEl) iconEl.className = getFileIconClass(previewFile);
                 }
             }
         });
@@ -636,6 +798,40 @@
 
         togglePaymentRatio();
         updateCalc();
+    }
+
+    function bindPaymentRecordEvents() {
+        var addBtn = document.getElementById('payment-record-add');
+        var list = document.getElementById('payment-record-list');
+        if (addBtn) {
+            addBtn.addEventListener('click', function () {
+                paymentRecordsState.push({ date: formatDate(new Date()), amount: 0, note: '' });
+                renderPaymentRecords();
+            });
+        }
+        if (list) {
+            list.addEventListener('input', function (e) {
+                var input = e.target.closest('.payment-record-input');
+                if (!input) return;
+                var row = input.closest('.payment-record-row');
+                if (!row) return;
+                var index = parseInt(row.dataset.index, 10);
+                var field = input.dataset.field;
+                if (!paymentRecordsState[index] || !field) return;
+                paymentRecordsState[index][field] = field === 'amount' ? (parseFloat(input.value) || 0) : input.value;
+                updatePaymentRecordSummary();
+            });
+            list.addEventListener('click', function (e) {
+                var btn = e.target.closest('.payment-record-remove');
+                if (!btn) return;
+                var row = btn.closest('.payment-record-row');
+                var index = row ? parseInt(row.dataset.index, 10) : -1;
+                if (index >= 0) {
+                    paymentRecordsState.splice(index, 1);
+                    renderPaymentRecords();
+                }
+            });
+        }
     }
 
     // ========== 事件绑定 ==========
@@ -675,8 +871,7 @@
                 var cleanFiles = {};
                 ['screenshot', 'showcase', 'quote', 'taskBook', 'paymentRecord'].forEach(function (key) {
                     if (uploadedFiles[key]) {
-                        var f = uploadedFiles[key];
-                        cleanFiles[key] = { name: f.name, size: f.size, type: f.type, url: f.url || '' };
+                        cleanFiles[key] = cleanUploadedFileValue(uploadedFiles[key]);
                     }
                 });
                 data.uploadedFiles = cleanFiles;
@@ -712,7 +907,10 @@
 
         // 实时计算
         ['amount', 'cost', 'hours'].forEach(function (name) {
-            form[name].addEventListener('input', updateCalc);
+            form[name].addEventListener('input', function () {
+                updateCalc();
+                if (name === 'amount') updatePaymentRecordSummary();
+            });
         });
         ['orderDate', 'finalDate'].forEach(function (name) {
             form[name].addEventListener('change', updateCalc);
@@ -720,6 +918,7 @@
 
         // 付款状态联动
         form.paymentStatus.addEventListener('change', togglePaymentRatio);
+        bindPaymentRecordEvents();
 
         // 标签点击
         document.querySelectorAll('.order-tag').forEach(function (btn) {
@@ -758,6 +957,7 @@
         selectedTags = [];
         selectedCustomerId = '';
         uploadedFiles = {};
+        paymentRecordsState = [];
         editMode = !!(data && data.id && !createMode);
         editId = editMode && data && data.id ? data.id : null;
 
@@ -769,6 +969,8 @@
         if (form.orderDate) form.orderDate.value = formatDate(new Date());
 
         bindEvents();
+        renderPaymentRecords();
+        togglePaymentRatio();
 
         // 编辑模式填充数据
         if (data) fillData(data, { preserveDefaults: !editMode });

@@ -82,19 +82,19 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="form-label">项目名称</label>
-                                <input type="text" data-field="projectName" value="企业官网定制开发 (双端自适应)" class="form-input">
+                                <input type="text" data-field="projectName" value="" class="form-input" placeholder="请输入项目名称">
                             </div>
                             <div>
                                 <label class="form-label">客户名称</label>
-                                <input type="text" data-field="customerName" value="张先生" class="form-input">
+                                <input type="text" data-field="customerName" value="" class="form-input" placeholder="请输入客户名称">
                             </div>
                             <div>
                                 <label class="form-label">报价日期</label>
-                                <input type="date" data-field="quoteDate" value="2025-07-03" class="form-input">
+                                <input type="date" data-field="quoteDate" value="" class="form-input">
                             </div>
                             <div>
                                 <label class="form-label">预计周期 (天)</label>
-                                <input type="number" data-field="cycle" value="15" class="form-input">
+                                <input type="number" data-field="cycle" value="" class="form-input" placeholder="如：15">
                             </div>
                         </div>
                     </div>
@@ -136,11 +136,12 @@
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="form-label">优惠折扣 (减免 ¥)</label>
-                                <input type="number" data-field="discount" value="300" class="form-input text-red-500 font-medium">
+                                <input type="number" data-field="discount" value="0" class="form-input text-red-500 font-medium">
                             </div>
                             <div>
                                 <label class="form-label">付款方式 (默认推荐 5-4-1)</label>
                                 <select data-field="paymentMethod" class="form-input">
+                                    <option value="">请选择付款方式</option>
                                     <option value="50%预付定金启动项目，40%测试上线无误后支付，10%为尾款交付源码时支付。">50%预付，40%上线，10%尾款</option>
                                     <option value="40%预付定金启动项目，60%上线交付无误后一次性支付。">40%预付，60%上线交付</option>
                                     <option value="全额预付（九折优惠），项目完成后交付全部源码。">全额预付 (九折优惠)</option>
@@ -149,9 +150,7 @@
                         </div>
                         <div>
                             <label class="form-label">补充说明 (将显示在报价单底部)</label>
-                            <textarea data-field="notes" rows="3" class="form-input resize-none">1. 本报价有效期为 7 天。
-2. 免费提供首年服务器日常维护及程序Bug修复。
-3. 超出上述需求范围的新增功能，需另行评估报价。</textarea>
+                            <textarea data-field="notes" rows="3" class="form-input resize-none" placeholder="报价有效期、售后范围、额外说明等"></textarea>
                         </div>
                     </div>
                 </div>
@@ -198,19 +197,19 @@
                         <div class="bg-gray-50/80 rounded-md p-4 mb-6 grid grid-cols-2 gap-y-2 text-sm border border-gray-100/50">
                             <div class="flex">
                                 <span class="text-gray-500 w-16">项目名称：</span>
-                                <span class="text-gray-800 font-medium truncate" id="pv-projectName">企业官网定制开发 (双端)</span>
+                                <span class="text-gray-800 font-medium truncate" id="pv-projectName">—</span>
                             </div>
                             <div class="flex">
                                 <span class="text-gray-500 w-16">报价日期：</span>
-                                <span class="text-gray-800" id="pv-quoteDate">2025-07-03</span>
+                                <span class="text-gray-800" id="pv-quoteDate">—</span>
                             </div>
                             <div class="flex">
                                 <span class="text-gray-500 w-16">客户名称：</span>
-                                <span class="text-gray-800" id="pv-customerName">张先生</span>
+                                <span class="text-gray-800" id="pv-customerName">—</span>
                             </div>
                             <div class="flex">
                                 <span class="text-gray-500 w-16">预计周期：</span>
-                                <span class="text-gray-800" id="pv-cycle">15 工作日</span>
+                                <span class="text-gray-800" id="pv-cycle">—</span>
                             </div>
                         </div>
 
@@ -234,16 +233,16 @@
                             <div class="w-1/2 space-y-2">
                                 <div class="flex justify-between text-sm text-gray-600">
                                     <span>小计：</span>
-                                    <span id="pv-subtotal">¥ 6,300.00</span>
+                                    <span id="pv-subtotal">¥ 0.00</span>
                                 </div>
                                 <div class="flex justify-between text-sm text-red-500">
                                     <span>优惠折扣：</span>
-                                    <span id="pv-discount">- ¥ 300.00</span>
+                                    <span id="pv-discount">- ¥ 0.00</span>
                                 </div>
                                 <div class="h-px bg-gray-200 my-1"></div>
                                 <div class="flex justify-between items-end">
                                     <span class="font-medium text-gray-800">总计金额：</span>
-                                    <span class="text-xl font-bold text-gray-900 font-mono" id="pv-total">¥ 6,000.00</span>
+                                    <span class="text-xl font-bold text-gray-900 font-mono" id="pv-total">¥ 0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -287,19 +286,33 @@
             // ========== 报价数据模型 ==========
             var quoteData = {
                 id: null, // 编辑模式下的报价单 ID
-                projectName: '企业官网定制开发 (双端自适应)',
-                customerName: '张先生',
-                quoteDate: new Date().toISOString().slice(0, 10),
-                cycle: '15',
-                discount: '300',
-                paymentMethod: '50%预付定金启动项目，40%测试上线无误后支付，10%为尾款交付源码时支付。',
-                notes: '1. 本报价有效期为 7 天。\n2. 免费提供首年服务器日常维护及程序Bug修复。\n3. 超出上述需求范围的新增功能，需另行评估报价。',
-                items: [
-                    { name: '基础架构与UI/UX设计', qty: 1, price: 2000, desc: '包含首页、关于我们、产品展示等5个核心页面的设计与前端重构 (响应式)' },
-                    { name: '后端管理系统开发', qty: 1, price: 3500, desc: '总览看板(CMS)、产品管理、基础权限分配、API接口开发' },
-                    { name: '服务器部署与备案协助', qty: 1, price: 800, desc: 'Linux环境配置、SSL证书配置、域名解析及上线测试' }
-                ]
+                projectName: '',
+                customerName: '',
+                quoteDate: '',
+                cycle: '',
+                discount: '0',
+                paymentMethod: '',
+                notes: '',
+                items: []
             };
+
+            var BUILTIN_TEMPLATES = [
+                {
+                    id: 'builtin:website-custom',
+                    projectName: '企业官网定制开发 (双端自适应)',
+                    customerName: '张先生',
+                    quoteDate: new Date().toISOString().slice(0, 10),
+                    cycle: '15',
+                    discount: 300,
+                    paymentMethod: '50%预付定金启动项目，40%测试上线无误后支付，10%为尾款交付源码时支付。',
+                    notes: '1. 本报价有效期为 7 天。\n2. 免费提供首年服务器日常维护及程序Bug修复。\n3. 超出上述需求范围的新增功能，需另行评估报价。',
+                    items: [
+                        { name: '基础架构与UI/UX设计', qty: 1, price: 2000, desc: '包含首页、关于我们、产品展示等5个核心页面的设计与前端重构 (响应式)' },
+                        { name: '后端管理系统开发', qty: 1, price: 3500, desc: '总览看板(CMS)、产品管理、基础权限分配、API接口开发' },
+                        { name: '服务器部署与备案协助', qty: 1, price: 800, desc: 'Linux环境配置、SSL证书配置、域名解析及上线测试' }
+                    ]
+                }
+            ];
 
             // ========== 工具函数 ==========
 
@@ -390,7 +403,7 @@
                 setText('pv-projectName', quoteData.projectName || '—');
                 setText('pv-customerName', quoteData.customerName || '—');
                 setText('pv-quoteDate', quoteData.quoteDate || '—');
-                setText('pv-cycle', (quoteData.cycle || '0') + ' 工作日');
+                setText('pv-cycle', quoteData.cycle ? (quoteData.cycle + ' 工作日') : '—');
 
                 // 明细列表
                 var itemsHtml = quoteData.items.map(function (item, i) {
@@ -418,7 +431,9 @@
                 setText('pv-total', '¥ ' + formatMoney(total));
 
                 // 补充说明
-                var notesHtml = '<p><strong>付款方式：</strong> ' + escapeHtml(quoteData.paymentMethod || '') + '</p>';
+                var notesHtml = quoteData.paymentMethod
+                    ? '<p><strong>付款方式：</strong> ' + escapeHtml(quoteData.paymentMethod) + '</p>'
+                    : '<p class="text-gray-400">暂无补充说明</p>';
                 if (quoteData.notes) {
                     quoteData.notes.split('\n').forEach(function (line) {
                         if (line.trim()) notesHtml += '<p>' + escapeHtml(line.trim()) + '</p>';
@@ -567,7 +582,7 @@
 
             // ========== 功能四：保存报价单到后端 ==========
 
-            function collectQuoteData() {
+            function collectQuoteData(status) {
                 return {
                     projectName: quoteData.projectName,
                     customerName: quoteData.customerName,
@@ -584,11 +599,13 @@
                     discount: parseFloat(quoteData.discount) || 0,
                     paymentMethod: quoteData.paymentMethod || '',
                     notes: quoteData.notes || '',
-                    status: 'draft'
+                    status: status || 'draft'
                 };
             }
 
-            function saveQuote() {
+            function saveQuote(options) {
+                options = options || {};
+                var asTemplate = !!options.asTemplate;
                 // 校验
                 if (!quoteData.projectName || !quoteData.projectName.trim()) {
                     showToast('请填写项目名称');
@@ -600,14 +617,15 @@
                 }
 
                 var btn = document.getElementById('save-quote-btn');
-                if (!btn) return;
-                var originalHtml = btn.innerHTML;
-                btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> 保存中...';
-                btn.disabled = true;
+                var originalHtml = btn ? btn.innerHTML : '';
+                if (btn && !asTemplate) {
+                    btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> 保存中...';
+                    btn.disabled = true;
+                }
 
-                var data = collectQuoteData();
-                var url = quoteData.id ? '/api/quotes/' + encodeURIComponent(quoteData.id) : '/api/quotes';
-                var method = quoteData.id ? 'PUT' : 'POST';
+                var data = collectQuoteData(asTemplate ? 'template' : 'draft');
+                var url = (!asTemplate && quoteData.id) ? '/api/quotes/' + encodeURIComponent(quoteData.id) : '/api/quotes';
+                var method = (!asTemplate && quoteData.id) ? 'PUT' : 'POST';
 
                 fetch(url, {
                     method: method,
@@ -615,94 +633,130 @@
                     body: JSON.stringify(data)
                 }).then(function (r) { return r.json(); }).then(function (res) {
                     if (res.success) {
-                        quoteData.id = res.data.id;
-                        showToast('报价单已保存！');
+                        if (!asTemplate) quoteData.id = res.data.id;
+                        showToast(asTemplate ? '已保存为模板！' : '报价单已保存！');
                         loadTemplateList(); // 刷新模板列表
                     } else {
                         showToast('保存失败：' + (res.error || '未知错误'));
                     }
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
+                    if (btn && !asTemplate) {
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                    }
                 }).catch(function (err) {
                     showToast('保存失败：' + err.message);
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
+                    if (btn && !asTemplate) {
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                    }
                 });
             }
 
             // ========== 功能五：从模板导入 ==========
 
+            function calcTemplateTotal(template) {
+                var subtotal = (template.items || []).reduce(function (sum, item) {
+                    return sum + (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
+                }, 0);
+                return subtotal - (parseFloat(template.discount) || 0);
+            }
+
+            function renderTemplateItem(q, badge) {
+                var total = q.totalAmount !== undefined ? q.totalAmount : calcTemplateTotal(q);
+                var date = q.quoteDate || q.createdAt || '';
+                return [
+                    '<div class="template-item px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors" data-template-id="' + escapeHtml(q.id) + '">',
+                    '  <div class="flex items-center justify-between gap-2">',
+                    '    <div class="min-w-0 flex-1">',
+                    '      <div class="flex items-center gap-2">',
+                    '        <p class="text-sm font-medium text-gray-800 truncate">' + escapeHtml(q.projectName || '未命名') + '</p>',
+                    badge ? '        <span class="text-[10px] px-1.5 py-0.5 rounded bg-brand-50 text-brand-600 flex-shrink-0">' + escapeHtml(badge) + '</span>' : '',
+                    '      </div>',
+                    '      <p class="text-xs text-gray-400 mt-0.5">' + escapeHtml(q.customerName || '—') + ' · ¥' + formatMoney(total) + (date ? ' · ' + escapeHtml(date) : '') + '</p>',
+                    '    </div>',
+                    '    <i class="ph ph-arrow-square-in text-gray-300 text-sm flex-shrink-0"></i>',
+                    '  </div>',
+                    '</div>'
+                ].join('');
+            }
+
+            function bindTemplateItems(container) {
+                container.querySelectorAll('.template-item').forEach(function (item) {
+                    item.addEventListener('click', function () {
+                        var templateId = item.getAttribute('data-template-id');
+                        importTemplate(templateId);
+                        closeTemplateDropdown();
+                    });
+                });
+            }
+
+            function syncFieldInputs() {
+                document.querySelectorAll('[data-field]').forEach(function (input) {
+                    var field = input.getAttribute('data-field');
+                    if (quoteData[field] !== undefined) input.value = quoteData[field];
+                });
+            }
+
+            function applyTemplateData(d) {
+                quoteData.projectName = d.projectName || '';
+                quoteData.customerName = d.customerName || '';
+                quoteData.quoteDate = d.quoteDate || new Date().toISOString().slice(0, 10);
+                quoteData.cycle = d.cycle || '';
+                quoteData.discount = String(d.discount !== undefined ? d.discount : 0);
+                quoteData.paymentMethod = d.paymentMethod || '';
+                quoteData.notes = d.notes || '';
+                quoteData.items = (d.items || []).map(function (item) {
+                    return {
+                        name: item.name || '',
+                        desc: item.desc || '',
+                        qty: parseFloat(item.qty) || 1,
+                        price: parseFloat(item.price) || 0
+                    };
+                });
+                quoteData.id = null; // 重置 ID，作为新单
+
+                syncFieldInputs();
+                renderAll();
+                showToast('已导入模板：' + (d.projectName || '未命名模板'));
+            }
+
             function loadTemplateList() {
                 fetch('/api/quotes').then(function (r) { return r.json(); }).then(function (res) {
                     if (!res.success) return;
-                    var list = res.data || [];
+                    var list = Array.isArray(res.data) ? res.data : [];
                     var container = document.getElementById('template-list');
                     if (!container) return;
 
-                    if (!list.length) {
-                        container.innerHTML = '<div class="px-4 py-3 text-sm text-gray-400 text-center">暂无已保存的报价单</div>';
-                        return;
-                    }
-
-                    container.innerHTML = list.map(function (q) {
-                        var total = q.totalAmount || 0;
-                        var date = q.quoteDate || q.createdAt || '';
-                        return [
-                            '<div class="template-item px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors" data-template-id="' + q.id + '">',
-                            '  <div class="flex items-center justify-between gap-2">',
-                            '    <div class="min-w-0 flex-1">',
-                            '      <p class="text-sm font-medium text-gray-800 truncate">' + escapeHtml(q.projectName || '未命名') + '</p>',
-                            '      <p class="text-xs text-gray-400 mt-0.5">' + escapeHtml(q.customerName || '—') + ' · ¥' + formatMoney(total) + '</p>',
-                            '    </div>',
-                            '    <i class="ph ph-arrow-square-in text-gray-300 text-sm flex-shrink-0"></i>',
-                            '  </div>',
-                            '</div>'
-                        ].join('');
-                    }).join('');
-
-                    // 绑定点击导入
-                    container.querySelectorAll('.template-item').forEach(function (item) {
-                        item.addEventListener('click', function () {
-                            var templateId = item.getAttribute('data-template-id');
-                            importTemplate(templateId);
-                            closeTemplateDropdown();
-                        });
-                    });
+                    var html = [
+                        '<div class="px-4 pt-2 pb-1 text-[11px] font-semibold text-gray-400">内置模板</div>',
+                        BUILTIN_TEMPLATES.map(function (q) { return renderTemplateItem(q, '内置'); }).join(''),
+                        '<div class="px-4 pt-3 pb-1 text-[11px] font-semibold text-gray-400 border-t border-gray-50 mt-1">我的模板</div>',
+                        list.length
+                            ? list.map(function (q) { return renderTemplateItem(q, q.status === 'template' ? '模板' : '报价单'); }).join('')
+                            : '<div class="px-4 py-3 text-sm text-gray-400 text-center">暂无已保存的模板</div>'
+                    ].join('');
+                    container.innerHTML = html;
+                    bindTemplateItems(container);
                 }).catch(function (err) {
                     console.error('[Quote] 模板列表加载失败:', err);
                 });
             }
 
             function importTemplate(id) {
+                if (id && id.indexOf('builtin:') === 0) {
+                    var builtin = BUILTIN_TEMPLATES.find(function (item) { return item.id === id; });
+                    if (!builtin) {
+                        showToast('内置模板不存在');
+                        return;
+                    }
+                    applyTemplateData(builtin);
+                    return;
+                }
+
                 fetch('/api/quotes/' + encodeURIComponent(id)).then(function (r) { return r.json(); }).then(function (res) {
                     if (!res.success) { showToast('加载失败：' + (res.error || '')); return; }
                     var d = res.data;
-                    // 导入模板数据（不导入 id，作为新报价单）
-                    quoteData.projectName = d.projectName || '';
-                    quoteData.customerName = d.customerName || '';
-                    quoteData.quoteDate = d.quoteDate || new Date().toISOString().slice(0, 10);
-                    quoteData.cycle = d.cycle || '';
-                    quoteData.discount = String(d.discount || 0);
-                    quoteData.paymentMethod = d.paymentMethod || '';
-                    quoteData.notes = d.notes || '';
-                    quoteData.items = (d.items || []).map(function (item) {
-                        return {
-                            name: item.name || '',
-                            desc: item.desc || '',
-                            qty: parseFloat(item.qty) || 1,
-                            price: parseFloat(item.price) || 0
-                        };
-                    });
-                    quoteData.id = null; // 重置 ID，作为新单
-
-                    // 更新表单字段
-                    document.querySelectorAll('[data-field]').forEach(function (input) {
-                        var field = input.getAttribute('data-field');
-                        if (quoteData[field] !== undefined) input.value = quoteData[field];
-                    });
-
-                    renderAll();
-                    showToast('已导入模板：' + (d.projectName || ''));
+                    applyTemplateData(d);
                 }).catch(function (err) {
                     showToast('加载失败：' + err.message);
                 });
@@ -759,6 +813,10 @@
                     }
                 });
             }
+
+            window.saveQuoteAsTemplate = function () {
+                saveQuote({ asTemplate: true });
+            };
 
             // ========== 初始化 ==========
 

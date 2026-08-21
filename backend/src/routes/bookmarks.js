@@ -31,105 +31,13 @@ var DEFAULT_CATEGORIES = [
     { id: 'other', name: '其他', color: 'other' }
 ];
 
-// Mock 数据
-var MOCK_BOOKMARKS = [
-    {
-        id: '1',
-        title: 'MDN Web Docs',
-        url: 'https://developer.mozilla.org',
-        category: 'docs',
-        description: 'Web 开发权威文档',
-        favicon: 'https://developer.mozilla.org/favicon.ico',
-        clickCount: 45,
-        createdAt: '2024-01-10T08:30:00Z',
-        updatedAt: '2024-06-15T14:22:00Z'
-    },
-    {
-        id: '2',
-        title: 'GitHub',
-        url: 'https://github.com',
-        category: 'tools',
-        description: '代码托管平台',
-        favicon: 'https://github.com/favicon.ico',
-        clickCount: 128,
-        createdAt: '2023-12-05T10:15:00Z',
-        updatedAt: '2024-07-10T09:45:00Z'
-    },
-    {
-        id: '3',
-        title: 'Stack Overflow',
-        url: 'https://stackoverflow.com',
-        category: 'community',
-        description: '程序员问答社区',
-        favicon: 'https://stackoverflow.com/favicon.ico',
-        clickCount: 67,
-        createdAt: '2024-02-20T16:20:00Z',
-        updatedAt: '2024-05-28T11:30:00Z'
-    },
-    {
-        id: '4',
-        title: 'Vue.js 官方文档',
-        url: 'https://vuejs.org',
-        category: 'docs',
-        description: 'Vue 框架文档',
-        favicon: 'https://vuejs.org/favicon.ico',
-        clickCount: 32,
-        createdAt: '2024-03-12T09:00:00Z',
-        updatedAt: '2024-04-22T15:10:00Z'
-    },
-    {
-        id: '5',
-        title: 'Figma',
-        url: 'https://figma.com',
-        category: 'design',
-        description: '在线设计工具',
-        favicon: 'https://figma.com/favicon.ico',
-        clickCount: 23,
-        createdAt: '2024-01-25T14:30:00Z',
-        updatedAt: '2024-06-08T10:00:00Z'
-    },
-    {
-        id: '6',
-        title: 'freeCodeCamp',
-        url: 'https://www.freecodecamp.org',
-        category: 'learning',
-        description: '免费编程学习平台',
-        favicon: 'https://www.freecodecamp.org/favicon.ico',
-        clickCount: 15,
-        createdAt: '2024-04-05T11:20:00Z',
-        updatedAt: '2024-05-15T16:45:00Z'
-    },
-    {
-        id: '7',
-        title: 'Dribbble',
-        url: 'https://dribbble.com',
-        category: 'design',
-        description: '设计师作品展示平台',
-        favicon: 'https://dribbble.com/favicon.ico',
-        clickCount: 8,
-        createdAt: '2024-02-28T13:10:00Z',
-        updatedAt: '2024-03-20T09:30:00Z'
-    },
-    {
-        id: '8',
-        title: 'V2EX',
-        url: 'https://www.v2ex.com',
-        category: 'community',
-        description: '创意工作者社区',
-        favicon: 'https://www.v2ex.com/favicon.ico',
-        clickCount: 56,
-        createdAt: '2023-11-15T15:40:00Z',
-        updatedAt: '2024-07-05T11:20:00Z'
-    }
-];
-
 // 确保数据文件存在
 function ensureDataFile() {
     if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
     }
     if (!fs.existsSync(BOOKMARKS_FILE)) {
-        fs.writeFileSync(BOOKMARKS_FILE, JSON.stringify(MOCK_BOOKMARKS, null, 2), 'utf-8');
+        fs.writeFileSync(BOOKMARKS_FILE, JSON.stringify([], null, 2), 'utf-8');
     }
 }
 
@@ -140,7 +48,7 @@ function readBookmarks() {
         var raw = fs.readFileSync(BOOKMARKS_FILE, 'utf-8');
         return JSON.parse(raw);
     } catch (e) {
-        return MOCK_BOOKMARKS;
+        return [];
     }
 }
 

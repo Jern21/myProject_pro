@@ -38,7 +38,7 @@ var storage = multer.diskStorage({
     }
 });
 
-var allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.mp4', '.mov'];
+var allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.doc', '.docx', '.txt', '.md', '.mp4', '.mov'];
 
 var upload = multer({
     storage: storage,

@@ -55,6 +55,7 @@ app.use('/api/stats', require('./src/routes/stats'));
 app.use('/api/image-gen', require('./src/routes/image-gen'));
 app.use('/api/accounts', require('./src/routes/accounts'));
 app.use('/api/bookmarks', require('./src/routes/bookmarks'));
+app.use('/api/bug-reports', require('./src/routes/bug-reports'));
 
 // API 健康检查
 app.get('/api/health', function (req, res) {

@@ -13,6 +13,62 @@
         return base + 'assets/svg/' + file;
     }
 
+    function escapeXml(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;');
+    }
+
+    function getDefaultUserProfile() {
+        return {
+            nickname: 'JERN',
+            role: '全栈开发工程师',
+            avatar: ''
+        };
+    }
+
+    function normalizeUserProfile(profile) {
+        return Object.assign(getDefaultUserProfile(), profile || {});
+    }
+
+    function makeProfileAvatar(name) {
+        var label = String(name || 'JERN').trim().charAt(0) || 'J';
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">' +
+            '<rect width="96" height="96" rx="48" fill="#2563eb"/>' +
+            '<text x="50%" y="50%" dy=".08em" text-anchor="middle" dominant-baseline="middle" ' +
+            'font-family="Inter, system-ui, sans-serif" font-size="36" font-weight="700" fill="#fff">' +
+            escapeXml(label) + '</text></svg>';
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    function applyUserProfileToHeader(profile) {
+        var normalized = normalizeUserProfile(profile);
+        window.__userProfile = normalized;
+        var name = normalized.nickname || 'JERN';
+        var avatar = normalized.avatar || makeProfileAvatar(name);
+        var avatarEl = document.getElementById('header-user-avatar');
+        var nameEl = document.getElementById('header-user-name');
+        if (avatarEl) avatarEl.src = avatar;
+        if (nameEl) nameEl.textContent = name;
+    }
+
+    function loadHeaderProfile() {
+        var apiBase = (window.ROOT_URL || window.PAGE_BASE || '') + 'api/settings';
+        fetch(apiBase)
+            .then(function (res) { return res.json(); })
+            .then(function (result) {
+                if (result.success && result.data) {
+                    applyUserProfileToHeader(result.data.profile);
+                }
+            })
+            .catch(function () {
+                applyUserProfileToHeader(window.__userProfile || getDefaultUserProfile());
+            });
+    }
+
     // ========== 统一页面配置 ==========
     // 所有页面共用同一套模板，通过可选字段控制内容显示：
     //   icon:     'platform:xianyu' → 渲染对应平台 SVG 图标（仅平台页面）
@@ -45,7 +101,7 @@
         'quote.html': {
             title: '生成报价单',
             subtitle: '规范化开发报价，支持一键生成文本或导出PDF',
-            action: { label: '保存为模板', icon: 'ph ph-floppy-disk', variant: 'secondary' }
+            action: { label: '保存为模板', icon: 'ph ph-floppy-disk', variant: 'secondary', onclick: 'saveQuoteAsTemplate()' }
         },
         'customer.html': {
             title: '客户管理',
@@ -492,10 +548,13 @@
     }
 
     function renderAvatar() {
+        var profile = normalizeUserProfile(window.__userProfile);
+        var name = profile.nickname || 'JERN';
+        var avatar = profile.avatar || makeProfileAvatar(name);
         return [
             '<div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 py-1.5 px-2 rounded-lg transition-colors border border-transparent hover:border-gray-200">',
-            '    <img src="https://ui-avatars.com/api/?name=JERN&background=random&color=fff" alt="User Avatar" class="w-8 h-8 rounded-full">',
-            '    <span class="text-sm font-medium text-gray-700">JERN</span>',
+            '    <img id="header-user-avatar" src="' + escapeHtml(avatar) + '" alt="User Avatar" class="w-8 h-8 rounded-full object-cover">',
+            '    <span id="header-user-name" class="text-sm font-medium text-gray-700">' + escapeHtml(name) + '</span>',
             '    <i class="ph ph-caret-down text-gray-400 text-xs"></i>',
             '</div>'
         ].join('');
@@ -580,6 +639,8 @@
             bindStatsRangeButtons(header);
             syncStatsRangeButtons(header);
             loadBellNotifications();
+            applyUserProfileToHeader(window.__userProfile || getDefaultUserProfile());
+            loadHeaderProfile();
             loadPageSubtitle(currentPage);
             return header;
         }
@@ -597,6 +658,8 @@
         bindStatsRangeButtons(header);
         syncStatsRangeButtons(header);
         loadBellNotifications();
+        applyUserProfileToHeader(window.__userProfile || getDefaultUserProfile());
+        loadHeaderProfile();
         loadPageSubtitle(currentPage);
         return header;
     }
@@ -610,5 +673,10 @@
         renderHeader(pageName);
     });
 
+    window.addEventListener('settings:profile-updated', function (event) {
+        applyUserProfileToHeader(event && event.detail && event.detail.profile);
+    });
+
     window.renderHeader = renderHeader;
+    window.applyUserProfileToHeader = applyUserProfileToHeader;
 })();
